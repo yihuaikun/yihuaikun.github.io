@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yihuaikun.github.io</id>
     <title>向java工程师迈进</title>
-    <updated>2019-12-12T12:55:23.828Z</updated>
+    <updated>2019-12-12T12:58:21.361Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yihuaikun.github.io"/>
     <link rel="self" href="https://yihuaikun.github.io/atom.xml"/>
@@ -10,472 +10,6 @@
     <logo>https://yihuaikun.github.io/images/avatar.png</logo>
     <icon>https://yihuaikun.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, 向java工程师迈进</rights>
-    <entry>
-        <title type="html"><![CDATA[单点登陆与redis集群缓存]]></title>
-        <id>https://yihuaikun.github.io/post/dan-dian-deng-lu-yu-redis-ji-qun-huan-cun</id>
-        <link href="https://yihuaikun.github.io/post/dan-dian-deng-lu-yu-redis-ji-qun-huan-cun">
-        </link>
-        <updated>2019-12-14T07:28:24.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="单点登录sso">单点登录SSO</h1>
-<p>​		单点登录:SSO英文全称Single Sign On，单点登录。SSO是在多个应用系统中，用户只需要登录一次就可以访问所有相互信任的应用系统。它包括可以将这次主要的登录映射到其他应用中用于同一个用户的登录的机制。它是目前比较流行的企业业务整合的解决方案之一。</p>
-<p>​		单点登录解决的问题:分布式session的共享问题,简单的说是解决了一个服务器一登陆的问题,实现多功能系统的一次登陆可访问多个服务的问题.</p>
-<h2 id="环境的搭配">环境的搭配</h2>
-<p>需要的依赖</p>
-<pre><code class="language-xml">    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
-            &lt;version&gt;2.2.1.RELEASE&lt;/version&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
-            &lt;artifactId&gt;commons-lang3&lt;/artifactId&gt;
-            &lt;version&gt;3.9&lt;/version&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
-            &lt;artifactId&gt;fastjson&lt;/artifactId&gt;
-            &lt;version&gt;1.2.62&lt;/version&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;redis.clients&lt;/groupId&gt;
-            &lt;artifactId&gt;jedis&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
-            &lt;artifactId&gt;commons-pool2&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
-            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
-            &lt;optional&gt;true&lt;/optional&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-            &lt;scope&gt;test&lt;/scope&gt;
-            &lt;exclusions&gt;
-                &lt;exclusion&gt;
-                    &lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;
-                    &lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;
-                &lt;/exclusion&gt;
-            &lt;/exclusions&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;io.lettuce&lt;/groupId&gt;
-            &lt;artifactId&gt;lettuce-core&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;mysql&lt;/groupId&gt;
-            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.apache.tomcat.embed&lt;/groupId&gt;
-            &lt;artifactId&gt;tomcat-embed-jasper&lt;/artifactId&gt;
-            &lt;scope&gt;provided&lt;/scope&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-</code></pre>
-<p>1.redis集群的搭建</p>
-<p>2.在java中的配置</p>
-<pre><code class="language-yml">server:
-  port: 10000
-spring:
-  datasource:
-    username: root
-    url: jdbc:mysql://localhost:3306/taotao?characterEncoding=utf8&amp;serverTimezone=UTC
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  redis:
-    #    redis.cluster集群的节点
-    cluster:
-      nodes: 
-      # 这里写你的redis集群的ip和端口号以&quot;,&quot;分割
-    jedis:
-      pool:
-        #      连接池最大数量
-        max-active: 10
-        #        连接池最小空闲连接
-        min-idle: 1
-        max-idle: 2
-        #        连接池最大阻塞时间
-        max-wait: -1
-    password: xxxxx
-    host: redis集群的ip地址
-    timeout: 1000
-    commandTimeout: 5000
-</code></pre>
-<p>3.在java中的配置文件</p>
-<pre><code class="language-java">package com.sso.taotaossostudying;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.JedisCluster;
-import redis.clients.jedis.JedisPoolConfig;
-
-import java.util.HashSet;
-import java.util.Set;
-
-@Configuration
-@ConditionalOnClass({JedisCluster.class})
-@Component
-public class RedisConfig {
-    @Value(&quot;${spring.redis.cluster.nodes}&quot;)
-    private String clusterNodes;
-    @Value(&quot;${spring.redis.password}&quot;)
-    private String password;
-    @Value(&quot;${spring.redis.timeout}&quot;)
-    private int timeout;
-    @Value(&quot;${spring.redis.commandTimeout}&quot;)
-    private int commandTimeout;
-    @Bean
-    public JedisCluster getJedisCluster() {
-        String[] cNodes = clusterNodes.split(&quot;,&quot;);
-        Set&lt;HostAndPort&gt; nodes = new HashSet&lt;&gt;();
-        //分割出集群节点
-        for (String node : cNodes) {
-            String[] hp = node.split(&quot;:&quot;);
-            nodes.add(new HostAndPort(hp[0], Integer.parseInt(hp[1])));
-        }
-        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        //创建集群对象。没有密码的请使用这一个
-        // JedisCluster jedisCluster = new JedisCluster(nodes,commandTimeout);
-        //有密码的请使用这一个。 我这里是redis有密码的所以我使用的这一个
-        return new JedisCluster(nodes,commandTimeout,commandTimeout,5,password, jedisPoolConfig);
-    }
-}
-
-</code></pre>
-<p>ps:需要注意的是上面解决了jedis和jediscluster的一些问题得到的配置,redis集群加密的配置.</p>
-<h2 id="单点登陆流程图">单点登陆流程图</h2>
-<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191125090924348.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h2 id="代码实现方面">代码实现方面</h2>
-<h3 id="登陆界面的实现">登陆界面的实现</h3>
-<pre><code class="language-java">@Controller
-public class LoginUriController {
-    @RequestMapping(&quot;/user/login&quot;)
-    public String uritoLogin(HttpServletRequest req, @RequestParam(required = false) String url , Model model){
-        try {
-            req.setCharacterEncoding(&quot;utf-8&quot;);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        System.out.println(url);
-        //把请求的uri放进来用于登陆成功后返回登陆时的页面
-        model.addAttribute(&quot;url&quot;,url);
-        return &quot;login&quot;;
-    }
-}
-
-</code></pre>
-<p>需要注意的是:</p>
-<p>​	<strong>url和uri的区别:</strong></p>
-<p>​		1.url在java中指是请求的全路径,uri指的是请求lujing,及handler上面的拦截路径</p>
-<p>​		2.URI，是uniform resource identifier，统一资源标识符，用来唯一的标识一个资源。而URL是uniform resource locator，统一资源定位器，它是一种具体的URI，即URL可以用来标识一个资源，而且还指明了如何locate这个资源。</p>
-<p>​	<strong>一定要获得请求的路径</strong></p>
-<p>​		获得请求的路径,通过location.href=xxx.xxx.com,来返回登陆处的功能,用户体验更好一些,</p>
-<p>京东,淘宝都是这样做的.以参数的方式来获得从哪里得到发起请求的地址url,然后登陆后重新回到登陆处,比如去购物车去付款发现没登陆账号,然后去登陆,登陆后重新回到支付的页面进行购物.</p>
-<h3 id="前端部分">前端部分</h3>
-<pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot; xmlns:th=&quot;http://thymeleaf.org&quot; &gt;
-&lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;title&gt;登陆界面&lt;/title&gt;
-&lt;/head&gt;
-&lt;script src=&quot;https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js&quot;&gt;&lt;/script&gt;
-&lt;body&gt;
-&lt;form action=&quot;/login&quot;&gt;
-    用户名: &lt;input type=&quot;text&quot; name=&quot;username&quot; &gt; &lt;/br&gt;
-    密码:   &lt;input type=&quot;password&quot; name=&quot;password&quot; &gt; &lt;/br&gt;
-    &lt;input type=&quot;submit&quot;&gt; &lt;a href=&quot;register.html&quot;&gt;注册&lt;/a&gt;
-&lt;/form&gt;
-&lt;/body&gt;
-&lt;script&gt;
-    //注意这里的thymeleaf的取值方式
-    var url = $(&quot;#uri&quot;).val();
-    console.log(url)
-    function login() {
-        var data = $(&quot;form&quot;).serialize();
-        console.log(data);
-        $.getJSON(&quot;/login&quot;,data,function (ret) {
-            if(ret.status == 200){
-                if(url == undefined){
-                    location.href = &quot;http://localhost:10001&quot;;
-                }else{
-                    location.href = url;
-                }
-            }else{
-                alert(ret.msg);
-            }
-        })
-    }
-    $(&quot;form&quot;).submit( function () {
-        login();
-        return false;
-    } );
-&lt;/script&gt;
-&lt;/html&gt;
-</code></pre>
-<p>需要注意的是:</p>
-<p>1.注意ajax的使用</p>
-<p>2.登陆按钮的禁止跳转</p>
-<p>3.前端做非空和非法判断</p>
-<h3 id="登陆信息的处理">登陆信息的处理</h3>
-<p>controller层的处理</p>
-<pre><code class="language-java"> @RequestMapping(&quot;/login&quot;)
-    public SSOResult login(String username, String password, HttpServletResponse resp){
-        return loginService.login(username,password,resp);
-    }
-</code></pre>
-<p>需要注意的是:</p>
-<p>​	<strong>要把用户信息保存在session或cookie中,需要用到HttpServletResponse的对象</strong></p>
-<p>service层对信息的处理</p>
-<p>1.校验用户信息的正确性(即密码的校验需要连接数据库),正确后生成token(UUID)</p>
-<p>2.把用户信息封装成对象(可以用md5堆成加密对用户信息加密),然后放到redis中</p>
-<p><strong>注意</strong>:最好不要把密码放进去,因为上面已经验证过密码的正确性,所以最好就是把用户不隐私的信息放进去即可.token做key,用户对像做value</p>
-<p>3.把token放到cookie中即可.</p>
-<p>​		注意:cookie是在分布式的一级域名下,达到系统共享,访问其他服务,能从cookie中拿到token,然后去redis中拿用户信息.</p>
-<p>4.需要注意的还有就是cookie和redis的有效期的设置,redis对内存要求比较高,这样的话我们对redis处理应该细致化.cookie中的token能否有效取决于redis中(token,用户对象)是否存在.不存在就失效或连接超时,需要重新登陆.</p>
-<pre><code class="language-java">    @Override
-    public SSOResult login(String username, String password, HttpServletResponse resp) {
-        /**
-         * 去数据库查找数据
-         */
-        if(StringUtils.isBlank(username) || StringUtils.isBlank(password)){
-            return new SSOResult(&quot;用户名或密码不能为空&quot;,500);
-        }
-        if(StringUtils.isBlank(username)){
-            return new SSOResult(&quot;用户名不能为空&quot;,500);
-        }
-        if(StringUtils.equals(username,&quot;zahngsan&quot;) &amp;&amp; !StringUtils.equals(password,&quot;123456&quot;)){
-            return new SSOResult(&quot;密码不正确&quot;,500);
-        }
-        /**
-         * 登陆成功后封装数据
-         */
-        //设置token
-        String token = UUID.randomUUID().toString();
-        UserInfo userInfo= new UserInfo();
-        userInfo.setNickname(&quot;laozhang&quot;);
-        userInfo.setUsername(&quot;zhangsan&quot;);
-
-        String user = JSON.toJSONString(userInfo);
-
-        //一般情况下不把password放在redis中,不安全
-       // userInfo.setPassword(&quot;123456&quot;);
-        jedis.setex(token,60,user);
-
-        /**
-         * 将token放入cookie,cookie的domain一般是一级域名下
-         * 如果不知道domain是什么,启动一下项目,去application中找一下就行
-         * 只是把token放到cookie中,然后其他服务用到,只能拿token去redis中拿数据,
-         * 如果redis的keyshixiao了,那就要重新返回登陆界面重新登陆
-         */
-        Cookie tokenCookie = new Cookie(&quot;token&quot;,token);
-        tokenCookie.setDomain(&quot;localhost&quot;);
-        tokenCookie.setMaxAge(60);
-        resp.addCookie(tokenCookie);
-        return new SSOResult(&quot;登陆成功&quot;,200);
-    }
-
-</code></pre>
-<p>总结:这里,面最后的返回码和上边前端相吻合,通过后处理后 返回到登陆时的界面.</p>
-<p><strong>到此简单的登陆就做好了,对单点登陆应用是在拦截器中的使用</strong></p>
-<h3 id="登陆的效果实现">登陆的效果实现</h3>
-<p>在门户系统中开登陆的口</p>
-<pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-&lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;title&gt;Title&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;a href=&quot;http://localhost:10000/user/login&quot;&gt;登陆&lt;/a&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<p>服务到sso做上边的登陆处理之后回到门户</p>
-<h2 id="比如订单的处理">比如订单的处理</h2>
-<p>看订单我们需要有用户信息,然后验证通过后才能看订单,这样我们就要在拦截器中来让用户的看订单请求去sso拿用户信息</p>
-<p>请求接口前端:</p>
-<pre><code class="language-java">&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-&lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;title&gt;Title&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;!--请求查看订单页面--&gt;
-&lt;a href=&quot;/order/all&quot; &gt;查看订单&lt;/a&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-
-</code></pre>
-<p>拦截这个路径处理用户身份信息,这是我们只有能唯一得到的时存储用户信息的cookie</p>
-<p>拦截器的配置</p>
-<pre><code class="language-java">@SpringBootApplication
-public class SsoDoorApplication implements WebMvcConfigurer 
-    @Autowired
-    private OrderInterceptor orderInterceptor;
-    @Bean
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
-    }
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(orderInterceptor).addPathPatterns(&quot;/order/**&quot;);
-    }
-    public static void main(String[] args) {
-        SpringApplication.run(SsoDoorApplication.class, args);
-    }
-}
-
-
-</code></pre>
-<p>在拦截器中的请求</p>
-<pre><code class="language-java">@Component
-public class OrderInterceptor implements HandlerInterceptor {
-    private String url = &quot;http://localhost:10000/user/login&quot;;
-    private String getDataUrl = &quot;http://localhost:10000/get_user_by_token&quot;;
-    @Autowired
-    private RestTemplate restTemplate;
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        StringBuffer requestURL = request.getRequestURL();
-        response.setContentType(&quot;text/html;charset=UTF-8&quot;);
-        PrintWriter writer = response.getWriter();
-        /**
-         * 拿到cookie获得token
-         * 两种结果cookie过期,然后重定向到登陆界面
-         * token存在,拿着token去sso服务要用户信息
-         */
-        Cookie[] cookies = request.getCookies();
-        String token = null;
-        String restUri = url + &quot;?&quot; + requestURL;
-        if (cookies == null) {
-            writer.println(&quot;&lt;script&gt; alert('你还没登陆,请登陆!');location.href='&quot; + restUri + &quot;'&lt;/script&gt;&quot;);
-        } else {
-            for (Cookie cookie : cookies) {
-                /**
-                 *拿到token
-                 */
-                if (cookie.getName().equals(&quot;token&quot;)) {
-                    token = cookie.getValue();
-                    break;
-                } else {
-                    continue;
-                }
-            }
-        }
-
-        if (token == null) {
-            writer.println(&quot;&lt;script&gt; alert('会话超时,请重新登陆!');location.href='&quot; + restUri + &quot;'&lt;/script&gt;&quot;);
-            return false;
-        }
-        /**
-         * 判断token是否存在
-         */
-        if (token != null) {
-            /**
-             * 存在的话就发起请求去sso拿信息
-             */
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpGet httpGet = new HttpGet(getDataUrl+&quot;token=&quot;+token);
-            CloseableHttpResponse resp = httpClient.execute(httpGet);
-            HttpEntity entity = resp.getEntity();
-            String userInfo = EntityUtils.toString(entity);
-            UserInfo user = JSON.parseObject(userInfo, UserInfo.class);
-            /**
-             * 两种情况,一种是redis中的key过期了,一种是获得了用户的信息
-             * 没有获得告诉用户,会话超时请重新登陆
-             * 正常情况下让它通过去该处理的controller
-             */
-            if (userInfo != null) {
-                return true;
-            }else {
-                writer.println(&quot;&lt;script&gt; alert('会话超时,请重新登陆!');location.href='&quot; + url + &quot;'&lt;/script&gt;&quot;);
-                return false;
-            }
-        }
-        return false;
-    }
-}
-
-</code></pre>
-<p><strong>上面需要注意的时情况的划分,然后就是带参数的script语句的拼写</strong></p>
-<p><strong>还有就是HttpClient的使用,省时间url直接写上去</strong></p>
-<p>获得信息的接口(sso中)</p>
-<pre><code class="language-java">  @RequestMapping(&quot;/get_user_by_token&quot;)
-    public UserInfo getData(@RequestParam String token){
-        return loginService.getData(token);
-    }
-
-</code></pre>
-<p>service中</p>
-<pre><code class="language-java">    /**
-     * 本文档用于查找用户信息,从redis中查找,如果没有返回null
-     * @param token
-     * @return
-     */
-    @Override
-    public UserInfo getData(String token) {
-        String user = jedis.get(token);
-        UserInfo userInfo = JSON.parseObject(user, UserInfo.class);
-        if(userInfo != null){
-            return userInfo;
-        }
-        return null;
-    }
-
-</code></pre>
-<p>所有的处理结束后</p>
-<p>zhengque放行,不zhengque就返回就登陆界面</p>
-<p>zhengque后的简单处理</p>
-<pre><code class="language-java">@Controller
-public class OrderController {
-
-    @RequestMapping(&quot;/order/all&quot;)
-    public String toOrder(){
-        return &quot;order&quot;;
-    }
-
-}
-
-
-</code></pre>
-<p>前端展示xiaog</p>
-<pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-&lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;title&gt;订单页面&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;pre&gt;
-         1.香蕉50斤
-         2.苹果50斤
-         3.三只松鼠50包
-         4.提子50斤
-         5.瓜子50斤
-            共计250
-    &lt;/pre&gt;
-&lt;/body&gt;
-&lt;/html
-
-</code></pre>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[ Mybatis实现批量插入]]></title>
         <id>https://yihuaikun.github.io/post/mybatis-shi-xian-pi-liang-cha-ru</id>
@@ -2856,6 +2390,165 @@ db.createUser({user:&quot;readuser&quot;,pwd:&quot;123&quot;,roles:[{role:&quot;
 db.auth(&quot;readuser&quot;,&quot;123&quot;)
 </code></pre>
 <p>做完这两步之后再执行查询操作就没有任何问题了，但是此时如果执行插入操作会提示没有权限，那我们可以创建一个有读写功能的用户执行相应的操作，这里就不再赘述。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[问题!!]]></title>
+        <id>https://yihuaikun.github.io/post/wen-ti</id>
+        <link href="https://yihuaikun.github.io/post/wen-ti">
+        </link>
+        <updated>2019-12-12T12:27:57.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="spring-cloud之eureka和ribbon使用问题">spring-cloud之eureka和ribbon使用问题</h1>
+<h2 id="提供服务层端">提供服务层端</h2>
+<pre><code class="language-java">@Service
+@Slf4j
+public class ContentServiceImpl implements ContentService {
+    @Autowired
+    private TbContentMapper tbContentMapper;
+    @Autowired
+    private CacheManagerService cacheManagerService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Override
+    public TaotaoResult getContent(Long cId) {
+        List&lt;TbContent&gt; tbContents = cacheManagerService.getTbContentFromCache(cId);
+        /**
+         * 如果缓存中没有数据就从数据库中查
+         * 查完之后将数据放入缓存,以便下次查找
+         */
+        if(tbContents == null){
+            TbContentExample tbContentExample = new TbContentExample();
+            TbContentExample.Criteria criteria = tbContentExample.createCriteria();
+            criteria.andCategoryIdEqualTo(cId);
+            tbContents = tbContentMapper.selectByExampleWithBLOBs(tbContentExample);
+            /**
+             * 将数据放入缓存
+             */
+            cacheManagerService.pushTbContent2Cache(cId,tbContents);
+        }
+        for(TbContent tbContent : tbContents){
+            System.out.println(tbContent.toString());
+        }
+        return TaotaoResult.ok(tbContents);
+    }
+}
+
+</code></pre>
+<p>上面是提供服务的服务层</p>
+<p>下面是提供服务的web控制层</p>
+<pre><code class="language-java">@RestController
+public class ContentController {
+    @Autowired
+    private ContentService  contentService;
+    @GetMapping(&quot;/content/{cId}&quot;)
+    public TaotaoResult getContent(@PathVariable Long cId){
+        TaotaoResult taotaoResult = contentService.getContent(cId);
+        return taotaoResult;
+    }
+}
+</code></pre>
+<p>我们把返回的结果封装在一个对象中,然后TaotaoResult的data字段我们在服务层用list存进去</p>
+<h2 id="消费端">消费端</h2>
+<pre><code class="language-java">@Service
+@PropertySource(&quot;classpath:resources.properties&quot;)
+public class AdServiceImpl implements AdService {
+    /**
+     * '
+     * ribbon的方式
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value(&quot;${INDEX_ADI_URL}&quot;)
+    private String INDEX_ADI_URL;
+    @Override
+    public String getAdItemList() {
+        //调用服务层的查询打广告的数据
+        //发起http的Get请求
+//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
+        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
+//        System.out.println(taotaoResult.toString());
+        String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
+        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);
+        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
+        for (TbContent tbContent : contentList) {
+            ADItem adItem = new ADItem();
+            adItem.setHeight(240);
+            adItem.setWidth(670);
+            adItem.setSrc(tbContent.getPic());
+            adItem.setHeightB(240);
+            adItem.setWidthB(550);
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setAlt(tbContent.getTitleDesc());
+            adItem.setHref(tbContent.getUrl());
+            adItemList.add(adItem);
+        }
+        return JsonUtils.objectToJson(adItemList);
+    }
+}
+</code></pre>
+<p>返回来的TaotaoResult的data字段还是ArrayList类型,但是ArrayLIst里面的每个是以LinkedhashMap存储的,就像下面这样拆分</p>
+<pre><code class="language-java">		ArrayList arrayList = new ArrayList();
+        LinkedHashMap map = new LinkedHashMap();
+        map.put(&quot;id&quot;,101);
+        map.put(&quot;name&quot;,&quot;张三&quot;);
+        map.put(&quot;age&quot;,24);
+        LinkedHashMap map1 = new LinkedHashMap();
+        map1.put(&quot;id&quot;,102);
+        map1.put(&quot;name&quot;,&quot;张三&quot;);
+        map1.put(&quot;age&quot;,2);
+        arrayList.add(map);
+        arrayList.add(map1);
+        System.out.println(arrayList);
+</code></pre>
+<p>所以直接用会报类型转换异常:LinkedHashMap  不能转换成某一个bean对象</p>
+<p>正确的写法是</p>
+<pre><code class="language-java">@Service
+@PropertySource(&quot;classpath:resources.properties&quot;)
+public class AdServiceImpl implements AdService {
+    /**
+     * '
+     * ribbon的方式
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value(&quot;${INDEX_ADI_URL}&quot;)
+    private String INDEX_ADI_URL;
+    @Override
+    public String getAdItemList() {
+        //调用服务层的查询打广告的数据
+        //发起http的Get请求
+//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
+//        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
+//        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, String.class);
+        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider&quot; + INDEX_ADI_URL, String.class);
+        System.out.println(result);
+        //        System.out.println(taotaoResult.toString());
+        TaotaoResult taotaoResult = TaotaoResult.formatToList(result, TbContent.class);
+//        System.out.println(taotaoResult.getData().getClass());
+        List&lt;TbContent&gt; contentList = (List&lt;TbContent&gt;) taotaoResult.getData();
+       /* String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
+        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);*/
+        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
+        for (TbContent tbContent : contentList) {
+            ADItem adItem = new ADItem();
+            adItem.setHeight(240);
+            adItem.setWidth(670);
+            adItem.setSrc(tbContent.getPic());
+            adItem.setHeightB(240);
+            adItem.setWidthB(550);
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setAlt(tbContent.getTitleDesc());
+            adItem.setHref(tbContent.getUrl());
+            adItemList.add(adItem);
+        }
+        return JsonUtils.objectToJson(adItemList);
+    }
+}
+
+</code></pre>
+<p><strong>直接把上面的data数据转换成json串,然后再转bean对象,还有就是服务不要写端口号,注册中心有端口号,不然没办法做客户端的负载均衡.</strong></p>
 ]]></content>
     </entry>
 </feed>
