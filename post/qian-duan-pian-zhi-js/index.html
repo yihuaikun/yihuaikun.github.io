@@ -1,0 +1,660 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>前端篇之-JS | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576153368591">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576153368591" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              前端篇之-JS
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                15 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="前端学习总结">前端学习总结</h1>
+<h2 id="js基础学习">js基础学习</h2>
+<pre><code>* 概念:   一门客户端脚本语言
+  	* 运行在客户端的浏览器中,每一个浏览器都有javaScript的解析引擎
+  	* 脚本语言:不需要编译,直接就可以被浏览器解析
+* 功能:
+  * 可以用来增强用户和Html页面的交互过程,可以控制html元素,让页面有一些动态效果,增强用户的体验.
+
+* javaScript发展历史:
+  1. 1992年，Nombase公司，开发出第一门客户端脚本语言，专门用于表单的校验。命名为 ： C--	，后来更名为：ScriptEase
+  2. 1995年，Netscape(网景)公司，开发了一门客户端脚本语言：LiveScript。后来，请来SUN公司的专家，修改LiveScript，命名为JavaScript
+  3. 1996年，微软抄袭JavaScript开发出JScript语言
+  4. 1997年，ECMA(欧洲计算机制造商协会)，制定出客户端脚本语言的标准：ECMAScript，就是统一了所有客户端脚本语言的编码方式。
+
+</code></pre>
+<h2 id="ecmascript客户端脚本语言标准">ECMAScript:客户端脚本语言标准</h2>
+<h3 id="和html结合方式">和Html结合方式</h3>
+<pre><code>1.与html结合方式
+	1.内部JS:
+		*定义&lt;script&gt;,标签体内容就是JS代码
+	2.外部JS
+		*定义&lt;script&gt;,通过src属性引入外部JS文件
+		
+	注意:
+		1.&lt;script&gt;可以定义在html页面的任何地方,但是定义的位置会影响执行顺序.
+		2.&lt;script&gt;可以定义多个
+</code></pre>
+<h3 id="javascript注释">javaScript注释</h3>
+<pre><code>1.在js中的注释一共两种类型
+	*单行注释: //注释内容
+	*多行注释:/*注释内容*/
+</code></pre>
+<h3 id="数据类型">数据类型</h3>
+<pre><code>1.原始数据类型(基本数据类型)
+	1.number :数字.整数/小数/NaN(not a number一个不是数字的数据类型)
+	2.string:字符串.字符串 &quot;abc&quot; &quot;a&quot; 'abc'
+	3.boolean:true或者false
+	4.null:一个对象为空的占位符
+	5.undefined:未定义.如果一个变量没有初始化值,则会被默认赋值为underfined
+2.引用数据类型对象
+</code></pre>
+<h3 id="变量">变量</h3>
+<pre><code>1.变量:一小块的存储数据的内存空间
+	*java语言是强类型语言,而JavaScript是弱类型语言
+		* 强类型:在开辟变量存储空间时,定义了空间将来存储数据的数据类型,只能存储固定类型的数据
+		* 弱类型:在开辟变量存储空间时,不定义空间将来存储的数据类型,可以存放任意的数据类型
+		
+	* 语法:
+		* var 变量名称  = 初始化值;
+	*typeof运算符:获取变量的类型
+		*注意:null运算后得到的是object
+</code></pre>
+<h3 id="运算符">运算符</h3>
+<pre><code>1.一元运算符:只有一个运算数的运算符
+	++,--,+(正号)
+		* ++ -- :自增(自减)
+			* ++(--) 在前,先自增(自减),再运算
+			* ++(--)在后,先运算,在自增(自减)
+注意:在JS中,如果运算数不是运算符所要求的类型,那么JS引擎会自动将运算数进行类型转换
+	*其他类型的转number
+		* string转number:按照字面值转换,如果字面值不是数字,则转换为NaN(不是数字的数字)
+		* boolean转number:true转换为1,false转换为0
+2.算数运算符
+	+ - * / %....
+3.赋值运算符
+	= += -+ *= /=....
+4.比较运算符
+	&gt; &lt; &gt;= &lt;= == ===(全等于)
+	*比较方式
+		1.类型相同:直接比较
+			* 字符串:按照字典顺序比较.按位逐一比较,直到得出大小为止
+		2.类型不同 :先进行类型转换,在比较
+			* ===: 全等于.在比较之前,先判断类型,如果类型不一样,则直接返回false
+5.逻辑运算符
+	&amp;&amp; || !
+		* 其他类型转换Boolean
+			1.number :0或NaN为假,其他为真
+			2.string:除了空字符串(&quot;&quot;),其他都是true
+			3.null&amp;undefined:都是false
+			4.对象:对象都是true
+6.三元运算符
+	? : 表达式
+	var a = 3;
+    var b = 4;
+    var c  = a &gt; b ? 1:0;
+    *语法:
+    	* 表达式 ? 值1:值2;
+    	* 判断表达式的值,如果true则取值1,如果false则取值为2
+		
+</code></pre>
+<h3 id="流程控制语句">流程控制语句</h3>
+<pre><code>1.if....else....
+2.switch:
+	*在java中,switch语句可以接受的数据类型:byte int short char,枚举(1.5),String(1.7)
+		*switch(变量)
+			case 值:
+	*在JS中,switch语句可以接受任意数据类型
+ 3.while
+ 4.do...while
+ 5.for
+	
+</code></pre>
+<p>使用for循环代码演示</p>
+<pre><code class="language-Html">	&lt;!DOCTYPE html&gt;
+		&lt;html lang=&quot;en&quot;&gt;
+		&lt;head&gt;
+		    &lt;meta charset=&quot;UTF-8&quot;&gt;
+		    &lt;title&gt;99乘法表&lt;/title&gt;
+		    &lt;style&gt;
+		        td{
+		            border: 1px solid;
+		        }
+		
+		    &lt;/style&gt;
+		
+		    &lt;script&gt;
+		
+		        document.write(&quot;&lt;table  align='center'&gt;&quot;);
+					        //1.完成基本的for循环嵌套，展示乘法表
+		        for (var i = 1; i &lt;= 9 ; i++) {
+		            document.write(&quot;&lt;tr&gt;&quot;);
+		            for (var j = 1; j &lt;=i ; j++) {
+		                document.write(&quot;&lt;td&gt;&quot;);
+		
+		                //输出  1 * 1 = 1
+		                document.write(i + &quot; * &quot; + j + &quot; = &quot; + ( i*j) +&quot;&amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;);
+		
+		                document.write(&quot;&lt;/td&gt;&quot;);
+		            }
+		            /*//输出换行
+		            document.write(&quot;&lt;br&gt;&quot;);*/
+		
+		            document.write(&quot;&lt;/tr&gt;&quot;);
+		        }
+		
+		        //2.完成表格嵌套
+		        document.write(&quot;&lt;/table&gt;&quot;);
+		
+		    &lt;/script&gt;
+		&lt;/head&gt;
+		&lt;body&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h2 id="基本对象">基本对象</h2>
+<h3 id="js创建对象的几种方式">js创建对象的几种方式</h3>
+<pre><code class="language-javascript">1.Object构造函数创建
+	var Person  = new Object();
+	Person.name = 'yhk';
+	Person.age = 21
+</code></pre>
+<pre><code class="language-javascript">2:使用对象字面量表示法来创建对象
+	var Person ={};//等同于var Person = new Object();
+	var Person = {
+        name:'yhk',
+        age:21
+	}
+</code></pre>
+<blockquote>
+<p>对象字面量是对象定义的一种简写形式,第一种和第二种创建形式的缺点是就是:<strong>他们用同一个接口创建很多对象,会产生大量重复的代码,如果你有500个对象,那么你就要输入500多次很多相同的代码</strong></p>
+</blockquote>
+<pre><code class="language-javascript">3.使用工厂模式创建
+	function createPerson(name,age,job) {
+        var o = new Object();
+        o.name = name;
+        o.age = age;
+        o.job = job;
+        this.sayName = function() {
+            alert(this.name);
+        };
+		return o;
+    }
+	var person1 = new Person('TOM',29,'Teacher');
+	var person1 = new Person('LUCK',18,'Student');
+</code></pre>
+<blockquote>
+<p>在使用工厂模式创建对象的时候，我们都可以注意到，在createPerson函数中，返回的是一个对象。那么我们就无法判断返回的对象究竟是一个什么样的类型。于是就出现了第四种创建对象的模式</p>
+</blockquote>
+<pre><code class="language-javascript">4.使用构造函数创建
+	function Person(name,age,job) {
+		this.name = name;
+		this.age = age;
+		this.job = job;
+		this.sayName = function() {
+            alert(this.name);
+		};
+	}
+</code></pre>
+<pre><code>1.Function:函数(方法)对象
+	1.创建:
+		1.var fun = new Function(形式参数列表,方法体);
+		2.
+			functon 方法名称(形式参数列表) {
+                方法体
+			}
+		3. 
+			var 方法名 = function(形式参数列表) {
+                方法体
+			}
+	2. 方法
+	3.属性
+		length:代表形参的个数
+	4.特点
+		1.方法定义是,形参的类型不用写,返回值类型不同写
+		2.方法是一个对象,如果定义名称相同的方法,会覆盖
+		3.在JS中,方法的调用只与方法的名称有关,和参数列表无关
+		4.在方法声明中有一个隐藏的内置对象(数组),arguments,封装所有的实际参数
+	5.调用
+		方法名称(实际参数列表);
+</code></pre>
+<h3 id="array数组的对象">Array:数组的对象</h3>
+<pre><code>1.创建:
+	1. var arr = new Array(元素列表);
+	2. var arr = new Array(默认长度);
+	3. var arr = [元素列表];
+2.方法
+	join(参数):将数组中的元素按照指定的分割符拼接为字符串
+	push() :向数组的末尾添加一个或者更多的元素,并返回数组的长度
+3.属性
+	length:数组的长度
+4.特点
+	
+</code></pre>
+<h3 id="date日期对象">Date:日期对象</h3>
+<pre><code>1.创建
+	var date = new Date();
+2.方法
+	toLocaleString():返回当前date对应的时间本地字符串格式
+	 getTime():获取毫秒值。返回当前如期对象描述的时间到1970年1月1日零点的毫秒值差
+</code></pre>
+<h3 id="math数学对象">Math:数学对象</h3>
+<pre><code> 1. 创建：
+ 		* 特点：Math对象不用创建，直接使用。  Math.方法名();
+
+2. 方法：
+	random():返回 0 ~ 1 之间的随机数。 含0不含1
+	ceil(x)：对数进行上舍入。
+	floor(x)：对数进行下舍入。
+	round(x)：把数四舍五入为最接近的整数。
+3. 属性：
+	PI
+</code></pre>
+<h3 id="regexp正则表达式对象">RegExp:正则表达式对象</h3>
+<pre><code>1. 正则表达式：定义字符串的组成规则。
+	1. 单个字符:[]
+			如： [a] [ab] [a-zA-Z0-9_]
+        * 特殊符号代表特殊含义的单个字符:
+        \d:单个数字字符 [0-9]
+        \w:单个单词字符[a-zA-Z0-9_]
+    2. 量词符号：
+        ?：表示出现0次或1次
+        *：表示出现0次或多次
+        +：出现1次或多次
+        {m,n}:表示 m&lt;= 数量 &lt;= n
+        * m如果缺省： {,n}:最多n次
+        * n如果缺省：{m,} 最少m次
+    3. 开始结束符号
+        * ^:开始
+        * $:结束
+2. 正则对象：
+1. 创建
+	1. var reg = new RegExp(&quot;正则表达式&quot;);
+	2. var reg = /正则表达式/;
+2. 方法	
+	1. test(参数):验证指定的字符串是否符合正则定义的规范	
+</code></pre>
+<h3 id="global全局对象">Global全局对象</h3>
+<pre><code>1. 特点：全局对象，这个Global中封装的方法不需要对象就可以直接调用。  方法名();
+2. 方法：
+        encodeURI():url编码
+        decodeURI():url解码
+
+        encodeURIComponent():url编码,编码的字符更多
+        decodeURIComponent():url解码
+
+        parseInt():将字符串转为数字
+        * 逐一判断每一个字符是否是数字，直到不是数字为止，将前边数字部分转为number
+        isNaN():判断一个值是否是NaN
+        * NaN六亲不认，连自己都不认。NaN参与的==比较全部问false
+
+        eval():讲 JavaScript 字符串，并把它作为脚本代码来执行。
+ 3. URL编码	
+    蓝鸥 =  %E4%BC%A0%E6%99%BA%E6%92%AD%E5%AE%A2
+</code></pre>
+<h1 id="bom">BOM</h1>
+<pre><code>1.概念:Browser object Model 浏览器对象模型
+	*将浏览器的各个组成部分封装成对象
+2.组成
+	* window:窗口对象
+	* Navigator:浏览器对象
+	* Screen:显示器屏幕对象
+	* History：历史记录对象
+	* Location：地址栏对象
+</code></pre>
+<h3 id="window窗口对象">window:窗口对象</h3>
+<pre><code>  1. 创建
+    2. 方法
+         1. 与弹出框有关的方法：
+            alert()	显示带有一段消息和一个确认按钮的警告框。
+            confirm()	显示带有一段消息以及确认按钮和取消按钮的对话框。
+                * 如果用户点击确定按钮，则方法返回true
+                * 如果用户点击取消按钮，则方法返回false
+            prompt()	显示可提示用户输入的对话框。
+                * 返回值：获取用户输入的值
+         2. 与打开关闭有关的方法：
+            close()	关闭浏览器窗口。
+                * 谁调用我 ，我关谁
+            open()	打开一个新的浏览器窗口
+                * 返回新的Window对象
+         3. 与定时器有关的方式
+            setTimeout()	在指定的毫秒数后调用函数或计算表达式。
+                * 参数：
+                    1. js代码或者方法对象
+                    2. 毫秒值
+                * 返回值：唯一标识，用于取消定时器
+            clearTimeout()	取消由 setTimeout() 方法设置的 timeout。
+
+            setInterval()	按照指定的周期（以毫秒计）来调用函数或计算表达式。
+            clearInterval()	取消由 setInterval() 设置的 timeout。
+
+    3. 属性：
+        1. 获取其他BOM对象：
+            history
+            location
+            Navigator
+            Screen:
+        2. 获取DOM对象
+            document
+    4. 特点
+        * Window对象不需要创建可以直接使用 window使用。 window.方法名();
+        * window引用可以省略。  方法名();
+</code></pre>
+<h3 id="localtion地址栏对象">Localtion:地址栏对象</h3>
+<pre><code>1.创建(获取)
+	1.window.location
+	2.location
+2.方法
+	* reload()重新加载当前文档.刷新
+3.属性
+	* href 设置或返回完整的URL
+</code></pre>
+<h3 id="history历史记录对象">History:历史记录对象</h3>
+<pre><code> 1. 创建(获取)：
+        1. window.history
+        2. history
+
+    2. 方法：
+        * back()	加载 history 列表中的前一个 URL。
+        * forward()	加载 history 列表中的下一个 URL。
+        * go(参数)	加载 history 列表中的某个具体页面。
+            * 参数：
+                * 正数：前进几个历史记录
+                * 负数：后退几个历史记录
+    3. 属性：
+        * length	返回当前窗口历史列表中的 URL 数量。
+</code></pre>
+<h1 id="dom">DOM</h1>
+<pre><code>* 概念： Document Object Model 文档对象模型
+	* 将标记语言文档的各个组成部分，封装为对象。可以使用这些对象，对标记语言文档进行CRUD的动态操作
+
+* W3C DOM 标准被分为 3 个不同的部分：
+
+	* 核心 DOM - 针对任何结构化文档的标准模型
+		* Document：文档对象
+		* Element：元素对象
+		* Attribute：属性对象
+		* Text：文本对象
+		* Comment:注释对象
+
+		* Node：节点对象，其他5个的父对象
+	* XML DOM - 针对 XML 文档的标准模型
+	* HTML DOM - 针对 HTML 文档的标准模型
+</code></pre>
+<h3 id="核心bom模型">核心BOM模型</h3>
+<pre><code>*核心BOM模型
+	* Document：文档对象
+		1. 创建(获取)：在html dom模型中可以使用window对象来获取
+			1. window.document
+			2. document
+		2. 方法：
+			1. 获取Element对象：
+				1. getElementById()	： 根据id属性值获取元素对象。id属性值一般唯一
+				2. getElementsByTagName()：根据元素名称获取元素对象们。返回值是一个数组
+				3. getElementsByClassName():根据Class属性值获取元素对象们。返回值是一个数组
+				4. getElementsByName(): 根据name属性值获取元素对象们。返回值是一个数组
+			2. 创建其他DOM对象：
+				createAttribute(name)
+            	createComment()
+            	createElement()
+            	createTextNode()
+		3. 属性
+	* Element：元素对象
+		1. 获取/创建：通过document来获取和创建
+		2. 方法：
+			1. removeAttribute()：删除属性
+			2. setAttribute()：设置属性
+	* Node：节点对象，其他5个的父对象
+		* 特点：所有dom对象都可以被认为是一个节点
+		* 方法：
+			* CRUD dom树：
+				* appendChild()：向节点的子节点列表的结尾添加新的子节点。
+				* removeChild()	：删除（并返回）当前节点的指定子节点。
+				* replaceChild()：用新节点替换一个子节点。
+		* 属性：
+			* parentNode 返回节点的父节点。
+</code></pre>
+<h1 id="html-dom">HTML DOM</h1>
+<pre><code>HTML DOM
+	1.标签体的设置和获取:innerHTML
+	2.使用html元素对象的属性
+	3.控制元素的样式
+		1.使用元素的style属性来设置
+			如:
+				//修改样式方式1
+				div1.style.border = &quot;1px solid red&quot;;
+				div1.style.width = &quot;200px&quot;;
+				//font-size ---&gt; size
+				div1.style.fontSize = &quot;20px&quot;;
+			2.提琴定义好选择器的样式,通过元素的className属性来设置
+</code></pre>
+<h1 id="事件监听机制">事件监听机制</h1>
+<pre><code>概念:某些组件被执行了某些操作后,触发某些代码的执行
+	* 事件:某些操作. 如:单击,双击,键盘按下了,鼠标移动了
+	* 事件源:事件发生的源头.比如按钮,文本输入框.....
+	* 监听器:代码
+	* 注册监听:将事件,事件源,监听器结合在一起.当事件源上发生了某个事件,则触发执行某个监听器的代码
+			
+</code></pre>
+<pre><code>常见的事件:
+	1.点击事件:
+		1.onclick:单击事件
+		2.ondbclick:双击事件
+	2.焦点事件:
+		1. onblur:失去焦点
+		2. onfocus:元素获得焦点
+	3.加载事件
+		1.onload:一张页面或者一幅图像完成加载
+	4.鼠标事件
+		1.onmousedown 鼠标按下事件
+		2.onmouseup 鼠标按键被松开
+		3.onmousemove 鼠标被移动
+		4.onmouseover 鼠标移到某个元素之上
+		5.onmouseout 鼠标从某元素移开
+	5.键盘事件
+    	1.onkeydown 某个键盘按键被松开
+    	2.onkeyup 某个键盘按键被松开
+    	3.onkeypress 某个键盘按键被按下并松开
+    6.选择和改变事件
+    	1.onchange 域的内容被改变
+    	2.onselect 文本被选中
+    7.表单事件
+    	1.onsubmit 确认按钮被点击
+    	2.onreset 重置按钮被点击
+    	
+		
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93">前端学习总结</a>
+<ul>
+<li><a href="#js%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0">js基础学习</a></li>
+<li><a href="#ecmascript%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86">ECMAScript:客户端脚本语言标准</a>
+<ul>
+<li><a href="#%E5%92%8Chtml%E7%BB%93%E5%90%88%E6%96%B9%E5%BC%8F">和Html结合方式</a></li>
+<li><a href="#javascript%E6%B3%A8%E9%87%8A">javaScript注释</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">数据类型</a></li>
+<li><a href="#%E5%8F%98%E9%87%8F">变量</a></li>
+<li><a href="#%E8%BF%90%E7%AE%97%E7%AC%A6">运算符</a></li>
+<li><a href="#%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5">流程控制语句</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E5%AF%B9%E8%B1%A1">基本对象</a>
+<ul>
+<li><a href="#js%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F">js创建对象的几种方式</a></li>
+<li><a href="#array%E6%95%B0%E7%BB%84%E7%9A%84%E5%AF%B9%E8%B1%A1">Array:数组的对象</a></li>
+<li><a href="#date%E6%97%A5%E6%9C%9F%E5%AF%B9%E8%B1%A1">Date:日期对象</a></li>
+<li><a href="#math%E6%95%B0%E5%AD%A6%E5%AF%B9%E8%B1%A1">Math:数学对象</a></li>
+<li><a href="#regexp%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%AF%B9%E8%B1%A1">RegExp:正则表达式对象</a></li>
+<li><a href="#global%E5%85%A8%E5%B1%80%E5%AF%B9%E8%B1%A1">Global全局对象</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#bom">BOM</a><br>
+*
+<ul>
+<li><a href="#window%E7%AA%97%E5%8F%A3%E5%AF%B9%E8%B1%A1">window:窗口对象</a></li>
+<li><a href="#localtion%E5%9C%B0%E5%9D%80%E6%A0%8F%E5%AF%B9%E8%B1%A1">Localtion:地址栏对象</a></li>
+<li><a href="#history%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95%E5%AF%B9%E8%B1%A1">History:历史记录对象</a></li>
+</ul>
+</li>
+<li><a href="#dom">DOM</a><br>
+*
+<ul>
+<li><a href="#%E6%A0%B8%E5%BF%83bom%E6%A8%A1%E5%9E%8B">核心BOM模型</a></li>
+</ul>
+</li>
+<li><a href="#html-dom">HTML DOM</a></li>
+<li><a href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6">事件监听机制</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/springcloud-ru-men-pian-2">
+              <h3 class="post-title">
+                SpringCloud-入门篇2
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

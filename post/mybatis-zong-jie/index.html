@@ -1,0 +1,1143 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mybatis总结 | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576153368591">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576153368591" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Mybatis总结
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                26 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="mybatis框架学习">Mybatis框架学习</h1>
+<h2 id="mybatis介绍">Mybatis介绍</h2>
+<p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis<br>
+避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。MyBatis<br>
+可以使用简单的 XML 或注解来配置和映射原生类型、接口和 Java 的 POJO（Plain Old<br>
+Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
+<h2 id="mybatis简单使用">Mybatis简单使用</h2>
+<h3 id="1初始化sqlsessionfactory对象">1.初始化SqlSessionFactory对象:</h3>
+<h4 id="1sqlsessionfactory对象">1.SqlSessionFactory对象:</h4>
+<p>需要从核心配置文件中获得,因此我们创建SqlSessionFactory对象时需要先配置一个Mybatis核心配置文件,过程如下:</p>
+<p>1&gt;.创建一个模板:建议最好去官网上找模板<a href="https://mybatis.org/mybatis-3/zh/getting-started.html">Mybatis配置模板</a></p>
+<p><img src="https://img-blog.csdnimg.cn/20191019172955442.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt=""><img src="https://img-blog.csdnimg.cn/20191019173125581.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="2效果试图和创建mybatis过程">2.效果试图和创建Mybatis过程:</h4>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191019173149492.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="3创建后的文件">3.创建后的文件:</h4>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/201910191732101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="2核心配置文件如下">2.核心配置文件如下:</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+    &lt;!-- 引入外部properties文件,路径从类路径的根目录开始 --&gt;
+    &lt;properties resource=&quot;jdbc.properties&quot; /&gt;
+
+    &lt;settings&gt;
+        &lt;!-- 开启将数据库中下划线连接的字段自动映射为Java的小驼峰命名 --&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+
+    &lt;!-- 定义类型别名，在xxxMapper.xml文件中就可以用别名代替很长的类名 --&gt;
+    &lt;typeAliases&gt;
+        
+            &lt;!-- 单个类配置别名 --&gt;
+&lt;!--        &lt;typeAlias type=&quot;com.lanou3g.mybatis.bean.User&quot; alias=&quot;User&quot; /&gt;--&gt;
+        
+            &lt;!-- 统一配置某个包下所有类的别名, 会使用 Bean 的首字母小写的类名来作为它的别名。 --&gt;
+        &lt;package name=&quot;com.lanou3g.mybatis.bean&quot; /&gt;
+    &lt;/typeAliases&gt;
+
+
+    &lt;!-- 配置不同环境的参数 --&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;!-- 开发环境数据库、事务配置 --&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;!-- 事务管理使用JDBC的事务 --&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;!-- 配置开发环境数据源 --&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+                &lt;!-- 将所有driver.开头的参数，附加到url属性的值后面上 --&gt;
+                &lt;property name=&quot;driver.characterEncoding&quot; value=&quot;utf8&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!-- 将mapper SQL映射文件包含进来 --&gt;
+    &lt;mappers&gt;
+        &lt;!-- 将通过XML方式配置的mapper引入进来 --&gt;
+        &lt;mapper resource=&quot;mapper/userMapper.xml&quot;/&gt;
+        &lt;!-- 将通过注解方式配置的mapper引入进来 --&gt;
+&lt;!--        &lt;mapper class=&quot;com.lanou3g.mybatis.mapper.UserMapper&quot; /&gt;--&gt;
+
+        &lt;!-- 将com.lanou3g.mybatis.mapper包下所有通过注解方式配置的mapper引入进来 --&gt;
+&lt;!--        &lt;package name=&quot;com.lanou3g.mybatis.mapper&quot;/&gt;--&gt;
+    &lt;/mappers&gt;
+&lt;/configuration&gt;
+</code></pre>
+<h4 id="1构建对象">1.构建对象:</h4>
+<pre><code class="language-java"> @Test
+    public void testXml() throws IOException {
+        String xmlPath = &quot;mybatis_config.xml&quot;;
+        InputStream inputStream = Resources.getResourceAsStream(xmlPath);
+        SqlSessionFactory sessionFactory = new 			                      SqlSessionFactoryBuilder().build(inputStream);
+        System.out.println(sessionFactory);
+    }
+</code></pre>
+<h4 id="2创建sqlsession对象">2.创建SqlSession对象</h4>
+<p>通过上步的SqlSessionFactory对象的创建可以获取到负责执行sql的SqlSession对象</p>
+<pre><code class="language-java">// 3. 获取SqlSession对象，默认事务不自动提交
+// SqlSession sqlSession = sqlSessionFactory.openSession();
+// 获取一个自动提交事务的sqlSession
+SqlSession sqlSession = sqlSessionFactory.openSession();
+</code></pre>
+<h4 id="3用sqlsession对象从mybatis中获取mapper接口的实现类">3.用SqlSession对象从Mybatis中获取Mapper接口的实现类</h4>
+<pre><code class="language-java"> StudentMapper mapper = sqlSession.getMapper(StudentMapper.class);
+</code></pre>
+<h4 id="4编写mapper对象的xml配置文件">4.编写Mapper对象的xml配置文件</h4>
+<p>和核心配置文件的步骤一样去官网找文档配置修改之后是这样,这里可以配合Fre Mybatis plugin插件使用效率更高:</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou3g.mybatis.mapper.UserMapper&quot;&gt;
+    &lt;select id=&quot;queryAllUser&quot; resultType=&quot;user&quot;&gt;
+        select * from user
+     &lt;/select&gt;
+
+    &lt;insert id=&quot;insertUser&quot;&gt;
+      insert into user (username,nick_name,email)
+      values (#{username},#{nickName},#{email})
+    &lt;/insert&gt;
+&lt;/mapper&gt;
+</code></pre>
+<h1 id="深入了解mybatis">深入了解Mybatis</h1>
+<h2 id="主要组件">主要组件</h2>
+<h3 id="核心配置文件的处理">核心配置文件的处理:</h3>
+<p>所谓的核心配置文件,就是mybatis的入口.它里面可以配置mybatis的具体参数、数据源、类型别名、关联映射文件等。</p>
+<h4 id="加载mybatis配置文件的路径">加载Mybatis配置文件的路径:</h4>
+<pre><code class="language-java"> String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+</code></pre>
+<h4 id="resources">Resources</h4>
+<pre><code class="language-java">package org.apache.ibatis.io;
+//Resources:所在的包.
+	public static InputStream getResourceAsStream(String resource) throws IOException {
+        return getResourceAsStream((ClassLoader)null, resource);
+    }
+
+	public static InputStream getUrlAsStream(String urlString) throws IOException {
+        URL url = new URL(urlString);
+        URLConnection conn = url.openConnection();
+        return conn.getInputStream();
+    }
+
+//上面是底层常用的方法:
+//例如:加载加载Mybatis配置文件
+InputStream inputStream = Resources.getResourceAsStream(configurationXmlPath);
+</code></pre>
+<h4 id="sqlsessionfactorybuilser">SqlSessionFactoryBuilser</h4>
+<p>主要用来创建SqlSessionFactory接口类对象.</p>
+<pre><code class="language-java">//SqlSessionFactoryBuiler所在的包:
+package org.apache.ibatis.session;
+
+	public SqlSessionFactory build(Reader reader, String environment) {
+        return this.build((Reader)reader, environment, (Properties)null);
+    }
+
+	public SqlSessionFactory build(InputStream inputStream) {
+        return this.build((InputStream)inputStream, (String)null, (Properties)null);
+    }
+//上面是SqlSessionFactoryBuilser的部分底层.我们调用build方法来获得下面的SqlSessionFactory接口类对象.
+//例如下面:获得SqlSessionFactory接口类对象:development表示xml中的environment的id
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,&quot;development&quot;);
+
+</code></pre>
+<h4 id="sqlsessionfactory">SqlSessionFactory</h4>
+<p>一个SqlSessionFactory只能连接一个数据库实例，如果需要连接多个数据库，需要构建多个SqlSessionFactory对象。</p>
+<p>在构建SqlSesssionFactory时可以指定environment的id，表示使用指定的数据源来构建factory对象</p>
+<pre><code class="language-java">	//这个是是否开启自动提交事务:入过不开启自动提交的话可能出现sql语句执行了,页成功了但	
+	//是没有插入到数据库例如下面实例:一般我们把参数设置为true,让它自动提交事务,如果没有设置出现下面实例	//	中的错误,在实例1下面由解决方法.注意Query时开不开没关系,最好开启
+	SqlSession openSession((boolean autoCommit);
+    SqlSession openSession(Connection var1);                        
+    //TransactionIsolationLevel是一个枚举类,事务隔离
+	// NONE(0),
+    //READ_COMMITTED(2),
+    //READ_UNCOMMITTED(1),
+    //REPEATABLE_READ(4),
+    //SERIALIZABLE(8);
+    SqlSession openSession(TransactionIsolationLevel level);
+	// ExecutorType枚举类
+    //SIMPLE,
+    //REUSE,
+    //BATCH;   最常用的试着个,Mybatis缓冲,下面我们会总结到                
+    SqlSession openSession(ExecutorType var1);
+
+    SqlSession openSession(ExecutorType var1, boolean var2);
+
+    SqlSession openSession(ExecutorType var1, TransactionIsolationLevel var2);
+
+    SqlSession openSession(ExecutorType var1, Connection var2);
+
+    Configuration getConfiguration();
+</code></pre>
+<p>关于Mybatis的TransactionIsolationLevel枚举类的探究,事务隔离级别:</p>
+<p>​			隔离级别：一个事务必须与由其他事务进行的资源或数据更改相隔离的程度。隔离级别从允许的并发副作用（例如，脏读或虚拟读取）的角度进行描述。</p>
+<pre><code class="language-java">none:
+read uncommitted | 1 未提交读
+read committed | 2 已提交读
+repeatable read | 4 可重复读
+serializable | 8 可序列化
+</code></pre>
+<p>实例1:</p>
+<pre><code class="language-java">    @Test
+    public void testPaperGirl() {
+        String configurationXmlPath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = 					            Resources.getResourceAsStream(configurationXmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //注意这里要开启事务:坑
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+            KingMapper mapper = sqlSession.getMapper(KingMapper.class);
+            List&lt;Girl&gt; girlList = new ArrayList&lt;&gt;();
+            Collections.addAll(girlList, new Girl(&quot;木兰&quot;, 2), new Girl(&quot;伽罗&quot;, 2));
+            int count = 0;
+            List&lt;BatchResult&gt; batchResults = null;
+            for(Girl girl : girlList){
+                mapper.insertPaperGir(girl);
+                count ++ ;
+                if(count % 2 == 0){
+                    batchResults = sqlSession.flushStatements();
+                    count = 0 ;
+                }
+            }
+            for(BatchResult batchResult : batchResults){
+                int[] updateCounts = batchResult.getUpdateCounts();
+                for(int updateCount : updateCounts){
+                    System.out.println(updateCount);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果如下:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173358929.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>但是数据库中并没有插入:</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191019173413717.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>解决办法有两种</p>
+<pre><code class="language-java">//解决方法一:
+SqlSession openSession(true);
+//解决方法二
+    @Test
+    public void testPaperGirl() {
+        String configurationXmlPath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(configurationXmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //注意这里要开启事务:坑
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+            KingMapper mapper = sqlSession.getMapper(KingMapper.class);
+            List&lt;Girl&gt; girlList = new ArrayList&lt;&gt;();
+            Collections.addAll(girlList, new Girl(&quot;木兰&quot;, 2), new Girl(&quot;伽罗&quot;, 2));
+            int count = 0;
+            List&lt;BatchResult&gt; batchResults = null;
+            for(Girl girl : girlList){
+                mapper.insertPaperGir(girl);
+                count ++ ;
+                if(count % 2 == 0){
+                    batchResults = sqlSession.flushStatements();
+                    count = 0 ;
+                }
+            }
+            for(BatchResult batchResult : batchResults){
+                int[] updateCounts = batchResult.getUpdateCounts();
+                for(int updateCount : updateCounts){
+                    System.out.println(updateCount);
+                }
+            }
+            //在这里加事务提交:
+            sqlSession.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+</code></pre>
+<p>解决后结果:</p>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191019173449651.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="sqlsession">SqlSession</h4>
+<p>一个SqlSession对象代表一次到数据的会话，该对象有一下功能：</p>
+<ul>
+<li>获取Mapper实现类</li>
+<li>管理事务操作</li>
+<li>注意： SqlSession对象是非线程安全的，在多线程环境下，建议不要作为类的实例属性来用。</li>
+</ul>
+<h4 id="mapper接口类">Mapper接口类:</h4>
+<h4 id="mapper">Mapper</h4>
+<ul>
+<li>
+<p>Mapper接口类</p>
+<p>定义了增删盖查的方法。注意，必须是接口类型，而且方法只需要定义就可以了。</p>
+</li>
+<li>
+<p>Mapper配置文件</p>
+<p>Mapper配置文件中就是负责实现接口中的方法，它定义了具体要执行什么SQL语句，如何映射结果集。</p>
+<ul>
+<li>配置文件中select、delete、update、insert标签的id必须是对应接口中的方法名。</li>
+<li>mapper文件的namespace属性需要对应Mapper接口的完全类型限定名。</li>
+</ul>
+</li>
+</ul>
+<h1 id="深入mybatis核心配置文件">深入Mybatis核心配置文件</h1>
+<h2 id="深入mybatis映射配置文件">深入Mybatis映射配置文件</h2>
+<h3 id="crud语句定义">CRUD语句定义</h3>
+<p>接口中的源码</p>
+<pre><code class="language-java">public interface KingMapper {
+    List&lt;King&gt; findKingById(int id);
+    int insertGirl(List&lt;Girl&gt; girlList);
+    int insertPaperGir(Girl girl);
+}
+
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.KingMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;kingMap&quot; type=&quot;com.lanou.bean.King&quot;&gt;
+        &lt;id column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;k_name&quot; property=&quot;kName&quot;/&gt;
+        &lt;association property=&quot;queen&quot; javaType=&quot;com.lanou.bean.Queen&quot; resultMap=&quot;queenMap&quot;/&gt;
+        &lt;collection property=&quot;girls&quot; ofType=&quot;com.lanou.bean.Girl&quot; resultMap=&quot;girlMap&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;girlMap&quot; type=&quot;com.lanou.bean.Girl&quot;&gt;
+        &lt;id property=&quot;gId&quot; column=&quot;g_id&quot;/&gt;
+        &lt;result property=&quot;kId&quot; column=&quot;k_id&quot;/&gt;
+        &lt;result property=&quot;gName&quot; column=&quot;g_name&quot;/&gt;
+
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;queenMap&quot; type=&quot;com.lanou.bean.Queen&quot;&gt;
+        &lt;id column=&quot;q_id&quot; property=&quot;qId&quot;/&gt;
+        &lt;result column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;q_name&quot; property=&quot;qName&quot;/&gt;
+    &lt;/resultMap&gt;
+    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+    &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;findKingById&quot; resultMap=&quot;kingMap&quot;&gt;
+
+        select
+         king.k_id k_id,
+         k_name,
+         q_id,
+         q_name,
+         g_id,
+         g_name
+        from king
+        left join girl
+        on king.k_id = girl.k_id
+        left join queen
+        on queen.k_id = king.k_id
+        where king.k_id = #{id};
+    &lt;/select&gt;
+&lt;/mapper
+</code></pre>
+<h4 id="插入语句">插入语句</h4>
+<h5 id="普通插入语句">普通插入语句</h5>
+<p>接口</p>
+<pre><code class="language-java">int insertUser(User user);
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertUser&quot;&gt;
+    insert into user (username,nick_name,email)
+    values (#{username},#{nickName},#{email})
+&lt;/insert&gt;
+</code></pre>
+<h4 id="如何返回数据库自增的id">如何返回数据库自增的ID</h4>
+<h5 id="java源代码之接口中">java源代码之接口中</h5>
+<pre><code class="language-java">public interface GirlMapper {
+    int insertGirl(Girl girl);
+}
+</code></pre>
+<h5 id="xml中">xml中</h5>
+<pre><code class="language-xml">&lt;!-- 给insert语句添加useGeneratedKeys、keyProperty后，mybatis会将自增的id值直接赋值到传进来的user对象的id属性上
+        useGeneratedKeys: 指定需要获取数据库自增的id
+        keyProperty: 指定自增地段的名称
+ps:只对update和insert语句使用
+     --&gt;
+ &lt;insert id=&quot;insertGirl&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;gId&quot; &gt;
+        insert into girl (g_name,k_id)
+        values(#{gName},#{kId})
+    &lt;/insert&gt;
+</code></pre>
+<h5 id="测试">测试</h5>
+<pre><code class="language-java">@Test
+    public void testGirl(){
+        String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream resourceAsStream = Resources.getResourceAsStream(configMybatisXmlpath);
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+            SqlSession sqlSession = sessionFactory.openSession(true);
+            GirlMapper girlMapper = sqlSession.getMapper(GirlMapper.class);
+            Girl girl = new Girl(&quot;香蛋&quot;,1);
+            int i = girlMapper.insertGirl(girl);
+            System.out.println(girl.getGId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<h5 id="结果">结果</h5>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191019173555319.png" alt="在这里插入图片描述"></figure>
+<h5 id="ps">ps:</h5>
+<p>​	keyColumn=&quot;&quot;:（仅对 insert 和 update 有用）通过生成的键值设置表中的列名，这个设置仅在某些数据库（像 PostgreSQL）是必须的，当主键列不是表中的第一列的时候需要设置。如果希望使用多个生成的列，也可以设置为逗号分隔的属性名称列表。</p>
+<p>​	keyProperty=&quot;&quot; :给insert语句添加useGeneratedKeys、keyProperty后，mybatis会将自增的id值直接赋值到传进来的user对象的id属性上:</p>
+<p>​		useGeneratedKeys: 指定需要获取数据库自增的id<br>
+keyProperty: 指定自增地段的名称</p>
+<p>只对update和insert语句使用</p>
+<h4 id="删除语句">删除语句</h4>
+<p>接口中</p>
+<pre><code class="language-java">void deleteUserById(Integer id);
+</code></pre>
+<p>xml中的配置:</p>
+<pre><code class="language-xml">&lt;delete id=&quot;deleteUserById&quot;&gt;
+    delete from user where id = #{id}
+&lt;/delete&gt;
+</code></pre>
+<h4 id="更新语句">更新语句</h4>
+<p>接口中:</p>
+<pre><code class="language-java">void updateUser(User user);
+</code></pre>
+<p>XML配置中</p>
+<pre><code class="language-xml">&lt;update id=&quot;updateUser&quot;&gt;
+    update user set password = #{password} where id = #{id}
+&lt;/update&gt;
+</code></pre>
+<h4 id="ps-2">ps:</h4>
+<p>插入和更新删除需要:</p>
+<pre><code class="language-java">    SqlSession sqlSession = sessionFactory.openSession(true);
+</code></pre>
+<h3 id="接口中的参数如果传递到sql中">接口中的参数如果传递到SQL中</h3>
+<h4 id="简单类型参数">简单类型参数</h4>
+<p>接口中</p>
+<pre><code class="language-java">void deleteUserById(Integer id);
+</code></pre>
+<p>xml配置</p>
+<pre><code class="language-xml">&lt;delete id=&quot;deleteUserById&quot;&gt;
+    delete from user where id = #{id}
+&lt;/delete&gt;
+</code></pre>
+<h4 id="引用类型参数">引用类型参数</h4>
+<p>接口中</p>
+<pre><code class="language-java">int insertUser(User user);
+</code></pre>
+<pre><code class="language-xml">&lt;!--这里注意取参数直接#+实体类字段名--&gt;
+&lt;insert id=&quot;insertUser&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+    insert into user (username,nick_name,email)
+    values (#{username},#{nickName},#{email})
+&lt;/insert&gt;
+</code></pre>
+<h4 id="当接口中参数和xml配置取值时名称不一样时">当接口中参数和XML配置取值时名称不一样时</h4>
+<p>ps:现在Mybatis版本中的不存在这个问题</p>
+<p>在接口中的参数前加注解</p>
+<pre><code class="language-java">User queryUserById(@Param(&quot;id&quot;) Integer xxxxxxxId);
+</code></pre>
+<p>在XML中取值时用注解指定的名称</p>
+<pre><code class="language-xml">&lt;select id=&quot;queryUserById&quot; resultType=&quot;user&quot;&gt;
+    select * from user where id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p>例如:</p>
+<p>接口中的java代码:</p>
+<pre><code class="language-java">public interface GirlMapper {
+    Girl queryGirl(Integer sid);
+}
+</code></pre>
+<p>xml中的配置:</p>
+<pre><code class="language-xml">    &lt;select id=&quot;queryGirl&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl where g_id = #{gId}
+    &lt;/select&gt;
+
+</code></pre>
+<p>运行的结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173831808.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="与的区别">#{}与${}的区别</h4>
+<ul>
+<li>它俩都可以获取接口调用中传递过来的参数</li>
+<li>#{}会将参数作为占位符，使用预编译语句(PreparedStatement)执行</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow></mrow><mi mathvariant="normal">会</mi><mi mathvariant="normal">直</mi><mi mathvariant="normal">接</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">际</mi><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">替</mi><mi mathvariant="normal">换</mi></mrow><annotation encoding="application/x-tex">{}会直接用实际参数替换</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord"></span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">直</span><span class="mord cjk_fallback">接</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">实</span><span class="mord cjk_fallback">际</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">替</span><span class="mord cjk_fallback">换</span></span></span></span>{}， 参数可以作为SQL的一部分。</li>
+</ul>
+<p>接口中的配置:</p>
+<pre><code class="language-java">public interface GirlMapper {
+    Girl queryGirl(Integer sid);
+}
+</code></pre>
+<p>xml配置:</p>
+<pre><code class="language-xml">    &lt;select id=&quot;queryGirl&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl where g_id = #{gId}
+    &lt;/select&gt;
+</code></pre>
+<p>#的运行结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173856777.png" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20191019173909890.png" alt="在这里插入图片描述"></p>
+<h4 id="结果集如何映射">结果集如何映射</h4>
+<h5 id="resulttype方式">ResultType方式</h5>
+<p>​	ResultType方式适用于数据库结果集可以直接映射成一个Java类的情况</p>
+<h5 id="resultmap方式">ResultMap方式</h5>
+<p>​	ResultMap方式适用于复杂的结果集映射，比如数据库返回的结果集中的列名和JavaBean无法一一对应，或者对象间存在一对一、一对多关联映射时。</p>
+<h6 id="解决数据库列名与java类中属性名不一致的映射问题">解决数据库列名与Java类中属性名不一致的映射问题</h6>
+<h6 id="解决一对一映射查询问题">解决一对一映射查询问题</h6>
+<h6 id="解决一对多映射查询问题">解决一对多映射查询问题</h6>
+<p>下面是例子:</p>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter
+@Getter
+@ToString
+public class Girl {
+    private int gId;
+    private int kId;
+    private String gName;
+    public Girl(){
+
+    }
+    public Girl(String gName ,int kId) {
+        this.gName = gName;
+        this.kId = kId;
+
+    }
+}
+</code></pre>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.List;
+
+@Setter
+@Getter
+@ToString
+public class King {
+    private int kId;
+    private String kName;
+    private Queen queen;
+    private List&lt;Girl&gt; girls;
+}
+
+</code></pre>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class Queen {
+    private int qId;
+    private int kId;
+    private String qName;
+}
+
+</code></pre>
+<p>接口中</p>
+<pre><code class="language-java">package com.lanou.mapper;
+
+import com.lanou.bean.Girl;
+import com.lanou.bean.King;
+
+import java.util.List;
+
+public interface KingMapper {
+    List&lt;King&gt; findKingById(int id);
+    int insertGirl(List&lt;Girl&gt; girlList);
+    int insertPaperGir(Girl girl);
+}
+
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.KingMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;kingMap&quot; type=&quot;com.lanou.bean.King&quot;&gt;
+        &lt;id column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;k_name&quot; property=&quot;kName&quot;/&gt;
+        &lt;!--这是一对一的情况--&gt;
+        &lt;association property=&quot;queen&quot; javaType=&quot;com.lanou.bean.Queen&quot; resultMap=&quot;queenMap&quot;/&gt;
+        &lt;!--这是一对多的情况--&gt;
+        &lt;collection property=&quot;girls&quot; ofType=&quot;com.lanou.bean.Girl&quot; resultMap=&quot;girlMap&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;girlMap&quot; type=&quot;com.lanou.bean.Girl&quot;&gt;
+        &lt;id property=&quot;gId&quot; column=&quot;g_id&quot;/&gt;
+        &lt;result property=&quot;kId&quot; column=&quot;k_id&quot;/&gt;
+        &lt;result property=&quot;gName&quot; column=&quot;g_name&quot;/&gt;
+
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;queenMap&quot; type=&quot;com.lanou.bean.Queen&quot;&gt;
+        &lt;id column=&quot;q_id&quot; property=&quot;qId&quot;/&gt;
+        &lt;result column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;q_name&quot; property=&quot;qName&quot;/&gt;
+    &lt;/resultMap&gt;
+    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+
+    &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;findKingById&quot; resultMap=&quot;kingMap&quot;&gt;
+
+        select
+         king.k_id k_id,
+         k_name,
+         q_id,
+         q_name,
+         g_id,
+         g_name
+        from king
+        left join girl
+        on king.k_id = girl.k_id
+        left join queen
+        on queen.k_id = king.k_id
+        where king.k_id = #{id};
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="动态sql">动态sql</h4>
+<h5 id="条件分支sql">条件分支SQL</h5>
+<ul>
+<li>
+<p>if</p>
+<p>mapper中:</p>
+<pre><code class="language-java">package com.lanou.mappers;
+import com.lanou.bean.Student;
+import java.util.List;
+public interface StudentMqpper {
+    List&lt;Student&gt; findStudent(Student condition);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">   &lt;select id=&quot;findStudent&quot; resultType=&quot;com.lanou.bean.Student&quot;&gt;
+        select * from `student`
+        &lt;where&gt;
+        &lt;if test=&quot;sex != null&quot; &gt;
+           sex = #{sex}
+        &lt;/if&gt;
+        &lt;if test=&quot;name != null&quot; &gt;
+            and name = #{name}
+        &lt;/if&gt;
+        &lt;/where&gt;
+    &lt;/select&gt;
+</code></pre>
+<p>测试1:</p>
+<pre><code class="language-java">    @Test
+    public void testStudentMapper(){
+        String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream resourceAsStream = Resources.getResourceAsStream(configMybatisXmlpath);
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+            SqlSession sqlSession = sessionFactory.openSession();
+            StudentMqpper mapper = sqlSession.getMapper(StudentMqpper.class);
+            Student condition = new Student();
+            condition.setName(&quot;黄忠&quot;);
+            condition.setSex(&quot;男&quot;);
+            List&lt;Student&gt; studentList = mapper.findStudent(condition);
+            for(Student student1 :studentList ){
+                System.out.println(student1.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果:</p>
+</li>
+</ul>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191019174002916.png" alt="在这里插入图片描述"></figure>
+<p>测试2:把setAge注释掉:</p>
+<p>结果为:</p>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20191019174018428.png" alt="在这里插入图片描述"></figure>
+<ul>
+<li>choose&amp;when&amp;otherwise</li>
+</ul>
+<h5 id="循环sql">循环SQL</h5>
+<ul>
+<li>forEach</li>
+</ul>
+<p>两种forEach:</p>
+<p>第一种:</p>
+<p>实例</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface KingMapper {
+    int insertGirl(List&lt;Girl&gt; girlList);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+</code></pre>
+<p>第二种:</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface KingMapper {
+    int insertPaperGir(Girl girl);
+}
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">  &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+</code></pre>
+<h5 id="其他特殊sql">其他特殊SQL</h5>
+<ul>
+<li>where</li>
+<li>set</li>
+<li>trim</li>
+</ul>
+<h2 id="一级缓存">一级缓存:</h2>
+<p>默认情况下是一级缓存,配置方法：</p>
+<pre><code class="language-xml">&lt;setting name=&quot;localCacheScope&quot; value=&quot;SESSION&quot;/&gt;
+</code></pre>
+<p>取值有两个：SESSION和STATEMENT分别对应缓存应用session会话范围和一次statement范围</p>
+<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20191019174130687.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>验证:</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface GirlsMapper {
+    List&lt;Girl&gt; queryGirls();
+    int insertGirl(Girl girl);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) value(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;queryGirls&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl
+    &lt;/select&gt;
+</code></pre>
+<p>测试:注意先不要设置自动提交,这样就能看到增删改是先对缓存的改动.提交之后才能到数据库更新数据:</p>
+<pre><code class="language-java">    @Test
+    public void testCache(){
+        String mybatisXmlpath =&quot;mybatis-config-cache.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(mybatisXmlpath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            GirlsMapper girlsMapper = sqlSession.getMapper(GirlsMapper.class);
+            List&lt;Girl&gt; girlList = girlsMapper.queryGirls();
+            System.out.println(&quot;*************&quot; + girlList.size());
+            for(Girl girl : girlList){
+                System.out.println(girl.toString());
+            }
+
+            Girl girl = new Girl(&quot;香香&quot;,1);
+            int i = girlsMapper.insertGirl(girl);
+            System.out.println(i);
+           // sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果是:</p>
+<figure data-type="image" tabindex="9"><img src="https://img-blog.csdnimg.cn/20191019174206167.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>然而数据库中则:</p>
+<figure data-type="image" tabindex="10"><img src="https://img-blog.csdnimg.cn/2019101917423782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>放开commit:</p>
+<pre><code class="language-java">    @Test
+    public void testCache(){
+        String mybatisXmlpath =&quot;mybatis-config-cache.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(mybatisXmlpath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            GirlsMapper girlsMapper = sqlSession.getMapper(GirlsMapper.class);
+            List&lt;Girl&gt; girlList = girlsMapper.queryGirls();
+            System.out.println(&quot;*************&quot; + girlList.size());
+            for(Girl girl : girlList){
+                System.out.println(girl.toString());
+            }
+
+            Girl girl = new Girl(&quot;香香&quot;,1);
+            int i = girlsMapper.insertGirl(girl);
+            System.out.println(i);
+           // sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果:</p>
+<figure data-type="image" tabindex="11"><img src="https://img-blog.csdnimg.cn/20191019174258260.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<figure data-type="image" tabindex="12"><img src="https://img-blog.csdnimg.cn/20191019174326101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>结果很明显也很符合上面原理图</p>
+<h2 id="二级缓存">二级缓存:</h2>
+<figure data-type="image" tabindex="13"><img src="https://img-blog.csdnimg.cn/201910191743484.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>开启二级缓存的方法</p>
+<ol>
+<li>第一步，打开全局二级缓存开关</li>
+</ol>
+<pre><code class="language-xml">&lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+</code></pre>
+<ol>
+<li>在具体的Mapper中开启二级缓存</li>
+</ol>
+<pre><code class="language-xml">&lt;cache/&gt; 
+</code></pre>
+<p>可配置参数：</p>
+<ul>
+<li><code>type</code>：cache使用的类型，默认是</li>
+<li><code>PerpetualCache</code>，这在一级缓存中提到过。</li>
+<li><code>eviction</code>： 定义回收的策略，常见的有FIFO，LRU。</li>
+<li><code>flushInterval</code>： 配置一定时间自动刷新缓存，单位是毫秒。</li>
+<li><code>size</code>： 最多缓存对象的个数。</li>
+<li><code>readOnly</code>： 是否只读，若配置可读写，则需要对应的实体类能够序列化。</li>
+<li><code>blocking</code>： 若缓存中找不到对应的key，是否会一直blocking，直到有对应的数据进入缓存。</li>
+</ul>
+<blockquote>
+<p>注意 要使用二级缓存结果集对应的POJO类必须实现序列化接口</p>
+</blockquote>
+<h1 id="spring与mybatis的整合">Spring与Mybatis的整合:</h1>
+<h2 id="1需要的依赖">1.需要的依赖:</h2>
+<pre><code class="language-xml">&lt;!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+    &lt;version&gt;2.0.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="2在spring中管理sqlsessionfactory">2.在Spring中管理SqlSessionFactory</h2>
+<pre><code class="language-xml">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;&gt;
+
+    &lt;!-- 注入数据源 --&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+    &lt;!-- 设置mybatis核心配置文件路径（可选） --&gt;    
+    &lt;property name=&quot;configLocation&quot; value=&quot;classpath:/mybatis-config.xml&quot; /&gt;
+     &lt;!-- 配置mybatis xml映射文件位置（如果Mapper是用注解配置的，这里就不用设置此属性了） --&gt;   
+    &lt;property name=&quot;mapperLocations&quot; value=&quot;classpath:/mappers/*&quot; /&gt;
+    &lt;/bean&gt;
+</code></pre>
+<p>如果是注解的方式配置的Mapper，我们需要在Spring配置文件中添加mybatis的schema以支持mybatis注解扫描</p>
+<pre><code class="language-xml">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+  xmlns:mybatis=&quot;http://mybatis.org/schema/mybatis-spring&quot;
+  xsi:schemaLocation=&quot;
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd&quot;&gt;
+
+&lt;!-- 配置基于注解的Mapper所在包的路径 --&gt;
+  &lt;mybatis:scan base-package=&quot;org.mybatis.spring.sample.mapper&quot; /&gt;
+
+
+&lt;/beans&gt;
+</code></pre>
+<p>或者这样配置</p>
+<pre><code class="language-java">@Configuration
+@MapperScan(&quot;org.mybatis.spring.sample.mapper&quot;)
+public class AppConfig {
+  // ...
+}
+</code></pre>
+<h2 id="3用spring管理事务">3.用Spring管理事务</h2>
+<blockquote>
+<p>和单独使用Spring时一样， 配置Spring的声明式事务就可以了，mybatis会自动参与到spring的事务中</p>
+</blockquote>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#mybatis%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0">Mybatis框架学习</a>
+<ul>
+<li><a href="#mybatis%E4%BB%8B%E7%BB%8D">Mybatis介绍</a></li>
+<li><a href="#mybatis%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8">Mybatis简单使用</a>
+<ul>
+<li><a href="#1%E5%88%9D%E5%A7%8B%E5%8C%96sqlsessionfactory%E5%AF%B9%E8%B1%A1">1.初始化SqlSessionFactory对象:</a>
+<ul>
+<li><a href="#1sqlsessionfactory%E5%AF%B9%E8%B1%A1">1.SqlSessionFactory对象:</a></li>
+<li><a href="#2%E6%95%88%E6%9E%9C%E8%AF%95%E5%9B%BE%E5%92%8C%E5%88%9B%E5%BB%BAmybatis%E8%BF%87%E7%A8%8B">2.效果试图和创建Mybatis过程:</a></li>
+<li><a href="#3%E5%88%9B%E5%BB%BA%E5%90%8E%E7%9A%84%E6%96%87%E4%BB%B6">3.创建后的文件:</a></li>
+</ul>
+</li>
+<li><a href="#2%E6%A0%B8%E5%BF%83%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%A6%82%E4%B8%8B">2.核心配置文件如下:</a>
+<ul>
+<li><a href="#1%E6%9E%84%E5%BB%BA%E5%AF%B9%E8%B1%A1">1.构建对象:</a></li>
+<li><a href="#2%E5%88%9B%E5%BB%BAsqlsession%E5%AF%B9%E8%B1%A1">2.创建SqlSession对象</a></li>
+<li><a href="#3%E7%94%A8sqlsession%E5%AF%B9%E8%B1%A1%E4%BB%8Emybatis%E4%B8%AD%E8%8E%B7%E5%8F%96mapper%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%B1%BB">3.用SqlSession对象从Mybatis中获取Mapper接口的实现类</a></li>
+<li><a href="#4%E7%BC%96%E5%86%99mapper%E5%AF%B9%E8%B1%A1%E7%9A%84xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">4.编写Mapper对象的xml配置文件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3mybatis">深入了解Mybatis</a>
+<ul>
+<li><a href="#%E4%B8%BB%E8%A6%81%E7%BB%84%E4%BB%B6">主要组件</a>
+<ul>
+<li><a href="#%E6%A0%B8%E5%BF%83%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E5%A4%84%E7%90%86">核心配置文件的处理:</a>
+<ul>
+<li><a href="#%E5%8A%A0%E8%BD%BDmybatis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E8%B7%AF%E5%BE%84">加载Mybatis配置文件的路径:</a></li>
+<li><a href="#resources">Resources</a></li>
+<li><a href="#sqlsessionfactorybuilser">SqlSessionFactoryBuilser</a></li>
+<li><a href="#sqlsessionfactory">SqlSessionFactory</a></li>
+<li><a href="#sqlsession">SqlSession</a></li>
+<li><a href="#mapper%E6%8E%A5%E5%8F%A3%E7%B1%BB">Mapper接口类:</a></li>
+<li><a href="#mapper">Mapper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E6%B7%B1%E5%85%A5mybatis%E6%A0%B8%E5%BF%83%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">深入Mybatis核心配置文件</a>
+<ul>
+<li><a href="#%E6%B7%B1%E5%85%A5mybatis%E6%98%A0%E5%B0%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">深入Mybatis映射配置文件</a>
+<ul>
+<li><a href="#crud%E8%AF%AD%E5%8F%A5%E5%AE%9A%E4%B9%89">CRUD语句定义</a>
+<ul>
+<li><a href="#%E6%8F%92%E5%85%A5%E8%AF%AD%E5%8F%A5">插入语句</a>
+<ul>
+<li><a href="#%E6%99%AE%E9%80%9A%E6%8F%92%E5%85%A5%E8%AF%AD%E5%8F%A5">普通插入语句</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A6%82%E4%BD%95%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%87%AA%E5%A2%9E%E7%9A%84id">如何返回数据库自增的ID</a>
+<ul>
+<li><a href="#java%E6%BA%90%E4%BB%A3%E7%A0%81%E4%B9%8B%E6%8E%A5%E5%8F%A3%E4%B8%AD">java源代码之接口中</a></li>
+<li><a href="#xml%E4%B8%AD">xml中</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95">测试</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+<li><a href="#ps">ps:</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%A0%E9%99%A4%E8%AF%AD%E5%8F%A5">删除语句</a></li>
+<li><a href="#%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5">更新语句</a></li>
+<li><a href="#ps-2">ps:</a></li>
+</ul>
+</li>
+<li><a href="#%E6%8E%A5%E5%8F%A3%E4%B8%AD%E7%9A%84%E5%8F%82%E6%95%B0%E5%A6%82%E6%9E%9C%E4%BC%A0%E9%80%92%E5%88%B0sql%E4%B8%AD">接口中的参数如果传递到SQL中</a>
+<ul>
+<li><a href="#%E7%AE%80%E5%8D%95%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0">简单类型参数</a></li>
+<li><a href="#%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0">引用类型参数</a></li>
+<li><a href="#%E5%BD%93%E6%8E%A5%E5%8F%A3%E4%B8%AD%E5%8F%82%E6%95%B0%E5%92%8Cxml%E9%85%8D%E7%BD%AE%E5%8F%96%E5%80%BC%E6%97%B6%E5%90%8D%E7%A7%B0%E4%B8%8D%E4%B8%80%E6%A0%B7%E6%97%B6">当接口中参数和XML配置取值时名称不一样时</a></li>
+<li><a href="#%E4%B8%8E%E7%9A%84%E5%8C%BA%E5%88%AB">#{}与${}的区别</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C%E9%9B%86%E5%A6%82%E4%BD%95%E6%98%A0%E5%B0%84">结果集如何映射</a>
+<ul>
+<li><a href="#resulttype%E6%96%B9%E5%BC%8F">ResultType方式</a></li>
+<li><a href="#resultmap%E6%96%B9%E5%BC%8F">ResultMap方式</a>
+<ul>
+<li><a href="#%E8%A7%A3%E5%86%B3%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%97%E5%90%8D%E4%B8%8Ejava%E7%B1%BB%E4%B8%AD%E5%B1%9E%E6%80%A7%E5%90%8D%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E6%98%A0%E5%B0%84%E9%97%AE%E9%A2%98">解决数据库列名与Java类中属性名不一致的映射问题</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3%E4%B8%80%E5%AF%B9%E4%B8%80%E6%98%A0%E5%B0%84%E6%9F%A5%E8%AF%A2%E9%97%AE%E9%A2%98">解决一对一映射查询问题</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%98%A0%E5%B0%84%E6%9F%A5%E8%AF%A2%E9%97%AE%E9%A2%98">解决一对多映射查询问题</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%8A%A8%E6%80%81sql">动态sql</a>
+<ul>
+<li><a href="#%E6%9D%A1%E4%BB%B6%E5%88%86%E6%94%AFsql">条件分支SQL</a></li>
+<li><a href="#%E5%BE%AA%E7%8E%AFsql">循环SQL</a></li>
+<li><a href="#%E5%85%B6%E4%BB%96%E7%89%B9%E6%AE%8Asql">其他特殊SQL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98">一级缓存:</a></li>
+<li><a href="#%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98">二级缓存:</a></li>
+</ul>
+</li>
+<li><a href="#spring%E4%B8%8Emybatis%E7%9A%84%E6%95%B4%E5%90%88">Spring与Mybatis的整合:</a>
+<ul>
+<li><a href="#1%E9%9C%80%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96">1.需要的依赖:</a></li>
+<li><a href="#2%E5%9C%A8spring%E4%B8%AD%E7%AE%A1%E7%90%86sqlsessionfactory">2.在Spring中管理SqlSessionFactory</a></li>
+<li><a href="#3%E7%94%A8spring%E7%AE%A1%E7%90%86%E4%BA%8B%E5%8A%A1">3.用Spring管理事务</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/spring-de-ji-ben-gai-nian">
+              <h3 class="post-title">
+                spring的基本概念
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

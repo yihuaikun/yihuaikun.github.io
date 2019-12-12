@@ -1,0 +1,780 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>多线程 | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576153368591">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576153368591" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              多线程
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                15 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="java多线程">Java多线程</h1>
+<h2 id="概念">概念:</h2>
+<h3 id="1程序">1.程序:</h3>
+<p>​	静止的,是计算机指令的集合，它以文件的形式存储在磁盘上,只有当程序获得cpu资源运行起来,才称为进程,就好比我们下载一个app然后把它放在了本地的磁盘</p>
+<h3 id="2进程">2.进程:</h3>
+<p>由多个线程组成,相互协作完成指定的作业.运行起来的程序就是进程,cpu分配资源的单位.下载后我们使用这款app,点开它,获得了cpu资源,运行起来就是一个进程</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191020203725679.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="3线程">3.线程:</h3>
+<p>​		线程又称为轻量级的进程,cpu调度资源的最小单位,就好比一个公司是一个程序,下边的每个部门就是一个进程,公司按部门分配资源,分配资源后,怎么用,谁用,所以部门中的每一个人就是一个线程,他们是调度使用资源的最小单位.</p>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191020203754700.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="4单线程">4.单线程:</h3>
+<p>​	如果一个进程只有一个线程,这样的程序称为单线程程序,一个部门就你一个人,没人和你抢资源,但是这样太浪费资源</p>
+<h3 id="5多线程">5.多线程:</h3>
+<p>​	如果一个进程拥有不止一个线程,那么这个进程就是多线程的.优势：可以同时执行多个任务。提高运行的效率。</p>
+<h3 id="线程的基本组成部分">线程的基本组成部分:</h3>
+<p>​	1.cpu时间片,操作系统会为每个线程分配执行时间</p>
+<p>​	2.运行数据:</p>
+<p>​			堆空间:存储线程需要的对象,(多个线程可以共享堆中的对对对象)</p>
+<p>​			栈空间:存储线程需要的局部变量(每个线程都有独立的栈,程序计数器)</p>
+<p>​	3.线程的逻辑代码</p>
+<h3 id="线程的使用场景">线程的使用场景:</h3>
+<p>1.比如app开发中耗时的操作都不在UI主线程中做</p>
+<p>2.实现响应更快的应用程序， 即主线程专门监听用户请求，子线程用来处理用户请求。以获得大的吞吐量。<br>
+感觉这种情况下，多线程的效率未必高。 这种情况下的多线程是为了不必等待， 可以并行处理多条数据。</p>
+<p>比如JavaWeb的就是主线程专门监听用户的HTTP请求，然后启动子线程去处理用户的HTTP请求。</p>
+<p>3.某种任务，虽然耗时，但是不耗CPU的操作时，开启多个线程，效率会有显著提高。<br>
+比如读取文件，然后处理。 磁盘IO是个很耗费时间，但是不耗CPU计算的工作。 所以可以一个线程读取数据，一个线程处理数据。肯定比一个线程读取数据，然后处理效率高。 因为两个线程的时候充分利用了CPU等待磁盘IO的空闲时间。</p>
+<h2 id="创建线程">创建线程:</h2>
+<h3 id="1创建一个类继承thread然后重写run方法">1.创建一个类继承Thread然后重写run()方法</h3>
+<p>线程A:</p>
+<pre><code class="language-java">public class MyThread extends Thread {	
+	@Override
+	public void run() {
+		for(int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程A: &quot;+ i);
+		}
+	}
+}
+</code></pre>
+<p>线程B:</p>
+<pre><code class="language-java">public class MyThread2 extends Thread {
+	@Override
+	public void run() {
+		for(int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程B: &quot; + i);
+		}
+	}
+}
+</code></pre>
+<p>测试:</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testExetendThread() {
+		MyThread myThread = new MyThread();
+		myThread.start();
+		MyThread2 myThread2 = new MyThread2();
+		myThread2.start();	
+	}
+}
+</code></pre>
+<p>结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191020203836171.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="2事项runable接口然后重写run方法">2.事项Runable接口,然后重写run方法</h3>
+<p>创建线程:</p>
+<p>​	线程A</p>
+<pre><code class="language-java">public class MyThread3 implements Runnable {
+	@Override
+	public void run() {
+		for (int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程A: &quot; + i);
+		}
+	}
+}
+</code></pre>
+<p>​	线程B</p>
+<pre><code class="language-java">public class MyThread4 implements Runnable {
+	@Override
+	public void run() {
+		for (int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程B: &quot; + i);
+		}
+	}
+}
+
+</code></pre>
+<p>测试</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testImplRnable() {
+		Runnable runnable3 = new MyThread3();
+		Thread myThread3 = new Thread(runnable3);
+		myThread3.start();
+		
+		Runnable runnable4 = new MyThread4();
+		Thread myThread4 = new Thread(runnable4);
+		myThread4.start();
+	}
+}
+
+</code></pre>
+<p>结果</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191020203922183.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="3匿名内部类">3.匿名内部类</h3>
+<p>两种写法:第一种</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testRunableImpl() {
+		Runnable mr = ()-&gt; {
+				for (int i = 0; i &lt; 500; i++) {
+					System.out.println(&quot;线程A: &quot; + i);
+				}
+		
+		};
+		Thread t = new Thread(mr);
+		t.start();
+	}
+}
+</code></pre>
+<p>或者这样写:</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testAisThread() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (int i = 0; i &lt; 500; i++) {
+					System.out.println(Thread.currentThread().getName()+&quot;: &quot; + i);
+				}
+			}
+		},&quot;线程A&quot;).start();
+	}
+}
+</code></pre>
+<p>第二种:</p>
+<pre><code class="language-java">public class TestMultiplyThread2 {
+	@Test
+	public void TestThread() {
+		Thread t1 = new Thread(&quot;线程A&quot;) {
+			@Override
+			public void run() {
+				System.out.println(&quot;我是一个子线程&quot;);
+				for(int i = 0; i &lt; 500; i++) {
+					System.out.println(i);
+				}
+			}
+		};
+		t1.start();
+		
+		System.out.println(&quot;hello world&quot;);
+	}
+
+}
+</code></pre>
+<p>结果</p>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191020203946888.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="4lamda表达式">4.Lamda表达式:</h3>
+<pre><code class="language-java">public class Test {
+	 @Test
+	public void testAisThread() {
+		new Thread(() -&gt; {
+			for (int i = 0; i &lt; 500; i++) {
+				System.out.println(Thread.currentThread().getName() + &quot;: &quot; + i);
+			}
+		}, &quot;线程A&quot;).start();
+	}
+}
+
+</code></pre>
+<p><strong>需要注意的是使用lamda表达式必须是函数式接口(即接口中只有一个方法).</strong></p>
+<h3 id="5calllable接口和future">5.Calllable接口和Future</h3>
+<p>这个需要配合线程池来使用,这里举一个简单的例子吧</p>
+<pre><code class="language-java">public class Test {
+	public void testFutureThread(String[] args) {
+		//这里面的核心线程数和最大线程数是一样的10
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		Future&lt;String&gt; future = executorService.submit(new Callable&lt;String&gt;() {
+			@Override
+			public String call() throws Exception {
+				
+				return &quot;学会了吗?&quot;;
+			}
+		});
+		try {
+			System.out.println(future.get());
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+<p>newFixedThreadPool底层:</p>
+<pre><code class="language-java"> public static ExecutorService newFixedThreadPool(int nThreads) {
+        return new ThreadPoolExecutor(nThreads, nThreads,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue&lt;Runnable&gt;());
+    }
+</code></pre>
+<p>结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191020204013400.png" alt="在这里插入图片描述"></p>
+<h2 id="多线程的常用方法">多线程的常用方法</h2>
+<p>currentThread() 获取当前线程对象。  <strong>类方法</strong></p>
+<p>setName(String name) 设置线程的名字。</p>
+<p>getName() 获取线程的名字。</p>
+<p>setPriority(int priority) 设置线程的优先级。 优先级的取值范围[1,10],默认是5</p>
+<p>getPriority() 获取线程的优先级。</p>
+<p>getState() 获取线程的状态</p>
+<p>join() 执行该线程，会阻塞当前线程。</p>
+<p>sleep(long millis) 休眠指定时间（单位毫秒），会阻塞当前线程。<strong>类方法</strong></p>
+<p>start() 启动线程</p>
+<p>yield() 暂定该线程的执行，交出CPU的使用权。</p>
+<h2 id="线程的同步">线程的同步</h2>
+<h3 id="线程的同步和线程的并发">线程的同步和线程的并发</h3>
+<p>​	1:线程的同步不是客观上的线程从宏观上的同步运行,微观上的串行的过程这一现象,而恰恰相反,线程的同步是指的线程的不同时执行,而是串行,以保证线程对临界资源的访问.</p>
+<p>​	2:线程的并发,指的是线程从宏观上一起运行,微观上还是串行的,因为那个线程获得cpu的时间片,,谁就运行.</p>
+<h4 id="卖票的实例">卖票的实例:</h4>
+<p>​		不同步发生的数据混乱现像,即多个线程对同一临界资源的访问打破了原理操作的情况下:</p>
+<p>简单的java代码:</p>
+<pre><code class="language-java">public class Tickets {
+	private int tickets = 100;
+	public int getTickets() {
+		return tickets;
+	}	
+	public void sellTickets() {
+		tickets--;
+		System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩余: 			&quot; +  tickets+ &quot;张票&quot;);
+	}
+}
+</code></pre>
+<p>测试代码</p>
+<pre><code class="language-java">public class TMyTest {
+    @Test
+	public void testStickets() {
+		Tickets t1 = new Tickets();
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();	
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程A&quot;).start();
+
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();
+					
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程B&quot;).start();
+	}
+}
+</code></pre>
+<p>结果出现不符合现实的现像:即500张票卖出了1000张,出现数据的混乱,如下:</p>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191020204047527.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="线程的同步操作">线程的同步操作</h3>
+<h4 id="同步方法">同步方法:</h4>
+<pre><code class="language-java">//在返回值前面加synchronized,语法是
+public 方法修饰符 synchronized 返回值类型 方法名(参数){}
+
+
+public class Tickets {
+	private int tickets = 100;	
+	public int getTickets() {
+		return tickets;
+	}	
+	public synchronized void sellTickets() {
+		tickets--;
+		System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩余: 			&quot; +  tickets+ &quot;张票&quot;);
+	}
+}
+</code></pre>
+<p>测试代码</p>
+<pre><code class="language-java">public class TMyTest {
+    @Test
+	public void testStickets() {
+		Tickets t1 = new Tickets();
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();	
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程A&quot;).start();
+
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();
+					
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程B&quot;).start();
+	}
+}
+</code></pre>
+<p>结果:</p>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191020204132119.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="同步代码块">同步代码块</h4>
+<pre><code class="language-java">public class Tickets {
+	private int tickets = 100;	
+	public int getTickets() {
+		return tickets;
+	}	
+	public void sellTickets() {
+        //同步代码块:
+		synchronized(this) {
+			tickets--;
+			System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩				余: &quot; +  tickets+ &quot;张票&quot;);
+		}	
+	}
+}
+</code></pre>
+<h4 id="重入锁reentrantlook">重入锁(ReentrantLook):</h4>
+<pre><code class="language-java">public class Tickets {
+	private int tickets = 100;
+
+	public int getTickets() {
+		return tickets;
+	}
+	public void sellTickets() {
+        //在juc包下,重入锁
+		Lock lock = new ReentrantLock();
+		lock.lock();
+		tickets--;
+		System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩余: &quot; + tickets + &quot;张票&quot;);
+		lock.unlock();
+	}
+}
+</code></pre>
+<h2 id="线程间的通信">线程间的通信</h2>
+<h3 id="什么是线程通信">什么是线程通信？</h3>
+<p>不同线程之间可以相互的发信号。这就是线程通信。之所以需要进行线程通信，是因为有些时候，一个线程的执行需要依赖另外一个线程的执行结果。在结果到来之前，让线程等待（wait），有了结果只之后再进行后续的操作。对于另外一个线程而言，计算完结果，通知（notify）一下处于等待状态的线程.</p>
+<p>线程通信借助的是Object类的wait，notify，nitifyall方法。</p>
+<p>wait作用是让当前线程阻塞，阻塞多久，取决于有没有其他线程唤醒它。</p>
+<p>notify作用是唤醒处于wait状态的线程。必须是同一个监视器下的线程。</p>
+<p>notifyall作用是唤醒所有处于wait状态的线程。必须是同一个监视器下的线程。</p>
+<p>一般情况下，多线程里会出现线程同步的问题，我们不但要进行线程通信，还要解决线程同步的问题。</p>
+<h3 id="生产者-消费者模式">生产者-消费者模式</h3>
+<p>这是一个比较经典的多线程场景。有商品的时候，消费者才可以消费，没有商品的时候，消费者等待。商品库存充足的时候，生产者等待，库存不满的时候，生产者生产商品。</p>
+<pre><code class="language-java">public class Saler {//售货员类
+	private int productCount = 10;	//商品数量
+	public synchronized void stockGoods() {
+		if(productCount &lt; 2000) {
+			productCount++;
+			System.out.println(Thread.currentThread().getName() + &quot;生产了1件商品，库存是：&quot; + productCount);
+			this.notifyAll();
+		}else {
+			System.out.println(&quot;库存满了&quot;);
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public synchronized void sellGoods() {
+		if(productCount &gt; 0) {
+			productCount--;
+			System.out.println(Thread.currentThread().getName() + &quot;购买了1件商品，库存剩余：&quot; + productCount);
+			 
+			this.notifyAll();
+		}else {
+			System.out.println(&quot;库存不足&quot;);
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+</code></pre>
+<pre><code class="language-java">public class Productor implements Runnable{//生产者类
+	private Saler s;
+
+	public Productor(Saler s) {
+		super();
+		this.s = s;
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			s.stockGoods();
+		}
+	}
+	
+}
+</code></pre>
+<pre><code class="language-java">public class Customer implements Runnable{//消费者类
+
+	private Saler s;
+	
+	
+	public Customer(Saler s) {
+		super();
+		this.s = s;
+	}
+
+
+	@Override
+	public void run() {
+		while(true) {
+			s.sellGoods();
+		}
+	}
+	
+}
+</code></pre>
+<pre><code class="language-java">public class TestTread {
+
+	public static void main(String[] args) {
+		//生产者-消费者模式。模拟生产和消费过程
+		Saler s = new Saler();
+		Customer c = new Customer(s);
+		Productor p = new Productor(s);
+		Thread t1 = new Thread(c, &quot;客户1&quot;);
+		t1.start();
+		Thread t2 = new Thread(p,&quot;厂家&quot;);
+		t2.start();
+		Customer c2 = new Customer(s);
+		Thread t3 = new Thread(c2, &quot;客户2&quot;);
+		t3.start();
+	}
+
+}
+</code></pre>
+<p><strong>注意:调用notify()方法必须在对该对象加锁的同步代码块中</strong></p>
+<h2 id="线程的生命周期">线程的生命周期</h2>
+<p>API中的java.lang包下的Thread.State枚举类下定义的线程状态如下：</p>
+<p>NEW：新建状态，指的是线程已经创建，但是尚未start()。</p>
+<p>RUNNABLE：可运行状态（已经调用了start方法），已经准备就绪，一旦抢到CPU就立即执行。</p>
+<p>BLOCKED：阻塞状态，处于阻塞状态的线程正在等待进入Synchronized块（或方法）。</p>
+<p>WAITING：等待状态，等待其他线程执行任务。直到其他线程任务结束或者收到notify信号。</p>
+<p>TIMED-WAITING：等待状态，限定时间的等待状态。</p>
+<p>TERMINATED：终止状态。线程要运行的任务已经结束。</p>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/201910202042027.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h2 id="线程池">线程池</h2>
+<h3 id="线程池的相关类树">线程池的相关类树</h3>
+<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20191020204215988.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="threadpoolexecutor底层构造方法">ThreadPoolExecutor底层构造方法:</h3>
+<pre><code class="language-java">   public ThreadPoolExecutor(
+       					//核心线程数
+       						int corePoolSize,
+       					//最大线程数
+                            int maximumPoolSize,
+       					//除了核心线程外的线程的最大存活时间
+                              long keepAliveTime,
+       					//时间的单位是TimeUnit是一个enmu(enmunation:枚举)类,
+                              TimeUnit unit,
+       					//任务队列
+                              BlockingQueue&lt;Runnable&gt; workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+             Executors.defaultThreadFactory(), defaultHandler);
+    }
+</code></pre>
+<h3 id="手动创建一个线性池">手动创建一个线性池</h3>
+<pre><code class="language-java">public static void main(String[] args) {
+		ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 20, 5, TimeUnit.MINUTES, new ArrayBlockingQueue(3));
+		pool.execute(new Runnable() {//实现Executor接口中得execute方法
+			@Override
+			public void run() {
+				System.out.println(&quot;你好世界!&quot;);
+			}	
+		});
+		
+		pool.submit(new Runnable() {//实现接口Executor子接口ExecutorService中的submit方法
+			@Override
+			public void run() {
+				System.out.println(&quot;你是小猪!&quot;);
+			}
+		});
+	}
+}
+
+</code></pre>
+<h3 id="对executorserviceexecutor和executors工具类创建线性池与spring使用一下">对ExecutorService,Executor和Executors工具类创建线性池与Spring使用一下</h3>
+<p>applicationContext.xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:c=&quot;http://www.springframework.org/schema/c&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+        &quot;&gt;
+    &lt;context:component-scan base-package=&quot;com.lanou.dao&quot; /&gt;
+    &lt;context:property-placeholder location=&quot;jdbc.properties&quot; /&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;&gt;
+        &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot; /&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot; /&gt;
+        &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot; /&gt;
+        &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot; /&gt;
+    &lt;/bean&gt;
+    &lt;bean id=&quot;queryRunner&quot; class=&quot;org.apache.commons.dbutils.QueryRunner&quot; c:ds-ref=&quot;dataSource&quot; /&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<p>jdbc.properties文件的配置:</p>
+<pre><code class="language-properties">jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost/day05?characterEncoding=utf-8&amp;useSSL=false
+jdbc.user=root
+jdbc.password=123456
+</code></pre>
+<p>bean中的实体类:</p>
+<pre><code class="language-java">import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+@Setter
+@Getter
+@ToString
+public class Girl {
+    private int gId;
+    private String gName;
+    private int kId;
+}
+</code></pre>
+<p>测试方法:与Callable和Future接口的使用.</p>
+<pre><code class="language-java">    @Test
+    public void testExecutors(){
+
+        ExecutorService es = Executors.newFixedThreadPool(10);
+        Future&lt;List&lt;Girl&gt;&gt; future = es.submit(new Callable&lt;List&lt;Girl&gt;&gt;() {
+            @Override
+            public List&lt;Girl&gt; call() throws Exception {
+                ApplicationContext applicationContext = new 	               ClassPathXmlApplicationContext(&quot;applicationContext.xml&quot;);
+                QueryRunner queryRunner = applicationContext.getBean(QueryRunner.class);
+                String sql = &quot;select g_id gId,g_name gName,k_id kId from girl&quot;;
+                List&lt;Girl&gt; girlList = queryRunner.query(sql, new BeanListHandler&lt;Girl&gt;(Girl.class));
+                return girlList;  
+            }
+        });
+        
+        try {
+            for(Girl girl : future.get()){
+                System.out.println(girl.toString());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>测试结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191020204240119.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#java%E5%A4%9A%E7%BA%BF%E7%A8%8B">Java多线程</a>
+<ul>
+<li><a href="#%E6%A6%82%E5%BF%B5">概念:</a>
+<ul>
+<li><a href="#1%E7%A8%8B%E5%BA%8F">1.程序:</a></li>
+<li><a href="#2%E8%BF%9B%E7%A8%8B">2.进程:</a></li>
+<li><a href="#3%E7%BA%BF%E7%A8%8B">3.线程:</a></li>
+<li><a href="#4%E5%8D%95%E7%BA%BF%E7%A8%8B">4.单线程:</a></li>
+<li><a href="#5%E5%A4%9A%E7%BA%BF%E7%A8%8B">5.多线程:</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86">线程的基本组成部分:</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF">线程的使用场景:</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B">创建线程:</a>
+<ul>
+<li><a href="#1%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%B1%BB%E7%BB%A7%E6%89%BFthread%E7%84%B6%E5%90%8E%E9%87%8D%E5%86%99run%E6%96%B9%E6%B3%95">1.创建一个类继承Thread然后重写run()方法</a></li>
+<li><a href="#2%E4%BA%8B%E9%A1%B9runable%E6%8E%A5%E5%8F%A3%E7%84%B6%E5%90%8E%E9%87%8D%E5%86%99run%E6%96%B9%E6%B3%95">2.事项Runable接口,然后重写run方法</a></li>
+<li><a href="#3%E5%8C%BF%E5%90%8D%E5%86%85%E9%83%A8%E7%B1%BB">3.匿名内部类</a></li>
+<li><a href="#4lamda%E8%A1%A8%E8%BE%BE%E5%BC%8F">4.Lamda表达式:</a></li>
+<li><a href="#5calllable%E6%8E%A5%E5%8F%A3%E5%92%8Cfuture">5.Calllable接口和Future</a></li>
+</ul>
+</li>
+<li><a href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95">多线程的常用方法</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%90%8C%E6%AD%A5">线程的同步</a>
+<ul>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%90%8C%E6%AD%A5%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%B9%B6%E5%8F%91">线程的同步和线程的并发</a>
+<ul>
+<li><a href="#%E5%8D%96%E7%A5%A8%E7%9A%84%E5%AE%9E%E4%BE%8B">卖票的实例:</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%90%8C%E6%AD%A5%E6%93%8D%E4%BD%9C">线程的同步操作</a>
+<ul>
+<li><a href="#%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95">同步方法:</a></li>
+<li><a href="#%E5%90%8C%E6%AD%A5%E4%BB%A3%E7%A0%81%E5%9D%97">同步代码块</a></li>
+<li><a href="#%E9%87%8D%E5%85%A5%E9%94%81reentrantlook">重入锁(ReentrantLook):</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1">线程间的通信</a>
+<ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1">什么是线程通信？</a></li>
+<li><a href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F">生产者-消费者模式</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">线程的生命周期</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0">线程池</a>
+<ul>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E7%9B%B8%E5%85%B3%E7%B1%BB%E6%A0%91">线程池的相关类树</a></li>
+<li><a href="#threadpoolexecutor%E5%BA%95%E5%B1%82%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95">ThreadPoolExecutor底层构造方法:</a></li>
+<li><a href="#%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%BA%BF%E6%80%A7%E6%B1%A0">手动创建一个线性池</a></li>
+<li><a href="#%E5%AF%B9executorserviceexecutor%E5%92%8Cexecutors%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%88%9B%E5%BB%BA%E7%BA%BF%E6%80%A7%E6%B1%A0%E4%B8%8Espring%E4%BD%BF%E7%94%A8%E4%B8%80%E4%B8%8B">对ExecutorService,Executor和Executors工具类创建线性池与Spring使用一下</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/mybatis-zong-jie">
+              <h3 class="post-title">
+                Mybatis总结
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

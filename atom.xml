@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yihuaikun.github.io</id>
     <title>向java工程师迈进</title>
-    <updated>2019-12-12T11:56:12.811Z</updated>
+    <updated>2019-12-12T12:22:54.788Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yihuaikun.github.io"/>
     <link rel="self" href="https://yihuaikun.github.io/atom.xml"/>
@@ -10,6 +10,4423 @@
     <logo>https://yihuaikun.github.io/images/avatar.png</logo>
     <icon>https://yihuaikun.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, 向java工程师迈进</rights>
+    <entry>
+        <title type="html"><![CDATA[SpringMvc]]></title>
+        <id>https://yihuaikun.github.io/post/springmvc</id>
+        <link href="https://yihuaikun.github.io/post/springmvc">
+        </link>
+        <updated>2019-12-12T12:22:25.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="spring-mvc">Spring mvc</h1>
+<h2 id="spring-mvc简介以及原理">spring mvc简介以及原理</h2>
+<h3 id="spring-mvc-2">spring mvc:</h3>
+<p>​		springmvc全称是spring web mvc，是spring框架一部分，是一个mvc的框架，和struts2一样是一个表现层框架。</p>
+<p>​		MVC里面的M指的的Model（通常包含bean、dao(mapper)、service）；V指的是View，视图层，视图层主要的技术（JSP、HTML、FreeMaker、Themeleaf）；C指的是Controller，控制层。控制层不负责具体数据、逻辑的处理和运算，它只负责将Model层的结果返回给对应的视图层去展示。</p>
+<p>​		在JavaWeb阶段， Controller层指的就是Servlet； View层指的就是JSP或者HTML;  Model层指的就是bean、dao、service。</p>
+<p>​		在J2EE阶段，Controller层指的就是SpringMVC、Structs1\2；  View层不变还是主流的页面展示技术; Model层包括bean、mybatis、service。</p>
+<h3 id="spring-mvc-与-strus的区别">spring mvc 与 strus的区别:</h3>
+<p>①、SpringMVC 的入口是 Servlet,而Struts2是Filter</p>
+<p>②、SpringMVC会稍微比Struts2快些，SpringMVC是基于方法设计的，而Struts2是基于类设计的，每次发一次请求都会实例一个Action.</p>
+<p>③、SpringMVC使用更加简洁，开发效率比Struts2高。支持JSR303，处理ajax的请求更方便</p>
+<p>④、Struts2的OGNL表达式使页面的开发效率相比SpringMVC更高些。</p>
+<h3 id="spring-mvc与jspservlet的区别">spring mvc与jsp,servlet的区别:</h3>
+<p>spring工作原理两张图:</p>
+<p>简化一点:</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdn.net/20180117202948131?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGFwcHlfbWVuZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></figure>
+<p>第二张图具体一点:</p>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191102150836357.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>sevlet和jsp工作原理图:</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdn.net/20180117202840191?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGFwcHlfbWVuZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="servlet和jsp工作原理"></figure>
+<p>小节:</p>
+<p>关于springmvc:</p>
+<p>1、用户发送请求至前端控制器DispatcherServlet</p>
+<p>2、DispatcherServlet收到请求调用HandlerMapping处理器映射器查找Handler。<br>
+3、处理器映射器根据请求url找到具体的处理器，生成<code>HandlerExecutionChain</code>对象，其中包含了目标Handler对象和若干个拦截器(可能没有)一并返回给DispatcherServlet。<br>
+4、DispatcherServlet通过Handler寻找匹配的HandlerAdapter<br>
+5、DispatcherServlet通过找到的HandlerAdapter调用Handler<br>
+6、Handler执行完成返回ModelAndView<br>
+7、HandlerAdapter将Handler执行结果ModelAndView返回给DispatcherServlet<br>
+8、如果Handler返回的View是逻辑视图名称而不是真正的View对象，DispatcherServlet调用resolveViewName方法在配置的所有视图解析器(ViewResolver)中，寻找合适的，最终通过ViewResolver将逻辑视图名解析成真正的View对象<br>
+9、ViewResolver通过调用createView方法尝试将视图名解析成View，如果无法解析会返回Null(注：如果ViewResolver是派生自AbstractCachingViewResolver则在调用createView方法前会先尝试根据viewName和locale从缓存中查找对应的视图对象)<br>
+10、DispatcherServlet调用View的render方法进行渲染视图（即将模型数据填充至request域）。<br>
+11、DispatcherServlet响应用户</p>
+<p>关于servlet:</p>
+<p>​		客户端发出http请求，web服务器将请求转发到servlet容器，servlet容器解析url并根据web.xml找到相对应的servlet，并将request、response对象传递给找到的servlet，servlet根据request就可以知道是谁发出的请求，请求信息及其他信息，当servlet处理完业务逻辑后会将信息放入到response并响应到客户端。</p>
+<h2 id="spring-mvc的简单使用">spring mvc的简单使用</h2>
+<h3 id="1用到的依赖">1.用到的依赖:</h3>
+<pre><code class="language-xml">    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+      &lt;version&gt;5.1.9.RELEASE&lt;/version&gt;
+    &lt;/dependency&gt;
+
+	&lt;dependency&gt;
+      &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+      &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+      &lt;version&gt;4.0.1&lt;/version&gt;
+    &lt;/dependency&gt;
+
+
+</code></pre>
+<h3 id="2配置dispatcherservlet">2.配置DispatcherServlet</h3>
+<h4 id="1contextloaderlistener">1.ContextLoaderListener</h4>
+<p>作用：在启动Web容器时，自动装配Spring applicationContext.xml的配置信息。<br>
+因为它实现了ServletContextListener这个接口，在web.xml配置这个监听器，启动容器时，就会默认执行它实现的方法。在ContextLoaderListener中关联了ContextLoader这个类，所以整个加载配置过程由ContextLoader来完成。</p>
+<pre><code class="language-xml">  &lt;!--这是创建DispatcherServlet 相当于电脑的cpu--&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;dispatcherServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+    &lt;!--配置容器启动时回去初始化DispatcherServlet对象--&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+      &lt;param-value&gt;/WEB-INF/dispatcher-servlet.xml&lt;/param-value&gt;
+    &lt;/init-param&gt;
+
+    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;dispatcherServlet&lt;/servlet-name&gt;
+      &lt;!--这种情况下什么也不会显示,原因是: 拦截所有请求(包括*.jsp)，可以走到Action中，
+      但转发到jsp时再次被拦截，不能访问到jsp--&gt;
+    &lt;!--&lt;url-pattern&gt;/*&lt;/url-pattern&gt;--&gt;
+      &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+</code></pre>
+<h3 id="3配置视图解析器">3.配置视图解析器:</h3>
+<pre><code class="language-xml"> &lt;!-- 配置视图解析器，用于将Handler方法中返回的视图名解析成真正可展示的页面 --&gt;
+    &lt;mvc:view-resolvers&gt;
+        &lt;bean class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+            &lt;property name=&quot;prefix&quot; value=&quot;/&quot;/&gt;
+            &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;/&gt;
+         &lt;/bean&gt;
+    &lt;/mvc:view-resolvers&gt;
+</code></pre>
+<h3 id="4定义controller">4.定义Controller</h3>
+<p>新建一个普通类，然后添加<code>@Controller</code>注解，就可以了</p>
+<h3 id="5定义请求处理方法handler">5.定义请求处理方法(Handler)</h3>
+<p>在Controller类中定义一个普通的方法，添加<code>@RequestMapping</code>注解就可以了</p>
+<p>实例</p>
+<pre><code class="language-java">@Controller
+public class HelloController {
+    @Autowired
+    private GirlService girlService;
+
+ /*    @RequestMapping(&quot;/index.jsp&quot;)
+    public String index() {
+        return &quot;girlsTable&quot;;
+    }*/
+
+    @RequestMapping(&quot;hello&quot;)
+    public String toHelloPasge(@RequestParam String message, Model model){
+        message = &quot;后裔射日!&quot;;
+        model.addAttribute(&quot;msg&quot;,message);
+        return &quot;hello_Springmvc&quot;;
+    }
+
+    @RequestMapping(&quot;girl&quot;)
+    public String toGirlsTable(Model model){
+        String girl = girlService.findGirl();
+        model.addAttribute(&quot;gName&quot;,girl);
+        return &quot;girlsTable&quot;;
+    }
+}
+</code></pre>
+<p>index.jsp中</p>
+<pre><code class="language-jsp">&lt;%--
+  Created by IntelliJ IDEA.
+  User: BW
+  Date: 2019/10/18
+  Time: 19:21
+  To change this template use File | Settings | File Templates.
+--%&gt;
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;首页&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;a href=&quot;/hello?message=你好，旧时光&quot;&gt;Hello SpringMvc&lt;/a&gt; &lt;br/&gt;
+    &lt;a href=&quot;/girl&quot; &gt;女神榜&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p>hello_Springmvc.jsp中:</p>
+<pre><code class="language-jsp">&lt;%--
+  Created by IntelliJ IDEA.
+  User: BW
+  Date: 2019/10/18
+  Time: 19:42
+  To change this template use File | Settings | File Templates.
+--%&gt;
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;SpringMvc&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    ${msg}
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<h2 id="root-webapplicationcontext-和-servlet-webapplicationcontext之间的关系">Root WebApplicationContext 和 Servlet  WebApplicationContext之间的关系:</h2>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191102151022365.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>​		两者之间的关系就像是父子类关系,其中Root WebApplicationContext是父类,Servlet WebApplicationContext是子类.凡是父类中的bean子类中都能用,但是子类中的父类不能用.</p>
+<h2 id="springmvc-常用知识点">springmvc 常用知识点:</h2>
+<h3 id="定义controller">定义Controller</h3>
+<p>定义Controller直接在在普通的类上面加@Controller注解</p>
+<pre><code class="language-jaca">package com.lanou.web;
+@Controller
+public class HelloController {
+}
+
+</code></pre>
+<h3 id="处理请求">处理请求</h3>
+<p>​		处理请求:使用注解@RequestMapping(参数),参数就相当于DispatcherServlet经过了HandlerMapping对url,xml,注解解析后找到了HandlerExecution然后到了HandlerAdapter找到了适合的Handler处理器来处理这个请求.</p>
+<pre><code class="language-java">package com.lanou.web;
+
+import com.lanou.bean.Girl;
+import com.lanou.service.GirlService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+public class HelloController {
+    @Autowired
+    private GirlService girlService;
+
+    @RequestMapping(&quot;/hello&quot;)
+    public String toHelloPasge(@RequestParam String message, Model model){
+        message = &quot;后裔射日!&quot;;
+        model.addAttribute(&quot;msg&quot;,message);
+        return &quot;hello_Springmvc&quot;;
+    }
+
+}
+
+</code></pre>
+<h3 id="请求参数自动绑定到参数中">请求参数自动绑定到参数中:</h3>
+<p>如果RequestMapping方法的参数中是一个自定义的对象，Spring会调用DataBinder自动将请求中的参数注入到对象的同名属性中。</p>
+<p>Controller中:</p>
+<pre><code class="language-java">    @RequestMapping(&quot;/girl&quot;)
+    public String toGirlsTable(Model model){
+        Girl girl = new Girl();
+        girl.setGId(101);
+        girl.setGName(&quot;于漫漫&quot;);
+        girl.setKId(1);
+        model.addAttribute(&quot;girl&quot;,girl);
+        return &quot;girlsTable&quot;;
+    }
+</code></pre>
+<p>jsp:中</p>
+<pre><code class="language-jsp">&lt;%--
+  Created by IntelliJ IDEA.
+  User: BW
+  Date: 2019/10/18
+  Time: 21:50
+  To change this template use File | Settings | File Templates.
+--%&gt;
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;br&gt;
+&lt;head&gt;
+    &lt;title&gt;女神表&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+女神榜单;${girl} &lt;/br&gt;
+   ${girl.GId} &lt;/br&gt;
+    ${girl.KId} &lt;/br&gt;
+    ${girl.GName} &lt;/br&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p>结果:</p>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/2019110215114618.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="请求参数的获得">请求参数的获得:</h3>
+<p>请求参数可以直接定义到方法参数里，并通过<code>@RequestParam(&quot;key&quot;)</code>注解修饰参数，这样SpringMVC会自动解析请求中的参数给你填充到方法参数中。</p>
+<p>注意：<code>此注解修饰的参数默认是必传的，如果请求中没有此参数会直接报错，可以通过设置此注解的required属性为false解决</code></p>
+<p>jsp中的代码:</p>
+<pre><code class="language-jsp">&lt;%--
+  Created by IntelliJ IDEA.
+  User: BW
+  Date: 2019/10/18
+  Time: 19:21
+  To change this template use File | Settings | File Templates.
+--%&gt;
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;首页&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;a href=&quot;/hello?message=你好，旧时光&quot;&gt;Hello SpringMvc&lt;/a&gt; &lt;br/&gt;
+    &lt;a href=&quot;/girl&quot; &gt;女神榜&lt;/a&gt; &lt;/br&gt;
+    &lt;a href=&quot;/baby?babyname=嬴政&amp;babyid=101&quot; &gt;孩子信息&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p>controller中的代码:</p>
+<pre><code class="language-java">    @RequestMapping(&quot;/baby&quot;)
+    public String toShowBoby(@RequestParam(&quot;babyname&quot;) String babyName,@RequestParam(&quot;babyid&quot;) int babyId,Model model){
+        Baby baby = new Baby();
+        baby.setBabyName(babyName);
+        baby.setBabyId(babyId);
+        model.addAttribute(&quot;baby&quot;,baby);
+        return &quot;baby_list&quot;;
+    }
+
+</code></pre>
+<p>测试jsp中的代码以及测试结果:</p>
+<pre><code class="language-xml">&lt;%--
+  Created by IntelliJ IDEA.
+  User: BW
+  Date: 2019/10/19
+  Time: 14:24
+  To change this template use File | Settings | File Templates.
+--%&gt;
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;boby信息&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    ${baby.babyName}     &lt;/br&gt;
+    ${baby.babyId}   &lt;/br&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p>测试结果:</p>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191102151217597.png" alt="在这里插入图片描述"></figure>
+<h1 id="拦截器">拦截器</h1>
+<h2 id="拦截器和过滤器">拦截器和过滤器</h2>
+<p>过滤器:是servlet规范中提供的一项技术,不依赖第三方技术,过滤请求的,加工请求</p>
+<p>拦截器:springmvc封装的一项基于拦截handler的一项技术,也就是说只有在springmvc中才有拦截器的概念</p>
+<p>拦截器的使用步骤:</p>
+<p>创建一个类继承HandlerInterceptor,例如</p>
+<pre><code class="language-java">public class PrivilegeToInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, 			Object handler) throws Exception {
+
+        return false;
+    }
+
+}
+</code></pre>
+<p>然后再dispatcher-servlet.xml中配置</p>
+<pre><code class="language-xml">    &lt;mvc:interceptors&gt;
+&lt;!--    权限拦截    --&gt;
+        &lt;mvc:interceptor&gt;
+            &lt;mvc:mapping path=&quot;/admin/views/**&quot;/&gt;
+            &lt;mvc:exclude-mapping path=&quot;/interceptor/**&quot;/&gt;
+            &lt;bean class=&quot;com.lanou.interceptor.PrivilegeToInterceptor&quot; /&gt;
+        &lt;/mvc:interceptor&gt;
+    &lt;/mvc:interceptors&gt;
+
+</code></pre>
+<p>需要注意的式拦截器执行的时期及其原理:</p>
+<h2 id="原理">原理</h2>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20191102151252271.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h1 id="ssm整合过程">SSM整合过程</h1>
+<h2 id="mybatis和spring的整合">Mybatis和Spring的整合</h2>
+<h4 id="加载依赖">加载依赖</h4>
+<p>1.spring的依赖:spring-context;</p>
+<pre><code class="language-xml"> &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+      &lt;version&gt;5.2.0.RELEASE&lt;/version&gt;
+ &lt;/dependency&gt;
+</code></pre>
+<p>2.mybatis的依赖:mybatis</p>
+<pre><code class="language-xml"> &lt;dependency&gt;
+      &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+      &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+      &lt;version&gt;3.4.6&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<p>3.整合的包:mybatis-spring</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+      &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+      &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+      &lt;version&gt;1.3.2&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<p>4:数据库驱动的包:</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;8.0.18&lt;/version&gt;
+&lt;/dependency&gt;
+
+</code></pre>
+<p>5.事务相关的包:spring-jdbc</p>
+<pre><code class="language-xml"> &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+      &lt;version&gt;5.2.0.RELEASE&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<p>6.其他依赖:lombok,logback</p>
+<pre><code class="language-xaml">  &lt;dependency&gt;
+      &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+      &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+      &lt;version&gt;1.18.10&lt;/version&gt;
+      &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<h4 id="在spring核心配置文件中配置sqlsessionfactorybean">在Spring核心配置文件中配置SqlSessionFactoryBean</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:mybatis=&quot;http://mybatis.org/schema/mybatis-spring&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://mybatis.org/schema/mybatis-spring
+        http://mybatis.org/schema/mybatis-spring.xsd
+        &quot;&gt;
+&lt;!--  开启扫描  --&gt;
+    &lt;context:component-scan base-package=&quot;com.lanou.service&quot; /&gt;
+    &lt;mybatis:scan base-package=&quot;com.lanou.mapper&quot; /&gt;
+
+&lt;!-- 把数据库连接的参数拿过来   --&gt;
+    &lt;context:property-placeholder location=&quot;classpath*:jdbc.properties&quot; /&gt;
+
+&lt;!-- 配置数据源   --&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;
+        &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+
+    &lt;/bean&gt;
+&lt;!--  配置sqlSessionFactoryBean,这个本身就是mybatis的配置文件  --&gt;
+    &lt;bean id=&quot;sqlSessionFactoryBean&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot; &gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;
+&lt;!--    这是给类起别名,相当于加前缀    --&gt;
+        &lt;property name=&quot;typeAliasesPackage&quot; value=&quot;com.lanou.bean&quot; /&gt;
+        &lt;property name=&quot;mapperLocations&quot; value=&quot;classpath*:mappers/QueenMapper.xml&quot; /&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+<h4 id="配置mybatishexin文件">配置mybatishexin文件</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:mybatis=&quot;http://mybatis.org/schema/mybatis-spring&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://mybatis.org/schema/mybatis-spring
+        http://mybatis.org/schema/mybatis-spring.xsd
+        &quot;&gt;
+&lt;!--  开启扫描  --&gt;
+    &lt;context:component-scan base-package=&quot;com.lanou.service&quot; /&gt;
+    &lt;mybatis:scan base-package=&quot;com.lanou.mapper&quot; /&gt;
+
+&lt;!-- 把数据库连接的参数拿过来   --&gt;
+    &lt;context:property-placeholder location=&quot;classpath*:jdbc.properties&quot; /&gt;
+
+&lt;!-- 配置数据源   --&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;
+        &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+
+    &lt;/bean&gt;
+&lt;!--  配置sqlSessionFactoryBean,这个本身就是mybatis的配置文件  --&gt;
+    &lt;bean id=&quot;sqlSessionFactoryBean&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot; &gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;
+&lt;!--    这是给类起别名,相当于加前缀    --&gt;
+        &lt;property name=&quot;typeAliasesPackage&quot; value=&quot;com.lanou.bean&quot; /&gt;
+        &lt;property name=&quot;mapperLocations&quot; value=&quot;classpath*:mappers/QueenMapper.xml&quot; /&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre>
+<h4 id="配置mybatis文件">配置Mybatis文件</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+    &lt;properties resource=&quot;jdbc.properties&quot; /&gt;
+
+    &lt;settings&gt;
+&lt;!--    开启小驼峰映射    --&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase &quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+    
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+    &lt;mappers&gt;
+        &lt;mapper resource=&quot;mappers/studentMapper.xml&quot;/&gt;
+        &lt;mapper resource=&quot;mappers/QueenMapper.xml&quot; /&gt;
+    &lt;/mappers&gt;
+&lt;/configuration&gt;
+</code></pre>
+<h4 id="mybatis的逆向工程">Mybatis的逆向工程</h4>
+<h5 id="配置及说明">配置及说明:</h5>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE generatorConfiguration
+        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
+
+&lt;generatorConfiguration&gt;
+    
+	&lt;!-- 引入第三方依赖包 --&gt;
+	
+	&lt;classPathEntry location=&quot;.\lib\mysql-connector-java-8.0.12.jar&quot; /&gt;
+	
+	
+	&lt;!--
+     targetRuntime常用值:
+        MyBatis3Simple(只生成基本的CRUD和少量的动态SQL)
+        MyBatis3(生成完整的CRUD，包含CriteriaAPI方法Example后缀的方法)
+     --&gt;
+    &lt;context id=&quot;localhost_mysql&quot; targetRuntime=&quot;MyBatis3&quot;&gt;
+
+        &lt;!-- 不生成注释 --&gt;
+        &lt;commentGenerator&gt;&lt;!--注解编辑器--&gt;
+            &lt;property name=&quot;suppressAllComments&quot; value=&quot;true&quot; /&gt;
+        &lt;/commentGenerator&gt;
+
+        &lt;jdbcConnection driverClass=&quot;com.mysql.jdbc.Driver&quot;
+                        connectionURL=&quot;jdbc:mysql://localhost:3306/day05?characterEncoding=utf8&amp;amp;serverTimezone=UTC&quot;
+                        userId=&quot;root&quot;
+                        password=&quot;123456&quot;&gt;
+        &lt;/jdbcConnection&gt;
+
+        &lt;javaTypeResolver &gt;
+            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot; /&gt;
+        &lt;/javaTypeResolver&gt;
+
+		&lt;!-- 生成实体类 --&gt;
+        &lt;javaModelGenerator targetPackage=&quot;com.lanou.bean&quot; targetProject=&quot;src/main/java&quot;&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot; /&gt;
+        &lt;/javaModelGenerator&gt;
+
+		&lt;!-- 生成XML Mapper --&gt;
+        &lt;sqlMapGenerator targetPackage=&quot;src/main/resources/mappers&quot; targetProject=&quot;.&quot;&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+        &lt;/sqlMapGenerator&gt;
+
+		&lt;!-- 生成Mapper接口 --&gt;
+        &lt;!-- 生成的Mapper类型：ANNOTATEDMAPPER（注解）、MIXEDMAPPER（混合）、XMLMAPPER（XML） --&gt;
+        &lt;javaClientGenerator type=&quot;XMLMAPPER&quot; targetPackage=&quot;com.lanou.mapper&quot;  targetProject=&quot;src/main/java&quot;&gt;
+            &lt;!-- 是否将数据库中的schema作为包名的一部分，默认就是false --&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+        &lt;/javaClientGenerator&gt;
+        
+		&lt;table tableName=&quot;queen&quot;&gt;
+		&lt;!--
+        &lt;table schema=&quot;day05&quot; tableName=&quot;girl domainObjectName=&quot;TbContent&quot;&gt;
+		--&gt;
+            &lt;!-- 是否用数据库中的字段名作为POJO属性名(不自动转小驼峰)，默认值是false --&gt;
+            &lt;!--
+            &lt;property name=&quot;useActualColumnNames&quot; value=&quot;true&quot;/&gt;
+            --&gt;
+            &lt;!-- 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 --&gt;
+			
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+			
+            &lt;!-- 此标签用于在生成代码时忽略数据库中的某个字段 --&gt;
+            &lt;!--
+            &lt;ignoreColumn column=&quot;FRED&quot; /&gt;
+            --&gt;
+            &lt;!-- 通过此标签重写mybatis从数据库读到的元信息，自定义列相关配置，包括(名称、类型) --&gt;
+            &lt;!--
+            &lt;columnOverride column=&quot;aa&quot; property=&quot;sname&quot; /&gt;
+            --&gt;
+        &lt;/table&gt;            
+    &lt;/context&gt;
+&lt;/generatorConfiguration&gt;
+</code></pre>
+<h5 id="对某个类的example的理解">对某个类的Example的理解</h5>
+<p>​		mybatis的逆向工程中会生成实例及实例对应的example，example用于添加条件，相当where后面的部分</p>
+<pre><code class="language-java">xxxExample example = new xxxExample(); 
+Criteria criteria = new Example().createCriteria();
+</code></pre>
+<h6 id="1增加">1.增加</h6>
+<pre><code class="language-java">  //增
+        Queen queen = new Queen();
+        queen.setqId(103);
+        queen.setqName(&quot;妲己&quot;);
+        queen.setkId(1);
+        queenMapper.insert(queen);
+</code></pre>
+<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20191102151335563.png" alt="在这里插入图片描述"></figure>
+<h6 id="2查询">2.查询</h6>
+<pre><code class="language-java"> //查询
+		QueenExample queenExample = new QueenExample();
+        QueenExample.Criteria queenExampleCriteria = 						queenExample.createCriteria();
+        queenExampleCriteria.andKIdEqualTo(1);
+        queenExampleCriteria.andQIdIsNotNull();
+        List&lt;Queen&gt; queens = queenMapper.selectByExample(queenExample);
+        for(Queen queen : queens){
+            System.out.println(queen.toString());
+        }
+</code></pre>
+<figure data-type="image" tabindex="9"><img src="https://img-blog.csdnimg.cn/20191102151355601.png" alt="在这里插入图片描述"></figure>
+<h6 id="3修改">3.修改</h6>
+<pre><code class="language-java">//更改
+        QueenExample queenExample = new QueenExample();
+        QueenExample.Criteria criteria = queenExample.createCriteria();
+        //创建条件:要修改的是kId是102的王后
+        criteria.andQIdEqualTo(102);
+        Queen queen = new Queen();
+        //本次测试的着三个属性不能为空
+        queen.setqId(102);
+        queen.setqName(&quot;甄姬&quot;);
+        queen.setkId(1);
+        int i = queenMapper.updateByExample(queen, queenExample);
+        System.out.println(i);
+
+//逆向工程更新执行的sql语句
+// update queen  set q_id = ?, q_name = ?,k_id = ? WHERE (  q_id = ? )
+</code></pre>
+<figure data-type="image" tabindex="10"><img src="https://img-blog.csdnimg.cn/20191102151421642.png" alt="在这里插入图片描述"></figure>
+<h6 id="4删除">4.删除</h6>
+<pre><code class="language-java"> QueenExample queenExample= new QueenExample();
+        QueenExample.Criteria criteria = queenExample.createCriteria();
+        QueenExample.Criteria criteria1 = criteria.andQIdEqualTo(103);
+        int i = queenMapper.deleteByExample(queenExample);
+        System.out.println(i);
+</code></pre>
+<figure data-type="image" tabindex="11"><img src="https://img-blog.csdnimg.cn/20191102151432713.png" alt="在这里插入图片描述"></figure>
+<h2 id="mybatisspringspringmvc的整合">Mybatis+Spring+Springmvc的整合</h2>
+<h3 id="加入依赖">加入依赖</h3>
+<pre><code class="language-xml">&lt;dependency&gt;
+      &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+      &lt;version&gt;5.2.0.RELEASE&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+    &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+    &lt;version&gt;3.1.0&lt;/version&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;
+&lt;/dependency&gt;
+
+</code></pre>
+<h3 id="配置webxml最好是支持el表达式的头">配置web.xml(最好是支持el表达式的头)</h3>
+<p><strong>以下是支持El表达式的头:</strong></p>
+<p>​	解决的问题是:再jsp页面上El表达式取不出来值得问题.</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+         xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+          http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+         id=&quot;WebApp_ID&quot; version=&quot;3.1&quot;&gt;
+    
+&lt;/web-app&gt;
+</code></pre>
+<h3 id="监视器解决乱码问题">监视器解决乱码问题</h3>
+<pre><code class="language-xml">  &lt;!-- 过滤器:解决乱码 --&gt;
+  &lt;filter&gt;
+    &lt;filter-name&gt;encodingFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;encoding&lt;/param-name&gt;
+      &lt;param-value&gt;UTF-8&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    &lt;init-param&gt;
+      &lt;param-name&gt;forceEncoding&lt;/param-name&gt;
+      &lt;param-value&gt;true&lt;/param-value&gt;
+    &lt;/init-param&gt;
+  &lt;/filter&gt;
+  &lt;filter-mapping&gt;
+    &lt;filter-name&gt;encodingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+</code></pre>
+<h3 id="配置父上下文">配置父上下文</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+         xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+          http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+         id=&quot;WebApp_ID&quot; version=&quot;3.1&quot;&gt;
+      &lt;!--配置父上下文--&gt;
+  &lt;context-param&gt;
+    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+    &lt;param-value&gt;classpath*:applicationContext.xml&lt;/param-value&gt;
+  &lt;/context-param&gt;
+    
+&lt;/web-app&gt;
+</code></pre>
+<h3 id="配置listener加载父上下文">配置listener加载父上下文</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+         xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+          http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+         id=&quot;WebApp_ID&quot; version=&quot;3.1&quot;&gt;
+      &lt;!--配置父上下文--&gt;
+  &lt;context-param&gt;
+    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+    &lt;param-value&gt;classpath*:applicationContext.xml&lt;/param-value&gt;
+  &lt;/context-param&gt;
+  //父上下文监听器,与上下文的加载有关
+      &lt;listener&gt;
+  &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+&lt;/listener&gt;
+&lt;/web-app&gt;
+</code></pre>
+<h3 id="配置dispatcherservlet大总管">配置DispatcherServlet大总管</h3>
+<pre><code class="language-xml">  &lt;!-- 配置大总管 --&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+
+</code></pre>
+<p>以上都是再web.xml中配置的.</p>
+<h3 id="dispatcher-servletxml配置">dispatcher-servlet.xml配置</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd&quot;&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<h3 id="开启扫描">开启扫描</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd&quot;&gt;
+
+        &lt;context:component-scan base-package=&quot;com.lanou.web&quot; /&gt;
+        &lt;context:component-scan base-package=&quot;com.lanou.mapper&quot;/&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<h3 id="视图解析器">视图解析器</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd&quot;&gt;
+
+        &lt;context:component-scan base-package=&quot;com.lanou.web&quot; /&gt;
+        &lt;context:component-scan base-package=&quot;com.lanou.mapper&quot;/&gt;
+    &lt;!--  静态资源的管理  --&gt;
+    &lt;mvc:resources mapping=&quot;/static/**&quot; location=&quot;/static/&quot;/&gt;
+&lt;!--    视图解析器    --&gt;
+        &lt;mvc:view-resolvers&gt;
+            &lt;bean id=&quot;viewResolver&quot; class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+                &lt;property name=&quot;prefix&quot; value=&quot;/admin&quot; /&gt;
+                &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+            &lt;/bean&gt;
+        &lt;/mvc:view-resolvers&gt;
+    &lt;!-- 开启直接驱动:里面有默认的消息转换器   --&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<h3 id="开启注解驱动消息转换器">开启注解驱动,消息转换器</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd&quot;&gt;
+
+        &lt;context:component-scan base-package=&quot;com.lanou.web&quot; /&gt;
+        &lt;context:component-scan base-package=&quot;com.lanou.mapper&quot;/&gt;
+    &lt;!--  静态资源的管理  --&gt;
+    &lt;mvc:resources mapping=&quot;/static/**&quot; location=&quot;/static/&quot;/&gt;
+&lt;!--    视图解析器    --&gt;
+        &lt;mvc:view-resolvers&gt;
+            &lt;bean id=&quot;viewResolver&quot; class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+                &lt;property name=&quot;prefix&quot; value=&quot;/admin&quot; /&gt;
+                &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+            &lt;/bean&gt;
+        &lt;/mvc:view-resolvers&gt;
+    &lt;!-- 开启直接驱动:里面有默认的消息转换器   --&gt;
+    &lt;mvc:annotation-driven&gt;
+    &lt;/mvc:annotation-driven&gt;
+
+    &lt;mvc:interceptors&gt;
+&lt;!--    权限拦截    --&gt;
+        &lt;mvc:interceptor&gt;
+            &lt;mvc:mapping path=&quot;/admin/views/**&quot;/&gt;
+            &lt;mvc:exclude-mapping path=&quot;/interceptor/**&quot;/&gt;
+            &lt;bean class=&quot;com.lanou.interceptor.PrivilegeToInterceptor&quot; /&gt;
+        &lt;/mvc:interceptor&gt;
+    &lt;/mvc:interceptors&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<h3 id="普通工程转maven工程中的注意点">普通工程转maven工程中的注意点</h3>
+<h4 id="1这两处path问题">1.这两处path问题:</h4>
+<p>决定了你的整个webapp文件存放的位置</p>
+<p>第一个:到项目的web.xml下</p>
+<p>第二个:到项目的webapp下</p>
+<figure data-type="image" tabindex="12"><img src="https://img-blog.csdnimg.cn/20191102151530821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>2.注意这里:</p>
+<p><img src="https://img-blog.csdnimg.cn/20191102151542722.png" alt="在这里插入图片描述"><br>
+最好把原来的删了,把新的加进来.</p>
+<h4 id="2父子工程问题">2.父子工程问题</h4>
+<p>如果父工程下面有子工程入:</p>
+<figure data-type="image" tabindex="13"><img src="https://img-blog.csdnimg.cn/20191102151604311.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>子工程要用到的是父工程总的pom.xml文件这样写会出现这样的结果:</p>
+<figure data-type="image" tabindex="14"><img src="https://img-blog.csdnimg.cn/20191102151624765.png" alt="在这里插入图片描述"></figure>
+<p>这是把war改成pom就可以,只用父亲的pom.xml文件.</p>
+<h4 id="3消息转换器问题">3.消息转换器问题:</h4>
+<p><img src="https://img-blog.csdnimg.cn/2019110215165992.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+这个问题是消息转换器没加:解决办法如下:</p>
+<p>SpringMVC默认使用Jackson将我们返回的对象类型转换成JSON格式数据，我们只需要做好以下两步：</p>
+<p>1、添加Jackson依赖</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+    &lt;version&gt;2.9.7&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>2、在dispatcher-servlet.xml中开启MVC注解支持</p>
+<pre><code class="language-xml">&lt;mvc:annotation-driven /&gt;
+</code></pre>
+<hr>
+<p>除了使用默认的Jackson来处理JSON，我们还可以用其他的JSON库，比如国内的FastJSON:</p>
+<ol>
+<li>添加FastJSON依赖：</li>
+</ol>
+<pre><code class="language-xml">&lt;dependency&gt;
+     &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+     &lt;artifactId&gt;fastjson&lt;/artifactId&gt;
+     &lt;version&gt;1.2.57&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<ol>
+<li>在dispatcher-servlet.xml中配置消息转换器：</li>
+</ol>
+<pre><code class="language-xml">&lt;mvc:message-converters&gt;
+    &lt;bean class=&quot;com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter&quot;&gt;
+        &lt;property name=&quot;defaultCharset&quot; value=&quot;UTF-8&quot; /&gt;
+        &lt;property name=&quot;fastJsonConfig&quot;&gt;
+            &lt;!-- 设置转换JSON的参数 --&gt;
+            &lt;bean class=&quot;com.alibaba.fastjson.support.config.FastJsonConfig&quot;&gt;
+                &lt;property name=&quot;dateFormat&quot; value=&quot;yyyy-MM-dd HH:mm:ss&quot; /&gt;
+            &lt;/bean&gt;
+        &lt;/property&gt;
+        &lt;property name=&quot;supportedMediaTypes&quot;&gt;
+        &lt;!-- 指定转换完JSON后返回的响应头和编码，添加text/html是为了处理在IE下application/json会弹出下载框问题 --&gt;
+            &lt;list&gt;
+                &lt;!--&lt;value&gt;text/html;charset=UTF-8&lt;/value&gt;--&gt;                
+                &lt;value&gt;application/json;charset=UTF-8&lt;/value&gt;
+            &lt;/list&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+&lt;/mvc:message-converters&gt;
+</code></pre>
+<hr>
+<p>使用方法： 在Controller中可以通过直接在类上添加<code>@RestController</code>或者在方法上添加<code>@ResponseBody</code>注解， 然后返回任意Java类型即可(包括自定义类型)<br>
+示例：</p>
+<pre><code class="language-java">@ResponseBody
+@RequestMapping(&quot;/getStudent&quot;)
+public Student getStudent(@RequestParam(&quot;id&quot;) Integer id) {
+    return studentService.findStudentById(id);
+}
+</code></pre>
+<h2 id="git的使用">Git的使用</h2>
+<h3 id="1注册码云账号">1.注册码云账号</h3>
+<h3 id="2创建一个仓库">2.创建一个仓库</h3>
+<h3 id="3对仓库的简单配置">3.对仓库的简单配置</h3>
+<h3 id="4再idea中的简单配置">4.再IDEA中的简单配置</h3>
+<figure data-type="image" tabindex="15"><img src="https://img-blog.csdnimg.cn/20191102151830922.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="5对现在的项目交给git管理">5.对现在的项目交给git管理</h3>
+<p><img src="https://img-blog.csdnimg.cn/20191102151843772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+<img src="https://img-blog.csdnimg.cn/20191102151852872.png" alt="在这里插入图片描述"></p>
+<h3 id="6创建gitignore文件进行忽略上传文件的范围">6.创建.gitignore文件进行忽略上传文件的,范围</h3>
+<h3 id="7右击项目名饭后点击git">7.右击项目名,饭后点击git</h3>
+<h3 id="8把项目add一下交给git管理">8.把项目add一下,交给git管理</h3>
+<h3 id="9remotes设置">9.remotes设置</h3>
+<p>这里把码云仓库的HTTPS地址克隆一下,粘贴到remote设置中</p>
+<figure data-type="image" tabindex="16"><img src="https://img-blog.csdnimg.cn/20191102151903648.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="10push-and-commit">10.push  and commit</h3>
+<h3 id="11解决合并冲突">11.解决合并冲突</h3>
+<p>合并,需要什么,左右移动到中间的result中即可</p>
+<h3 id="12新的一天拉取pull也要进行解决冲突">12.新的一天拉取pull,也要进行解决冲突.</h3>
+<p>合并,需要什么,左右移动到中间的result中即可</p>
+<h1 id="项目相关文题及其解决方案问题">项目相关文题及其解决方案问题:</h1>
+<h2 id="相关知识点">相关知识点</h2>
+<h3 id="restfullayui分页异步请求">RESTful+layui+分页(异步请求)</h3>
+<h4 id="layui中">layui中</h4>
+<p>先声明自己要用到的组件:</p>
+<pre><code class="language-javascript">    &lt;script type=&quot;text/javascript&quot; &gt;
+&lt;%--    初始化组件,即使用哪一个初始化哪一个    --%&gt;
+        layui.use(['table'], function(){
+            var table = layui.table;
+        });
+    &lt;/script&gt;
+</code></pre>
+<p>然后去找自己要用的组件的相关用法,比如表格</p>
+<pre><code class="language-javascript">    &lt;script type=&quot;text/javascript&quot; &gt;
+&lt;%--    初始化组件,即使用哪一个初始化哪一个    --%&gt;
+        layui.use(['table'], function(){
+            var table = layui.table;
+            //第一个实例
+            table.render({
+                elem: '#demo'
+                ,height: 312
+                ,url: '/student_data' //数据接口
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                    {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+                    ,{field: 'name', title: '姓名', width:80}
+                    ,{field: 'sex', title: '性别', width:80, sort: true}
+                    ,{field: 'age', title: '年龄', width:80}
+                ]]
+            });
+        });
+    &lt;/script&gt;
+</code></pre>
+<h4 id="restful控制层">RESTful控制层:</h4>
+<pre><code class="language-java">@RequestMapping(&quot;student_data&quot;)
+@RestController
+public class RestfulController {
+    @Autowired
+    private StudentService studentService;
+    @GetMapping(&quot;&quot;)
+    public LayUiData&lt;Student&gt; toGetStudent(@RequestParam(value = &quot;page&quot;,required = false,defaultValue = &quot;1&quot;)int page,
+                                           @RequestParam(value = &quot;limit&quot;,required = false,defaultValue = &quot;5&quot;)int limit){
+        System.out.println(page + &quot; 和 &quot; +limit);
+        LayUiData&lt;Student&gt; layUiData = studentService.queryStudents(page,limit);
+        return layUiData;
+    }
+}
+
+</code></pre>
+<h4 id="逻辑层service">逻辑层Service</h4>
+<pre><code class="language-java">    @Override
+    public LayUiData&lt;Student&gt; queryStudents(int page,int limit) {
+        cache = studentMapper.query();
+        int startIndex = (page - 1)*limit;
+        int endIndex = page*limit;
+        if(endIndex &gt; cache.size()) {
+            endIndex = cache.size();
+        }
+        List&lt;Student&gt; studentList = cache.subList(startIndex, endIndex);
+        LayUiData&lt;Student&gt; layUiData = new LayUiData&lt;&gt;();
+        layUiData.setCode(0);
+        layUiData.setMsg(&quot;&quot;);
+        layUiData.setCount(studentList.size());
+        layUiData.setData(studentList);
+        return layUiData;
+    }
+</code></pre>
+<h3 id="树形动态菜单递归">树形动态菜单(递归)</h3>
+<p>这是自己写的简单的前端代码</p>
+<pre><code class="language-jsp">&lt;%--
+  Created by IntelliJ IDEA.
+  User: BW
+  Date: 2019/10/31
+  Time: 19:30
+  To change this template use File | Settings | File Templates.
+--%&gt;
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;tree&lt;/title&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;/static/jquery.min.js&quot;  &gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;/static/layui/layui.js&quot; &gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;/static/layui/css/layui.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+        &lt;div id=&quot;treefile&quot;&gt;
+        &lt;/div&gt;
+&lt;/body&gt;
+&lt;script&gt;
+                $.ajax(&quot;tree_data&quot;, {
+                    type: &quot;GET&quot;,
+                    data: {
+                        action: &quot;json&quot;
+                    },
+                    dataType: &quot;json&quot;,
+                    success: function(data, status_text){
+
+                        console.log(data)
+                        layui.use('tree',function () {
+                                var tree = layui.tree;
+                                //    渲染
+                                var insert = tree.render({
+                                    elem:'#treefile'
+                                    ,data:[data]
+                                });
+                        });
+                    },
+                    error: function(xhr, textStatus, errorThrow) {
+                        console.log(&quot;请求失败&quot;);
+                    }
+                });
+&lt;/script&gt;
+&lt;/html&gt;
+</code></pre>
+<p>后端测试代码及其数据格式</p>
+<pre><code class="language-java">import com.alibaba.fastjson.JSON;
+import com.lanou.bean.LayUiStype;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class MyTest {
+    @Test
+    public void testLayuiStyle(){
+        ConcurrentHashMap&lt;String,List&lt;LayUiStype&gt;&gt; map = new ConcurrentHashMap&lt;&gt;();
+//  一级标题
+        LayUiStype layUiStype = new LayUiStype();
+        layUiStype.setTitle(&quot;山东&quot;);
+//  二级标题集合
+        List&lt;LayUiStype&gt; layUiStypeList = new ArrayList&lt;&gt;();
+        LayUiStype layUiStype1 = new LayUiStype();
+        layUiStype1.setTitle(&quot;济源&quot;);
+        layUiStypeList.add(layUiStype1);
+//  把二级标题放到对应的父节点下面
+        layUiStype.setChildren(layUiStypeList);
+        String s = JSON.toJSONString(layUiStype);
+        System.out.println(s);
+    }
+}
+
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[多线程]]></title>
+        <id>https://yihuaikun.github.io/post/duo-xian-cheng</id>
+        <link href="https://yihuaikun.github.io/post/duo-xian-cheng">
+        </link>
+        <updated>2019-12-12T12:18:44.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="java多线程">Java多线程</h1>
+<h2 id="概念">概念:</h2>
+<h3 id="1程序">1.程序:</h3>
+<p>​	静止的,是计算机指令的集合，它以文件的形式存储在磁盘上,只有当程序获得cpu资源运行起来,才称为进程,就好比我们下载一个app然后把它放在了本地的磁盘</p>
+<h3 id="2进程">2.进程:</h3>
+<p>由多个线程组成,相互协作完成指定的作业.运行起来的程序就是进程,cpu分配资源的单位.下载后我们使用这款app,点开它,获得了cpu资源,运行起来就是一个进程</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191020203725679.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="3线程">3.线程:</h3>
+<p>​		线程又称为轻量级的进程,cpu调度资源的最小单位,就好比一个公司是一个程序,下边的每个部门就是一个进程,公司按部门分配资源,分配资源后,怎么用,谁用,所以部门中的每一个人就是一个线程,他们是调度使用资源的最小单位.</p>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191020203754700.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="4单线程">4.单线程:</h3>
+<p>​	如果一个进程只有一个线程,这样的程序称为单线程程序,一个部门就你一个人,没人和你抢资源,但是这样太浪费资源</p>
+<h3 id="5多线程">5.多线程:</h3>
+<p>​	如果一个进程拥有不止一个线程,那么这个进程就是多线程的.优势：可以同时执行多个任务。提高运行的效率。</p>
+<h3 id="线程的基本组成部分">线程的基本组成部分:</h3>
+<p>​	1.cpu时间片,操作系统会为每个线程分配执行时间</p>
+<p>​	2.运行数据:</p>
+<p>​			堆空间:存储线程需要的对象,(多个线程可以共享堆中的对对对象)</p>
+<p>​			栈空间:存储线程需要的局部变量(每个线程都有独立的栈,程序计数器)</p>
+<p>​	3.线程的逻辑代码</p>
+<h3 id="线程的使用场景">线程的使用场景:</h3>
+<p>1.比如app开发中耗时的操作都不在UI主线程中做</p>
+<p>2.实现响应更快的应用程序， 即主线程专门监听用户请求，子线程用来处理用户请求。以获得大的吞吐量。<br>
+感觉这种情况下，多线程的效率未必高。 这种情况下的多线程是为了不必等待， 可以并行处理多条数据。</p>
+<p>比如JavaWeb的就是主线程专门监听用户的HTTP请求，然后启动子线程去处理用户的HTTP请求。</p>
+<p>3.某种任务，虽然耗时，但是不耗CPU的操作时，开启多个线程，效率会有显著提高。<br>
+比如读取文件，然后处理。 磁盘IO是个很耗费时间，但是不耗CPU计算的工作。 所以可以一个线程读取数据，一个线程处理数据。肯定比一个线程读取数据，然后处理效率高。 因为两个线程的时候充分利用了CPU等待磁盘IO的空闲时间。</p>
+<h2 id="创建线程">创建线程:</h2>
+<h3 id="1创建一个类继承thread然后重写run方法">1.创建一个类继承Thread然后重写run()方法</h3>
+<p>线程A:</p>
+<pre><code class="language-java">public class MyThread extends Thread {	
+	@Override
+	public void run() {
+		for(int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程A: &quot;+ i);
+		}
+	}
+}
+</code></pre>
+<p>线程B:</p>
+<pre><code class="language-java">public class MyThread2 extends Thread {
+	@Override
+	public void run() {
+		for(int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程B: &quot; + i);
+		}
+	}
+}
+</code></pre>
+<p>测试:</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testExetendThread() {
+		MyThread myThread = new MyThread();
+		myThread.start();
+		MyThread2 myThread2 = new MyThread2();
+		myThread2.start();	
+	}
+}
+</code></pre>
+<p>结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191020203836171.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="2事项runable接口然后重写run方法">2.事项Runable接口,然后重写run方法</h3>
+<p>创建线程:</p>
+<p>​	线程A</p>
+<pre><code class="language-java">public class MyThread3 implements Runnable {
+	@Override
+	public void run() {
+		for (int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程A: &quot; + i);
+		}
+	}
+}
+</code></pre>
+<p>​	线程B</p>
+<pre><code class="language-java">public class MyThread4 implements Runnable {
+	@Override
+	public void run() {
+		for (int i = 0; i &lt; 500; i++) {
+			System.out.println(&quot;线程B: &quot; + i);
+		}
+	}
+}
+
+</code></pre>
+<p>测试</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testImplRnable() {
+		Runnable runnable3 = new MyThread3();
+		Thread myThread3 = new Thread(runnable3);
+		myThread3.start();
+		
+		Runnable runnable4 = new MyThread4();
+		Thread myThread4 = new Thread(runnable4);
+		myThread4.start();
+	}
+}
+
+</code></pre>
+<p>结果</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191020203922183.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="3匿名内部类">3.匿名内部类</h3>
+<p>两种写法:第一种</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testRunableImpl() {
+		Runnable mr = ()-&gt; {
+				for (int i = 0; i &lt; 500; i++) {
+					System.out.println(&quot;线程A: &quot; + i);
+				}
+		
+		};
+		Thread t = new Thread(mr);
+		t.start();
+	}
+}
+</code></pre>
+<p>或者这样写:</p>
+<pre><code class="language-java">public class Test {
+    @Test
+	public void testAisThread() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (int i = 0; i &lt; 500; i++) {
+					System.out.println(Thread.currentThread().getName()+&quot;: &quot; + i);
+				}
+			}
+		},&quot;线程A&quot;).start();
+	}
+}
+</code></pre>
+<p>第二种:</p>
+<pre><code class="language-java">public class TestMultiplyThread2 {
+	@Test
+	public void TestThread() {
+		Thread t1 = new Thread(&quot;线程A&quot;) {
+			@Override
+			public void run() {
+				System.out.println(&quot;我是一个子线程&quot;);
+				for(int i = 0; i &lt; 500; i++) {
+					System.out.println(i);
+				}
+			}
+		};
+		t1.start();
+		
+		System.out.println(&quot;hello world&quot;);
+	}
+
+}
+</code></pre>
+<p>结果</p>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191020203946888.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="4lamda表达式">4.Lamda表达式:</h3>
+<pre><code class="language-java">public class Test {
+	 @Test
+	public void testAisThread() {
+		new Thread(() -&gt; {
+			for (int i = 0; i &lt; 500; i++) {
+				System.out.println(Thread.currentThread().getName() + &quot;: &quot; + i);
+			}
+		}, &quot;线程A&quot;).start();
+	}
+}
+
+</code></pre>
+<p><strong>需要注意的是使用lamda表达式必须是函数式接口(即接口中只有一个方法).</strong></p>
+<h3 id="5calllable接口和future">5.Calllable接口和Future</h3>
+<p>这个需要配合线程池来使用,这里举一个简单的例子吧</p>
+<pre><code class="language-java">public class Test {
+	public void testFutureThread(String[] args) {
+		//这里面的核心线程数和最大线程数是一样的10
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		Future&lt;String&gt; future = executorService.submit(new Callable&lt;String&gt;() {
+			@Override
+			public String call() throws Exception {
+				
+				return &quot;学会了吗?&quot;;
+			}
+		});
+		try {
+			System.out.println(future.get());
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+</code></pre>
+<p>newFixedThreadPool底层:</p>
+<pre><code class="language-java"> public static ExecutorService newFixedThreadPool(int nThreads) {
+        return new ThreadPoolExecutor(nThreads, nThreads,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue&lt;Runnable&gt;());
+    }
+</code></pre>
+<p>结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191020204013400.png" alt="在这里插入图片描述"></p>
+<h2 id="多线程的常用方法">多线程的常用方法</h2>
+<p>currentThread() 获取当前线程对象。  <strong>类方法</strong></p>
+<p>setName(String name) 设置线程的名字。</p>
+<p>getName() 获取线程的名字。</p>
+<p>setPriority(int priority) 设置线程的优先级。 优先级的取值范围[1,10],默认是5</p>
+<p>getPriority() 获取线程的优先级。</p>
+<p>getState() 获取线程的状态</p>
+<p>join() 执行该线程，会阻塞当前线程。</p>
+<p>sleep(long millis) 休眠指定时间（单位毫秒），会阻塞当前线程。<strong>类方法</strong></p>
+<p>start() 启动线程</p>
+<p>yield() 暂定该线程的执行，交出CPU的使用权。</p>
+<h2 id="线程的同步">线程的同步</h2>
+<h3 id="线程的同步和线程的并发">线程的同步和线程的并发</h3>
+<p>​	1:线程的同步不是客观上的线程从宏观上的同步运行,微观上的串行的过程这一现象,而恰恰相反,线程的同步是指的线程的不同时执行,而是串行,以保证线程对临界资源的访问.</p>
+<p>​	2:线程的并发,指的是线程从宏观上一起运行,微观上还是串行的,因为那个线程获得cpu的时间片,,谁就运行.</p>
+<h4 id="卖票的实例">卖票的实例:</h4>
+<p>​		不同步发生的数据混乱现像,即多个线程对同一临界资源的访问打破了原理操作的情况下:</p>
+<p>简单的java代码:</p>
+<pre><code class="language-java">public class Tickets {
+	private int tickets = 100;
+	public int getTickets() {
+		return tickets;
+	}	
+	public void sellTickets() {
+		tickets--;
+		System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩余: 			&quot; +  tickets+ &quot;张票&quot;);
+	}
+}
+</code></pre>
+<p>测试代码</p>
+<pre><code class="language-java">public class TMyTest {
+    @Test
+	public void testStickets() {
+		Tickets t1 = new Tickets();
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();	
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程A&quot;).start();
+
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();
+					
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程B&quot;).start();
+	}
+}
+</code></pre>
+<p>结果出现不符合现实的现像:即500张票卖出了1000张,出现数据的混乱,如下:</p>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191020204047527.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="线程的同步操作">线程的同步操作</h3>
+<h4 id="同步方法">同步方法:</h4>
+<pre><code class="language-java">//在返回值前面加synchronized,语法是
+public 方法修饰符 synchronized 返回值类型 方法名(参数){}
+
+
+public class Tickets {
+	private int tickets = 100;	
+	public int getTickets() {
+		return tickets;
+	}	
+	public synchronized void sellTickets() {
+		tickets--;
+		System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩余: 			&quot; +  tickets+ &quot;张票&quot;);
+	}
+}
+</code></pre>
+<p>测试代码</p>
+<pre><code class="language-java">public class TMyTest {
+    @Test
+	public void testStickets() {
+		Tickets t1 = new Tickets();
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();	
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程A&quot;).start();
+
+		new Thread(() -&gt; {
+			while (true) {
+				if (t1.getTickets() &gt; 1) {
+					t1.sellTickets();
+					
+				}else {
+					return;
+				}	
+			}
+		}, &quot;线程B&quot;).start();
+	}
+}
+</code></pre>
+<p>结果:</p>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191020204132119.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="同步代码块">同步代码块</h4>
+<pre><code class="language-java">public class Tickets {
+	private int tickets = 100;	
+	public int getTickets() {
+		return tickets;
+	}	
+	public void sellTickets() {
+        //同步代码块:
+		synchronized(this) {
+			tickets--;
+			System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩				余: &quot; +  tickets+ &quot;张票&quot;);
+		}	
+	}
+}
+</code></pre>
+<h4 id="重入锁reentrantlook">重入锁(ReentrantLook):</h4>
+<pre><code class="language-java">public class Tickets {
+	private int tickets = 100;
+
+	public int getTickets() {
+		return tickets;
+	}
+	public void sellTickets() {
+        //在juc包下,重入锁
+		Lock lock = new ReentrantLock();
+		lock.lock();
+		tickets--;
+		System.out.println(Thread.currentThread().getName() + &quot; : 买了一张票,当前剩余: &quot; + tickets + &quot;张票&quot;);
+		lock.unlock();
+	}
+}
+</code></pre>
+<h2 id="线程间的通信">线程间的通信</h2>
+<h3 id="什么是线程通信">什么是线程通信？</h3>
+<p>不同线程之间可以相互的发信号。这就是线程通信。之所以需要进行线程通信，是因为有些时候，一个线程的执行需要依赖另外一个线程的执行结果。在结果到来之前，让线程等待（wait），有了结果只之后再进行后续的操作。对于另外一个线程而言，计算完结果，通知（notify）一下处于等待状态的线程.</p>
+<p>线程通信借助的是Object类的wait，notify，nitifyall方法。</p>
+<p>wait作用是让当前线程阻塞，阻塞多久，取决于有没有其他线程唤醒它。</p>
+<p>notify作用是唤醒处于wait状态的线程。必须是同一个监视器下的线程。</p>
+<p>notifyall作用是唤醒所有处于wait状态的线程。必须是同一个监视器下的线程。</p>
+<p>一般情况下，多线程里会出现线程同步的问题，我们不但要进行线程通信，还要解决线程同步的问题。</p>
+<h3 id="生产者-消费者模式">生产者-消费者模式</h3>
+<p>这是一个比较经典的多线程场景。有商品的时候，消费者才可以消费，没有商品的时候，消费者等待。商品库存充足的时候，生产者等待，库存不满的时候，生产者生产商品。</p>
+<pre><code class="language-java">public class Saler {//售货员类
+	private int productCount = 10;	//商品数量
+	public synchronized void stockGoods() {
+		if(productCount &lt; 2000) {
+			productCount++;
+			System.out.println(Thread.currentThread().getName() + &quot;生产了1件商品，库存是：&quot; + productCount);
+			this.notifyAll();
+		}else {
+			System.out.println(&quot;库存满了&quot;);
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public synchronized void sellGoods() {
+		if(productCount &gt; 0) {
+			productCount--;
+			System.out.println(Thread.currentThread().getName() + &quot;购买了1件商品，库存剩余：&quot; + productCount);
+			 
+			this.notifyAll();
+		}else {
+			System.out.println(&quot;库存不足&quot;);
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+</code></pre>
+<pre><code class="language-java">public class Productor implements Runnable{//生产者类
+	private Saler s;
+
+	public Productor(Saler s) {
+		super();
+		this.s = s;
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			s.stockGoods();
+		}
+	}
+	
+}
+</code></pre>
+<pre><code class="language-java">public class Customer implements Runnable{//消费者类
+
+	private Saler s;
+	
+	
+	public Customer(Saler s) {
+		super();
+		this.s = s;
+	}
+
+
+	@Override
+	public void run() {
+		while(true) {
+			s.sellGoods();
+		}
+	}
+	
+}
+</code></pre>
+<pre><code class="language-java">public class TestTread {
+
+	public static void main(String[] args) {
+		//生产者-消费者模式。模拟生产和消费过程
+		Saler s = new Saler();
+		Customer c = new Customer(s);
+		Productor p = new Productor(s);
+		Thread t1 = new Thread(c, &quot;客户1&quot;);
+		t1.start();
+		Thread t2 = new Thread(p,&quot;厂家&quot;);
+		t2.start();
+		Customer c2 = new Customer(s);
+		Thread t3 = new Thread(c2, &quot;客户2&quot;);
+		t3.start();
+	}
+
+}
+</code></pre>
+<p><strong>注意:调用notify()方法必须在对该对象加锁的同步代码块中</strong></p>
+<h2 id="线程的生命周期">线程的生命周期</h2>
+<p>API中的java.lang包下的Thread.State枚举类下定义的线程状态如下：</p>
+<p>NEW：新建状态，指的是线程已经创建，但是尚未start()。</p>
+<p>RUNNABLE：可运行状态（已经调用了start方法），已经准备就绪，一旦抢到CPU就立即执行。</p>
+<p>BLOCKED：阻塞状态，处于阻塞状态的线程正在等待进入Synchronized块（或方法）。</p>
+<p>WAITING：等待状态，等待其他线程执行任务。直到其他线程任务结束或者收到notify信号。</p>
+<p>TIMED-WAITING：等待状态，限定时间的等待状态。</p>
+<p>TERMINATED：终止状态。线程要运行的任务已经结束。</p>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/201910202042027.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h2 id="线程池">线程池</h2>
+<h3 id="线程池的相关类树">线程池的相关类树</h3>
+<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20191020204215988.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="threadpoolexecutor底层构造方法">ThreadPoolExecutor底层构造方法:</h3>
+<pre><code class="language-java">   public ThreadPoolExecutor(
+       					//核心线程数
+       						int corePoolSize,
+       					//最大线程数
+                            int maximumPoolSize,
+       					//除了核心线程外的线程的最大存活时间
+                              long keepAliveTime,
+       					//时间的单位是TimeUnit是一个enmu(enmunation:枚举)类,
+                              TimeUnit unit,
+       					//任务队列
+                              BlockingQueue&lt;Runnable&gt; workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+             Executors.defaultThreadFactory(), defaultHandler);
+    }
+</code></pre>
+<h3 id="手动创建一个线性池">手动创建一个线性池</h3>
+<pre><code class="language-java">public static void main(String[] args) {
+		ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 20, 5, TimeUnit.MINUTES, new ArrayBlockingQueue(3));
+		pool.execute(new Runnable() {//实现Executor接口中得execute方法
+			@Override
+			public void run() {
+				System.out.println(&quot;你好世界!&quot;);
+			}	
+		});
+		
+		pool.submit(new Runnable() {//实现接口Executor子接口ExecutorService中的submit方法
+			@Override
+			public void run() {
+				System.out.println(&quot;你是小猪!&quot;);
+			}
+		});
+	}
+}
+
+</code></pre>
+<h3 id="对executorserviceexecutor和executors工具类创建线性池与spring使用一下">对ExecutorService,Executor和Executors工具类创建线性池与Spring使用一下</h3>
+<p>applicationContext.xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:c=&quot;http://www.springframework.org/schema/c&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+        &quot;&gt;
+    &lt;context:component-scan base-package=&quot;com.lanou.dao&quot; /&gt;
+    &lt;context:property-placeholder location=&quot;jdbc.properties&quot; /&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;&gt;
+        &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot; /&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot; /&gt;
+        &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot; /&gt;
+        &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot; /&gt;
+    &lt;/bean&gt;
+    &lt;bean id=&quot;queryRunner&quot; class=&quot;org.apache.commons.dbutils.QueryRunner&quot; c:ds-ref=&quot;dataSource&quot; /&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<p>jdbc.properties文件的配置:</p>
+<pre><code class="language-properties">jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost/day05?characterEncoding=utf-8&amp;useSSL=false
+jdbc.user=root
+jdbc.password=123456
+</code></pre>
+<p>bean中的实体类:</p>
+<pre><code class="language-java">import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+@Setter
+@Getter
+@ToString
+public class Girl {
+    private int gId;
+    private String gName;
+    private int kId;
+}
+</code></pre>
+<p>测试方法:与Callable和Future接口的使用.</p>
+<pre><code class="language-java">    @Test
+    public void testExecutors(){
+
+        ExecutorService es = Executors.newFixedThreadPool(10);
+        Future&lt;List&lt;Girl&gt;&gt; future = es.submit(new Callable&lt;List&lt;Girl&gt;&gt;() {
+            @Override
+            public List&lt;Girl&gt; call() throws Exception {
+                ApplicationContext applicationContext = new 	               ClassPathXmlApplicationContext(&quot;applicationContext.xml&quot;);
+                QueryRunner queryRunner = applicationContext.getBean(QueryRunner.class);
+                String sql = &quot;select g_id gId,g_name gName,k_id kId from girl&quot;;
+                List&lt;Girl&gt; girlList = queryRunner.query(sql, new BeanListHandler&lt;Girl&gt;(Girl.class));
+                return girlList;  
+            }
+        });
+        
+        try {
+            for(Girl girl : future.get()){
+                System.out.println(girl.toString());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>测试结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191020204240119.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Mybatis总结]]></title>
+        <id>https://yihuaikun.github.io/post/mybatis-zong-jie</id>
+        <link href="https://yihuaikun.github.io/post/mybatis-zong-jie">
+        </link>
+        <updated>2019-12-12T12:17:19.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="mybatis框架学习">Mybatis框架学习</h1>
+<h2 id="mybatis介绍">Mybatis介绍</h2>
+<p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis<br>
+避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。MyBatis<br>
+可以使用简单的 XML 或注解来配置和映射原生类型、接口和 Java 的 POJO（Plain Old<br>
+Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
+<h2 id="mybatis简单使用">Mybatis简单使用</h2>
+<h3 id="1初始化sqlsessionfactory对象">1.初始化SqlSessionFactory对象:</h3>
+<h4 id="1sqlsessionfactory对象">1.SqlSessionFactory对象:</h4>
+<p>需要从核心配置文件中获得,因此我们创建SqlSessionFactory对象时需要先配置一个Mybatis核心配置文件,过程如下:</p>
+<p>1&gt;.创建一个模板:建议最好去官网上找模板<a href="https://mybatis.org/mybatis-3/zh/getting-started.html">Mybatis配置模板</a></p>
+<p><img src="https://img-blog.csdnimg.cn/20191019172955442.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt=""><img src="https://img-blog.csdnimg.cn/20191019173125581.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="2效果试图和创建mybatis过程">2.效果试图和创建Mybatis过程:</h4>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191019173149492.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="3创建后的文件">3.创建后的文件:</h4>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/201910191732101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="2核心配置文件如下">2.核心配置文件如下:</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+    &lt;!-- 引入外部properties文件,路径从类路径的根目录开始 --&gt;
+    &lt;properties resource=&quot;jdbc.properties&quot; /&gt;
+
+    &lt;settings&gt;
+        &lt;!-- 开启将数据库中下划线连接的字段自动映射为Java的小驼峰命名 --&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+
+    &lt;!-- 定义类型别名，在xxxMapper.xml文件中就可以用别名代替很长的类名 --&gt;
+    &lt;typeAliases&gt;
+        
+            &lt;!-- 单个类配置别名 --&gt;
+&lt;!--        &lt;typeAlias type=&quot;com.lanou3g.mybatis.bean.User&quot; alias=&quot;User&quot; /&gt;--&gt;
+        
+            &lt;!-- 统一配置某个包下所有类的别名, 会使用 Bean 的首字母小写的类名来作为它的别名。 --&gt;
+        &lt;package name=&quot;com.lanou3g.mybatis.bean&quot; /&gt;
+    &lt;/typeAliases&gt;
+
+
+    &lt;!-- 配置不同环境的参数 --&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;!-- 开发环境数据库、事务配置 --&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;!-- 事务管理使用JDBC的事务 --&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;!-- 配置开发环境数据源 --&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+                &lt;!-- 将所有driver.开头的参数，附加到url属性的值后面上 --&gt;
+                &lt;property name=&quot;driver.characterEncoding&quot; value=&quot;utf8&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!-- 将mapper SQL映射文件包含进来 --&gt;
+    &lt;mappers&gt;
+        &lt;!-- 将通过XML方式配置的mapper引入进来 --&gt;
+        &lt;mapper resource=&quot;mapper/userMapper.xml&quot;/&gt;
+        &lt;!-- 将通过注解方式配置的mapper引入进来 --&gt;
+&lt;!--        &lt;mapper class=&quot;com.lanou3g.mybatis.mapper.UserMapper&quot; /&gt;--&gt;
+
+        &lt;!-- 将com.lanou3g.mybatis.mapper包下所有通过注解方式配置的mapper引入进来 --&gt;
+&lt;!--        &lt;package name=&quot;com.lanou3g.mybatis.mapper&quot;/&gt;--&gt;
+    &lt;/mappers&gt;
+&lt;/configuration&gt;
+</code></pre>
+<h4 id="1构建对象">1.构建对象:</h4>
+<pre><code class="language-java"> @Test
+    public void testXml() throws IOException {
+        String xmlPath = &quot;mybatis_config.xml&quot;;
+        InputStream inputStream = Resources.getResourceAsStream(xmlPath);
+        SqlSessionFactory sessionFactory = new 			                      SqlSessionFactoryBuilder().build(inputStream);
+        System.out.println(sessionFactory);
+    }
+</code></pre>
+<h4 id="2创建sqlsession对象">2.创建SqlSession对象</h4>
+<p>通过上步的SqlSessionFactory对象的创建可以获取到负责执行sql的SqlSession对象</p>
+<pre><code class="language-java">// 3. 获取SqlSession对象，默认事务不自动提交
+// SqlSession sqlSession = sqlSessionFactory.openSession();
+// 获取一个自动提交事务的sqlSession
+SqlSession sqlSession = sqlSessionFactory.openSession();
+</code></pre>
+<h4 id="3用sqlsession对象从mybatis中获取mapper接口的实现类">3.用SqlSession对象从Mybatis中获取Mapper接口的实现类</h4>
+<pre><code class="language-java"> StudentMapper mapper = sqlSession.getMapper(StudentMapper.class);
+</code></pre>
+<h4 id="4编写mapper对象的xml配置文件">4.编写Mapper对象的xml配置文件</h4>
+<p>和核心配置文件的步骤一样去官网找文档配置修改之后是这样,这里可以配合Fre Mybatis plugin插件使用效率更高:</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou3g.mybatis.mapper.UserMapper&quot;&gt;
+    &lt;select id=&quot;queryAllUser&quot; resultType=&quot;user&quot;&gt;
+        select * from user
+     &lt;/select&gt;
+
+    &lt;insert id=&quot;insertUser&quot;&gt;
+      insert into user (username,nick_name,email)
+      values (#{username},#{nickName},#{email})
+    &lt;/insert&gt;
+&lt;/mapper&gt;
+</code></pre>
+<h1 id="深入了解mybatis">深入了解Mybatis</h1>
+<h2 id="主要组件">主要组件</h2>
+<h3 id="核心配置文件的处理">核心配置文件的处理:</h3>
+<p>所谓的核心配置文件,就是mybatis的入口.它里面可以配置mybatis的具体参数、数据源、类型别名、关联映射文件等。</p>
+<h4 id="加载mybatis配置文件的路径">加载Mybatis配置文件的路径:</h4>
+<pre><code class="language-java"> String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+</code></pre>
+<h4 id="resources">Resources</h4>
+<pre><code class="language-java">package org.apache.ibatis.io;
+//Resources:所在的包.
+	public static InputStream getResourceAsStream(String resource) throws IOException {
+        return getResourceAsStream((ClassLoader)null, resource);
+    }
+
+	public static InputStream getUrlAsStream(String urlString) throws IOException {
+        URL url = new URL(urlString);
+        URLConnection conn = url.openConnection();
+        return conn.getInputStream();
+    }
+
+//上面是底层常用的方法:
+//例如:加载加载Mybatis配置文件
+InputStream inputStream = Resources.getResourceAsStream(configurationXmlPath);
+</code></pre>
+<h4 id="sqlsessionfactorybuilser">SqlSessionFactoryBuilser</h4>
+<p>主要用来创建SqlSessionFactory接口类对象.</p>
+<pre><code class="language-java">//SqlSessionFactoryBuiler所在的包:
+package org.apache.ibatis.session;
+
+	public SqlSessionFactory build(Reader reader, String environment) {
+        return this.build((Reader)reader, environment, (Properties)null);
+    }
+
+	public SqlSessionFactory build(InputStream inputStream) {
+        return this.build((InputStream)inputStream, (String)null, (Properties)null);
+    }
+//上面是SqlSessionFactoryBuilser的部分底层.我们调用build方法来获得下面的SqlSessionFactory接口类对象.
+//例如下面:获得SqlSessionFactory接口类对象:development表示xml中的environment的id
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,&quot;development&quot;);
+
+</code></pre>
+<h4 id="sqlsessionfactory">SqlSessionFactory</h4>
+<p>一个SqlSessionFactory只能连接一个数据库实例，如果需要连接多个数据库，需要构建多个SqlSessionFactory对象。</p>
+<p>在构建SqlSesssionFactory时可以指定environment的id，表示使用指定的数据源来构建factory对象</p>
+<pre><code class="language-java">	//这个是是否开启自动提交事务:入过不开启自动提交的话可能出现sql语句执行了,页成功了但	
+	//是没有插入到数据库例如下面实例:一般我们把参数设置为true,让它自动提交事务,如果没有设置出现下面实例	//	中的错误,在实例1下面由解决方法.注意Query时开不开没关系,最好开启
+	SqlSession openSession((boolean autoCommit);
+    SqlSession openSession(Connection var1);                        
+    //TransactionIsolationLevel是一个枚举类,事务隔离
+	// NONE(0),
+    //READ_COMMITTED(2),
+    //READ_UNCOMMITTED(1),
+    //REPEATABLE_READ(4),
+    //SERIALIZABLE(8);
+    SqlSession openSession(TransactionIsolationLevel level);
+	// ExecutorType枚举类
+    //SIMPLE,
+    //REUSE,
+    //BATCH;   最常用的试着个,Mybatis缓冲,下面我们会总结到                
+    SqlSession openSession(ExecutorType var1);
+
+    SqlSession openSession(ExecutorType var1, boolean var2);
+
+    SqlSession openSession(ExecutorType var1, TransactionIsolationLevel var2);
+
+    SqlSession openSession(ExecutorType var1, Connection var2);
+
+    Configuration getConfiguration();
+</code></pre>
+<p>关于Mybatis的TransactionIsolationLevel枚举类的探究,事务隔离级别:</p>
+<p>​			隔离级别：一个事务必须与由其他事务进行的资源或数据更改相隔离的程度。隔离级别从允许的并发副作用（例如，脏读或虚拟读取）的角度进行描述。</p>
+<pre><code class="language-java">none:
+read uncommitted | 1 未提交读
+read committed | 2 已提交读
+repeatable read | 4 可重复读
+serializable | 8 可序列化
+</code></pre>
+<p>实例1:</p>
+<pre><code class="language-java">    @Test
+    public void testPaperGirl() {
+        String configurationXmlPath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = 					            Resources.getResourceAsStream(configurationXmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //注意这里要开启事务:坑
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+            KingMapper mapper = sqlSession.getMapper(KingMapper.class);
+            List&lt;Girl&gt; girlList = new ArrayList&lt;&gt;();
+            Collections.addAll(girlList, new Girl(&quot;木兰&quot;, 2), new Girl(&quot;伽罗&quot;, 2));
+            int count = 0;
+            List&lt;BatchResult&gt; batchResults = null;
+            for(Girl girl : girlList){
+                mapper.insertPaperGir(girl);
+                count ++ ;
+                if(count % 2 == 0){
+                    batchResults = sqlSession.flushStatements();
+                    count = 0 ;
+                }
+            }
+            for(BatchResult batchResult : batchResults){
+                int[] updateCounts = batchResult.getUpdateCounts();
+                for(int updateCount : updateCounts){
+                    System.out.println(updateCount);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果如下:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173358929.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>但是数据库中并没有插入:</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191019173413717.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>解决办法有两种</p>
+<pre><code class="language-java">//解决方法一:
+SqlSession openSession(true);
+//解决方法二
+    @Test
+    public void testPaperGirl() {
+        String configurationXmlPath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(configurationXmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //注意这里要开启事务:坑
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+            KingMapper mapper = sqlSession.getMapper(KingMapper.class);
+            List&lt;Girl&gt; girlList = new ArrayList&lt;&gt;();
+            Collections.addAll(girlList, new Girl(&quot;木兰&quot;, 2), new Girl(&quot;伽罗&quot;, 2));
+            int count = 0;
+            List&lt;BatchResult&gt; batchResults = null;
+            for(Girl girl : girlList){
+                mapper.insertPaperGir(girl);
+                count ++ ;
+                if(count % 2 == 0){
+                    batchResults = sqlSession.flushStatements();
+                    count = 0 ;
+                }
+            }
+            for(BatchResult batchResult : batchResults){
+                int[] updateCounts = batchResult.getUpdateCounts();
+                for(int updateCount : updateCounts){
+                    System.out.println(updateCount);
+                }
+            }
+            //在这里加事务提交:
+            sqlSession.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+</code></pre>
+<p>解决后结果:</p>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191019173449651.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="sqlsession">SqlSession</h4>
+<p>一个SqlSession对象代表一次到数据的会话，该对象有一下功能：</p>
+<ul>
+<li>获取Mapper实现类</li>
+<li>管理事务操作</li>
+<li>注意： SqlSession对象是非线程安全的，在多线程环境下，建议不要作为类的实例属性来用。</li>
+</ul>
+<h4 id="mapper接口类">Mapper接口类:</h4>
+<h4 id="mapper">Mapper</h4>
+<ul>
+<li>
+<p>Mapper接口类</p>
+<p>定义了增删盖查的方法。注意，必须是接口类型，而且方法只需要定义就可以了。</p>
+</li>
+<li>
+<p>Mapper配置文件</p>
+<p>Mapper配置文件中就是负责实现接口中的方法，它定义了具体要执行什么SQL语句，如何映射结果集。</p>
+<ul>
+<li>配置文件中select、delete、update、insert标签的id必须是对应接口中的方法名。</li>
+<li>mapper文件的namespace属性需要对应Mapper接口的完全类型限定名。</li>
+</ul>
+</li>
+</ul>
+<h1 id="深入mybatis核心配置文件">深入Mybatis核心配置文件</h1>
+<h2 id="深入mybatis映射配置文件">深入Mybatis映射配置文件</h2>
+<h3 id="crud语句定义">CRUD语句定义</h3>
+<p>接口中的源码</p>
+<pre><code class="language-java">public interface KingMapper {
+    List&lt;King&gt; findKingById(int id);
+    int insertGirl(List&lt;Girl&gt; girlList);
+    int insertPaperGir(Girl girl);
+}
+
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.KingMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;kingMap&quot; type=&quot;com.lanou.bean.King&quot;&gt;
+        &lt;id column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;k_name&quot; property=&quot;kName&quot;/&gt;
+        &lt;association property=&quot;queen&quot; javaType=&quot;com.lanou.bean.Queen&quot; resultMap=&quot;queenMap&quot;/&gt;
+        &lt;collection property=&quot;girls&quot; ofType=&quot;com.lanou.bean.Girl&quot; resultMap=&quot;girlMap&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;girlMap&quot; type=&quot;com.lanou.bean.Girl&quot;&gt;
+        &lt;id property=&quot;gId&quot; column=&quot;g_id&quot;/&gt;
+        &lt;result property=&quot;kId&quot; column=&quot;k_id&quot;/&gt;
+        &lt;result property=&quot;gName&quot; column=&quot;g_name&quot;/&gt;
+
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;queenMap&quot; type=&quot;com.lanou.bean.Queen&quot;&gt;
+        &lt;id column=&quot;q_id&quot; property=&quot;qId&quot;/&gt;
+        &lt;result column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;q_name&quot; property=&quot;qName&quot;/&gt;
+    &lt;/resultMap&gt;
+    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+    &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;findKingById&quot; resultMap=&quot;kingMap&quot;&gt;
+
+        select
+         king.k_id k_id,
+         k_name,
+         q_id,
+         q_name,
+         g_id,
+         g_name
+        from king
+        left join girl
+        on king.k_id = girl.k_id
+        left join queen
+        on queen.k_id = king.k_id
+        where king.k_id = #{id};
+    &lt;/select&gt;
+&lt;/mapper
+</code></pre>
+<h4 id="插入语句">插入语句</h4>
+<h5 id="普通插入语句">普通插入语句</h5>
+<p>接口</p>
+<pre><code class="language-java">int insertUser(User user);
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertUser&quot;&gt;
+    insert into user (username,nick_name,email)
+    values (#{username},#{nickName},#{email})
+&lt;/insert&gt;
+</code></pre>
+<h4 id="如何返回数据库自增的id">如何返回数据库自增的ID</h4>
+<h5 id="java源代码之接口中">java源代码之接口中</h5>
+<pre><code class="language-java">public interface GirlMapper {
+    int insertGirl(Girl girl);
+}
+</code></pre>
+<h5 id="xml中">xml中</h5>
+<pre><code class="language-xml">&lt;!-- 给insert语句添加useGeneratedKeys、keyProperty后，mybatis会将自增的id值直接赋值到传进来的user对象的id属性上
+        useGeneratedKeys: 指定需要获取数据库自增的id
+        keyProperty: 指定自增地段的名称
+ps:只对update和insert语句使用
+     --&gt;
+ &lt;insert id=&quot;insertGirl&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;gId&quot; &gt;
+        insert into girl (g_name,k_id)
+        values(#{gName},#{kId})
+    &lt;/insert&gt;
+</code></pre>
+<h5 id="测试">测试</h5>
+<pre><code class="language-java">@Test
+    public void testGirl(){
+        String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream resourceAsStream = Resources.getResourceAsStream(configMybatisXmlpath);
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+            SqlSession sqlSession = sessionFactory.openSession(true);
+            GirlMapper girlMapper = sqlSession.getMapper(GirlMapper.class);
+            Girl girl = new Girl(&quot;香蛋&quot;,1);
+            int i = girlMapper.insertGirl(girl);
+            System.out.println(girl.getGId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<h5 id="结果">结果</h5>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191019173555319.png" alt="在这里插入图片描述"></figure>
+<h5 id="ps">ps:</h5>
+<p>​	keyColumn=&quot;&quot;:（仅对 insert 和 update 有用）通过生成的键值设置表中的列名，这个设置仅在某些数据库（像 PostgreSQL）是必须的，当主键列不是表中的第一列的时候需要设置。如果希望使用多个生成的列，也可以设置为逗号分隔的属性名称列表。</p>
+<p>​	keyProperty=&quot;&quot; :给insert语句添加useGeneratedKeys、keyProperty后，mybatis会将自增的id值直接赋值到传进来的user对象的id属性上:</p>
+<p>​		useGeneratedKeys: 指定需要获取数据库自增的id<br>
+keyProperty: 指定自增地段的名称</p>
+<p>只对update和insert语句使用</p>
+<h4 id="删除语句">删除语句</h4>
+<p>接口中</p>
+<pre><code class="language-java">void deleteUserById(Integer id);
+</code></pre>
+<p>xml中的配置:</p>
+<pre><code class="language-xml">&lt;delete id=&quot;deleteUserById&quot;&gt;
+    delete from user where id = #{id}
+&lt;/delete&gt;
+</code></pre>
+<h4 id="更新语句">更新语句</h4>
+<p>接口中:</p>
+<pre><code class="language-java">void updateUser(User user);
+</code></pre>
+<p>XML配置中</p>
+<pre><code class="language-xml">&lt;update id=&quot;updateUser&quot;&gt;
+    update user set password = #{password} where id = #{id}
+&lt;/update&gt;
+</code></pre>
+<h4 id="ps-2">ps:</h4>
+<p>插入和更新删除需要:</p>
+<pre><code class="language-java">    SqlSession sqlSession = sessionFactory.openSession(true);
+</code></pre>
+<h3 id="接口中的参数如果传递到sql中">接口中的参数如果传递到SQL中</h3>
+<h4 id="简单类型参数">简单类型参数</h4>
+<p>接口中</p>
+<pre><code class="language-java">void deleteUserById(Integer id);
+</code></pre>
+<p>xml配置</p>
+<pre><code class="language-xml">&lt;delete id=&quot;deleteUserById&quot;&gt;
+    delete from user where id = #{id}
+&lt;/delete&gt;
+</code></pre>
+<h4 id="引用类型参数">引用类型参数</h4>
+<p>接口中</p>
+<pre><code class="language-java">int insertUser(User user);
+</code></pre>
+<pre><code class="language-xml">&lt;!--这里注意取参数直接#+实体类字段名--&gt;
+&lt;insert id=&quot;insertUser&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+    insert into user (username,nick_name,email)
+    values (#{username},#{nickName},#{email})
+&lt;/insert&gt;
+</code></pre>
+<h4 id="当接口中参数和xml配置取值时名称不一样时">当接口中参数和XML配置取值时名称不一样时</h4>
+<p>ps:现在Mybatis版本中的不存在这个问题</p>
+<p>在接口中的参数前加注解</p>
+<pre><code class="language-java">User queryUserById(@Param(&quot;id&quot;) Integer xxxxxxxId);
+</code></pre>
+<p>在XML中取值时用注解指定的名称</p>
+<pre><code class="language-xml">&lt;select id=&quot;queryUserById&quot; resultType=&quot;user&quot;&gt;
+    select * from user where id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p>例如:</p>
+<p>接口中的java代码:</p>
+<pre><code class="language-java">public interface GirlMapper {
+    Girl queryGirl(Integer sid);
+}
+</code></pre>
+<p>xml中的配置:</p>
+<pre><code class="language-xml">    &lt;select id=&quot;queryGirl&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl where g_id = #{gId}
+    &lt;/select&gt;
+
+</code></pre>
+<p>运行的结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173831808.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="与的区别">#{}与${}的区别</h4>
+<ul>
+<li>它俩都可以获取接口调用中传递过来的参数</li>
+<li>#{}会将参数作为占位符，使用预编译语句(PreparedStatement)执行</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow></mrow><mi mathvariant="normal">会</mi><mi mathvariant="normal">直</mi><mi mathvariant="normal">接</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">际</mi><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">替</mi><mi mathvariant="normal">换</mi></mrow><annotation encoding="application/x-tex">{}会直接用实际参数替换</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord"></span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">直</span><span class="mord cjk_fallback">接</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">实</span><span class="mord cjk_fallback">际</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">替</span><span class="mord cjk_fallback">换</span></span></span></span>{}， 参数可以作为SQL的一部分。</li>
+</ul>
+<p>接口中的配置:</p>
+<pre><code class="language-java">public interface GirlMapper {
+    Girl queryGirl(Integer sid);
+}
+</code></pre>
+<p>xml配置:</p>
+<pre><code class="language-xml">    &lt;select id=&quot;queryGirl&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl where g_id = #{gId}
+    &lt;/select&gt;
+</code></pre>
+<p>#的运行结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173856777.png" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20191019173909890.png" alt="在这里插入图片描述"></p>
+<h4 id="结果集如何映射">结果集如何映射</h4>
+<h5 id="resulttype方式">ResultType方式</h5>
+<p>​	ResultType方式适用于数据库结果集可以直接映射成一个Java类的情况</p>
+<h5 id="resultmap方式">ResultMap方式</h5>
+<p>​	ResultMap方式适用于复杂的结果集映射，比如数据库返回的结果集中的列名和JavaBean无法一一对应，或者对象间存在一对一、一对多关联映射时。</p>
+<h6 id="解决数据库列名与java类中属性名不一致的映射问题">解决数据库列名与Java类中属性名不一致的映射问题</h6>
+<h6 id="解决一对一映射查询问题">解决一对一映射查询问题</h6>
+<h6 id="解决一对多映射查询问题">解决一对多映射查询问题</h6>
+<p>下面是例子:</p>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter
+@Getter
+@ToString
+public class Girl {
+    private int gId;
+    private int kId;
+    private String gName;
+    public Girl(){
+
+    }
+    public Girl(String gName ,int kId) {
+        this.gName = gName;
+        this.kId = kId;
+
+    }
+}
+</code></pre>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.List;
+
+@Setter
+@Getter
+@ToString
+public class King {
+    private int kId;
+    private String kName;
+    private Queen queen;
+    private List&lt;Girl&gt; girls;
+}
+
+</code></pre>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class Queen {
+    private int qId;
+    private int kId;
+    private String qName;
+}
+
+</code></pre>
+<p>接口中</p>
+<pre><code class="language-java">package com.lanou.mapper;
+
+import com.lanou.bean.Girl;
+import com.lanou.bean.King;
+
+import java.util.List;
+
+public interface KingMapper {
+    List&lt;King&gt; findKingById(int id);
+    int insertGirl(List&lt;Girl&gt; girlList);
+    int insertPaperGir(Girl girl);
+}
+
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.KingMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;kingMap&quot; type=&quot;com.lanou.bean.King&quot;&gt;
+        &lt;id column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;k_name&quot; property=&quot;kName&quot;/&gt;
+        &lt;!--这是一对一的情况--&gt;
+        &lt;association property=&quot;queen&quot; javaType=&quot;com.lanou.bean.Queen&quot; resultMap=&quot;queenMap&quot;/&gt;
+        &lt;!--这是一对多的情况--&gt;
+        &lt;collection property=&quot;girls&quot; ofType=&quot;com.lanou.bean.Girl&quot; resultMap=&quot;girlMap&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;girlMap&quot; type=&quot;com.lanou.bean.Girl&quot;&gt;
+        &lt;id property=&quot;gId&quot; column=&quot;g_id&quot;/&gt;
+        &lt;result property=&quot;kId&quot; column=&quot;k_id&quot;/&gt;
+        &lt;result property=&quot;gName&quot; column=&quot;g_name&quot;/&gt;
+
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;queenMap&quot; type=&quot;com.lanou.bean.Queen&quot;&gt;
+        &lt;id column=&quot;q_id&quot; property=&quot;qId&quot;/&gt;
+        &lt;result column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;q_name&quot; property=&quot;qName&quot;/&gt;
+    &lt;/resultMap&gt;
+    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+
+    &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;findKingById&quot; resultMap=&quot;kingMap&quot;&gt;
+
+        select
+         king.k_id k_id,
+         k_name,
+         q_id,
+         q_name,
+         g_id,
+         g_name
+        from king
+        left join girl
+        on king.k_id = girl.k_id
+        left join queen
+        on queen.k_id = king.k_id
+        where king.k_id = #{id};
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="动态sql">动态sql</h4>
+<h5 id="条件分支sql">条件分支SQL</h5>
+<ul>
+<li>
+<p>if</p>
+<p>mapper中:</p>
+<pre><code class="language-java">package com.lanou.mappers;
+import com.lanou.bean.Student;
+import java.util.List;
+public interface StudentMqpper {
+    List&lt;Student&gt; findStudent(Student condition);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">   &lt;select id=&quot;findStudent&quot; resultType=&quot;com.lanou.bean.Student&quot;&gt;
+        select * from `student`
+        &lt;where&gt;
+        &lt;if test=&quot;sex != null&quot; &gt;
+           sex = #{sex}
+        &lt;/if&gt;
+        &lt;if test=&quot;name != null&quot; &gt;
+            and name = #{name}
+        &lt;/if&gt;
+        &lt;/where&gt;
+    &lt;/select&gt;
+</code></pre>
+<p>测试1:</p>
+<pre><code class="language-java">    @Test
+    public void testStudentMapper(){
+        String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream resourceAsStream = Resources.getResourceAsStream(configMybatisXmlpath);
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+            SqlSession sqlSession = sessionFactory.openSession();
+            StudentMqpper mapper = sqlSession.getMapper(StudentMqpper.class);
+            Student condition = new Student();
+            condition.setName(&quot;黄忠&quot;);
+            condition.setSex(&quot;男&quot;);
+            List&lt;Student&gt; studentList = mapper.findStudent(condition);
+            for(Student student1 :studentList ){
+                System.out.println(student1.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果:</p>
+</li>
+</ul>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191019174002916.png" alt="在这里插入图片描述"></figure>
+<p>测试2:把setAge注释掉:</p>
+<p>结果为:</p>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20191019174018428.png" alt="在这里插入图片描述"></figure>
+<ul>
+<li>choose&amp;when&amp;otherwise</li>
+</ul>
+<h5 id="循环sql">循环SQL</h5>
+<ul>
+<li>forEach</li>
+</ul>
+<p>两种forEach:</p>
+<p>第一种:</p>
+<p>实例</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface KingMapper {
+    int insertGirl(List&lt;Girl&gt; girlList);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+</code></pre>
+<p>第二种:</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface KingMapper {
+    int insertPaperGir(Girl girl);
+}
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">  &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+</code></pre>
+<h5 id="其他特殊sql">其他特殊SQL</h5>
+<ul>
+<li>where</li>
+<li>set</li>
+<li>trim</li>
+</ul>
+<h2 id="一级缓存">一级缓存:</h2>
+<p>默认情况下是一级缓存,配置方法：</p>
+<pre><code class="language-xml">&lt;setting name=&quot;localCacheScope&quot; value=&quot;SESSION&quot;/&gt;
+</code></pre>
+<p>取值有两个：SESSION和STATEMENT分别对应缓存应用session会话范围和一次statement范围</p>
+<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20191019174130687.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>验证:</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface GirlsMapper {
+    List&lt;Girl&gt; queryGirls();
+    int insertGirl(Girl girl);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) value(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;queryGirls&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl
+    &lt;/select&gt;
+</code></pre>
+<p>测试:注意先不要设置自动提交,这样就能看到增删改是先对缓存的改动.提交之后才能到数据库更新数据:</p>
+<pre><code class="language-java">    @Test
+    public void testCache(){
+        String mybatisXmlpath =&quot;mybatis-config-cache.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(mybatisXmlpath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            GirlsMapper girlsMapper = sqlSession.getMapper(GirlsMapper.class);
+            List&lt;Girl&gt; girlList = girlsMapper.queryGirls();
+            System.out.println(&quot;*************&quot; + girlList.size());
+            for(Girl girl : girlList){
+                System.out.println(girl.toString());
+            }
+
+            Girl girl = new Girl(&quot;香香&quot;,1);
+            int i = girlsMapper.insertGirl(girl);
+            System.out.println(i);
+           // sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果是:</p>
+<figure data-type="image" tabindex="9"><img src="https://img-blog.csdnimg.cn/20191019174206167.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>然而数据库中则:</p>
+<figure data-type="image" tabindex="10"><img src="https://img-blog.csdnimg.cn/2019101917423782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>放开commit:</p>
+<pre><code class="language-java">    @Test
+    public void testCache(){
+        String mybatisXmlpath =&quot;mybatis-config-cache.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(mybatisXmlpath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            GirlsMapper girlsMapper = sqlSession.getMapper(GirlsMapper.class);
+            List&lt;Girl&gt; girlList = girlsMapper.queryGirls();
+            System.out.println(&quot;*************&quot; + girlList.size());
+            for(Girl girl : girlList){
+                System.out.println(girl.toString());
+            }
+
+            Girl girl = new Girl(&quot;香香&quot;,1);
+            int i = girlsMapper.insertGirl(girl);
+            System.out.println(i);
+           // sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果:</p>
+<figure data-type="image" tabindex="11"><img src="https://img-blog.csdnimg.cn/20191019174258260.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<figure data-type="image" tabindex="12"><img src="https://img-blog.csdnimg.cn/20191019174326101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>结果很明显也很符合上面原理图</p>
+<h2 id="二级缓存">二级缓存:</h2>
+<figure data-type="image" tabindex="13"><img src="https://img-blog.csdnimg.cn/201910191743484.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>开启二级缓存的方法</p>
+<ol>
+<li>第一步，打开全局二级缓存开关</li>
+</ol>
+<pre><code class="language-xml">&lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+</code></pre>
+<ol>
+<li>在具体的Mapper中开启二级缓存</li>
+</ol>
+<pre><code class="language-xml">&lt;cache/&gt; 
+</code></pre>
+<p>可配置参数：</p>
+<ul>
+<li><code>type</code>：cache使用的类型，默认是</li>
+<li><code>PerpetualCache</code>，这在一级缓存中提到过。</li>
+<li><code>eviction</code>： 定义回收的策略，常见的有FIFO，LRU。</li>
+<li><code>flushInterval</code>： 配置一定时间自动刷新缓存，单位是毫秒。</li>
+<li><code>size</code>： 最多缓存对象的个数。</li>
+<li><code>readOnly</code>： 是否只读，若配置可读写，则需要对应的实体类能够序列化。</li>
+<li><code>blocking</code>： 若缓存中找不到对应的key，是否会一直blocking，直到有对应的数据进入缓存。</li>
+</ul>
+<blockquote>
+<p>注意 要使用二级缓存结果集对应的POJO类必须实现序列化接口</p>
+</blockquote>
+<h1 id="spring与mybatis的整合">Spring与Mybatis的整合:</h1>
+<h2 id="1需要的依赖">1.需要的依赖:</h2>
+<pre><code class="language-xml">&lt;!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+    &lt;version&gt;2.0.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="2在spring中管理sqlsessionfactory">2.在Spring中管理SqlSessionFactory</h2>
+<pre><code class="language-xml">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;&gt;
+
+    &lt;!-- 注入数据源 --&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+    &lt;!-- 设置mybatis核心配置文件路径（可选） --&gt;    
+    &lt;property name=&quot;configLocation&quot; value=&quot;classpath:/mybatis-config.xml&quot; /&gt;
+     &lt;!-- 配置mybatis xml映射文件位置（如果Mapper是用注解配置的，这里就不用设置此属性了） --&gt;   
+    &lt;property name=&quot;mapperLocations&quot; value=&quot;classpath:/mappers/*&quot; /&gt;
+    &lt;/bean&gt;
+</code></pre>
+<p>如果是注解的方式配置的Mapper，我们需要在Spring配置文件中添加mybatis的schema以支持mybatis注解扫描</p>
+<pre><code class="language-xml">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+  xmlns:mybatis=&quot;http://mybatis.org/schema/mybatis-spring&quot;
+  xsi:schemaLocation=&quot;
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd&quot;&gt;
+
+&lt;!-- 配置基于注解的Mapper所在包的路径 --&gt;
+  &lt;mybatis:scan base-package=&quot;org.mybatis.spring.sample.mapper&quot; /&gt;
+
+
+&lt;/beans&gt;
+</code></pre>
+<p>或者这样配置</p>
+<pre><code class="language-java">@Configuration
+@MapperScan(&quot;org.mybatis.spring.sample.mapper&quot;)
+public class AppConfig {
+  // ...
+}
+</code></pre>
+<h2 id="3用spring管理事务">3.用Spring管理事务</h2>
+<blockquote>
+<p>和单独使用Spring时一样， 配置Spring的声明式事务就可以了，mybatis会自动参与到spring的事务中</p>
+</blockquote>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[spring的基本概念]]></title>
+        <id>https://yihuaikun.github.io/post/spring-de-ji-ben-gai-nian</id>
+        <link href="https://yihuaikun.github.io/post/spring-de-ji-ben-gai-nian">
+        </link>
+        <updated>2019-12-12T12:15:02.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="springioc">SpringIOC</h1>
+<h2 id="ioc容器概念">IOC容器概念</h2>
+<p>IOC其实就是一个对象的容器。全称Inversion Of Control 控制反转，核心的作用就是将原来由开发人员来控制的对象管理操作交由Spring来管理。</p>
+<p>SpringIOC不仅帮我们管理了对象的创建，还包括给对象增加了生命周期行为、作用域(单例、非单例)、懒加载。 配合Spring的DI， 更能方便的解决对象属性值注入、对象之间的依赖注入问题。</p>
+<h2 id="ioc容器初始化方式">IOC容器初始化方式</h2>
+<h3 id="classpathxmlapplicationcontext">ClassPathXmlApplicationContext</h3>
+<p>该类负责加载类路径下的xml配置文件的方式，去初始化IOC容器上下文，具体使用步骤如下：</p>
+<ol>
+<li>
+<p>编写配置文件</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;    xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
+    
+    &lt;!-- 使用bean标签将对象配置到ioc容器中 --&gt;
+    &lt;bean id=&quot;man&quot; class=&quot;com.lanou3g.bean.Man&quot; /&gt;
+    &lt;bean id=&quot;apple&quot; class=&quot;com.lanou3g.bean.Food&quot; /&gt;
+&lt;/beans&gt;
+</code></pre>
+</li>
+<li>
+<p>加载配置文件，初始化IOC容器</p>
+</li>
+</ol>
+<pre><code class="language-java">   // 加载单个xml配置，初始化上下文
+   ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(&quot;applicationContext1.xml&quot;);
+  
+   // 加载多个xml配置，初始化上下文
+   ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{&quot;applicationContext1.xml&quot;, &quot;applicationContext2.xml&quot;});
+  
+   // 加载当前运行类所在的类路径下所有以application开头的配置文件
+   ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(&quot;appliction*.xml&quot;);
+  
+   // 加载工程中所有类路径下所有以application开头的配置文件
+   ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(&quot;classpath*:appliction*.xml&quot;);
+  
+   // 加载工程中所有类路径下所有以application或spring开头的配置文件
+   ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{&quot;classpath*:appliction*.xml&quot;, &quot;classpath*:spring*.xml&quot;});
+</code></pre>
+<blockquote>
+<p>配置文件路径中可以包含通配符(*)和前缀(classpath*:，代表所有类路径，包括源码类路径和单元测试类路径)</p>
+</blockquote>
+<ol start="3">
+<li>
+<p>从容器中获取对象</p>
+<pre><code class="language-java">// 通过xml中配置的bean的id或name属性的值获取bean, 返回的类型是Object，需要强转成对象真正的类型
+Man man = (Man) cxt.getBean(&quot;man&quot;); 
+// 通过bean的名称获取bean的同时，指定类型 
+Man man1 = cxt.getBean(&quot;man&quot;,Man.class); 
+// 通过类型从容器中获取bean，如果容器中该类型的bean有多于一个，则会报错
+Man man2 = cxt.getBean(Man.class); 
+
+// 调用对象的方法
+man.eat();
+man.play();
+</code></pre>
+</li>
+</ol>
+<h3 id="annotationconfigapplicationcontext">AnnotationConfigApplicationContext</h3>
+<p>加载通过Java注解方式配置的Bean上下文。具体使用步骤如下：</p>
+<ol>
+<li>
+<p>定义配置类</p>
+<pre><code class="language-java">@Configuration	//代表该类是一个bean的配置类，类似于xml配置中的&lt;beans&gt;标签
+public class MyConfiguration {
+
+}
+</code></pre>
+<ol>
+<li>
+<p>开启注解支持，配置扫描包路径</p>
+<p>如果是通过ClassPathXmlApplicationContext初始化的上下文，则在xml中添加如下配置：</p>
+<pre><code class="language-xml">&lt;!-- 添加context命名空间 --&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+&lt;!-- 下面两个配置用于xml和注解配置混合使用时，开启注解扫描支持，并指定扫描的包路径 --&gt;
+&lt;!-- 如果指定了扫描包路径，该配置可省略 --&gt;
+&lt;context:annotation-config /&gt; 
+&lt;context:component-scan base-package=&quot;com.lanou3g.spring&quot; /&gt;
+</code></pre>
+<p>如果是通过AnnotationConfigApplicationContext初始化的上下文，则需要在t通过<code>@Configuration</code>注解标注的配置类上添加 @ComponentScans注解：</p>
+<pre><code class="language-java">@Configuration
+@ComponentScan(basePackages = &quot;com.lanou.spring&quot;) //指定扫描包路径
+public class MyConfiguration {
+
+}
+</code></pre>
+</li>
+<li>
+<p>配置Bean</p>
+<p>通过注解方式有两种方式可以将类的对象交由IOC容器中管理</p>
+<ul>
+<li>
+<p>通过@Component的方式定义</p>
+<pre><code class="language-java">@Component
+public class King {
+}
+</code></pre>
+<blockquote>
+<p>适用于我们自己定义的类，或者我们可以修改源代码的类</p>
+</blockquote>
+</li>
+<li>
+<p>通过@Bean注解定义</p>
+<pre><code class="language-java">public class King {
+}
+
+
+@Configuration
+public class MyApplicationContextConf {
+    @Bean
+    public King king() {
+        return new King();
+    }
+}
+</code></pre>
+<blockquote>
+<p>适用于需要将第三方jar包中的类交由ioc管理，因为我们不能修改jar包中的代码，无法给其添加@Component注解</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>加载配置类，初始化IOC容器</p>
+<pre><code class="language-java">// 加载单个注解配置，初始化上下文
+AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyConfiguration.class);
+
+// 加载多个注解配置，初始化上下文
+AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(new Class[]{MyConfiguration1.class, MyConfiguration2.class});
+
+</code></pre>
+</li>
+<li>
+<p>从容器中获取bean</p>
+<pre><code class="language-java">// 通过xml中配置的bean的id或name属性的值获取bean, 返回的类型是Object，需要强转成对象真正的类型
+Man man = (Man) cxt.getBean(&quot;man&quot;); 
+// 通过bean的名称获取bean的同时，指定类型 
+Man man1 = cxt.getBean(&quot;man&quot;,Man.class); 
+// 通过类型从容器中获取bean，如果容器中该类型的bean有多于一个，则会报错
+Man man2 = cxt.getBean(Man.class); 
+
+// 调用对象的方法
+man.eat();
+man.play();
+
+</code></pre>
+</li>
+</ol>
+<h2 id="bean初始化方式">Bean初始化方式</h2>
+<h3 id="构造方法方式最常用">构造方法方式（最常用）</h3>
+<pre><code class="language-xml">&lt;bean id=&quot;xx&quot; class=&quot;com.test.StudentDao&quot; /&gt;
+
+</code></pre>
+<h3 id="静态工厂方法">静态工厂方法</h3>
+<pre><code class="language-xml">&lt;!-- 
+	class：指定的是静态工厂类，而不是将要创建的对象类型
+	factory-method: 指定的是工厂中的静态方法 
+--&gt;
+&lt;bean id=&quot;xx&quot; class=&quot;com.test.StudentDaoFactory&quot; factory-method=&quot;createDao&quot; /&gt;
+
+</code></pre>
+<h3 id="实例工厂方法">实例工厂方法</h3>
+<pre><code class="language-xml">&lt;!-- 
+	class：指定的是实例工厂类 
+--&gt;
+&lt;bean id=&quot;xxFactory&quot; class=&quot;com.test.StudentDaoFactory&quot; /&gt;
+&lt;!-- 
+	factory-bean：指定的是实例工厂对象
+	factory-method: 指定的是工厂中的实例方法 
+--&gt;
+&lt;bean id=&quot;xx&quot; factory-bean=&quot;xxFactory&quot; factory-method=&quot;createDao&quot; /&gt;
+
+</code></pre>
+<h2 id="bean的命名">Bean的命名</h2>
+<p>在XML中配置中可以通过<bean>标签上的id、name属性值给一个bean命名，以便在其他地方引用。</p>
+<p>id属性： bean的唯一名称，只允许出现一个值。且同一个IOC容器中不允许出现两个id值一样的bean。</p>
+<p>name属性： 和id类似也是给bean命名。但是name属性的值可以有多个，多个值之间使用英文逗号(,)或者英文分号(;)或者空格符隔开</p>
+<h2 id="bean的作用域">Bean的作用域</h2>
+<ul>
+<li>
+<p>prototype</p>
+<p>在SpringIOC中prototype scope的意思指的是非单例，就是每次使用该bean的时候都会重新创建一个对象。</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-Hcpmxzii-1571292053411)(https://docs.spring.io/spring/docs/5.2.0.RELEASE/spring-framework-reference/images/prototype.png)]</p>
+</li>
+<li>
+<p>singleton(默认)</p>
+<p>singleton作用域是IOC中默认的作用域，代表单例。每次使用bean的时候，不会重新创建对象，在整个IOC容器中该类型的对象只有一个。</p>
+<figure data-type="image" tabindex="1"><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmcvZG9jcy81LjIuMC5SRUxFQVNFL3NwcmluZy1mcmFtZXdvcmstcmVmZXJlbmNlL2ltYWdlcy9zaW5nbGV0b24ucG5n?x-oss-process=image/format,png" alt="单例作用域示意图"></figure>
+</li>
+</ul>
+<h2 id="bean的生命周期">Bean的生命周期</h2>
+<ul>
+<li>Singleton Bean的生命周期
+<ul>
+<li>初始化时机： 在IOC容器初始化时，就会把配置的所有单例bean实例化。</li>
+<li>销毁时机：在IOC容器销毁时，所有bean的销毁方法会被调用。</li>
+</ul>
+</li>
+<li>Prototype Bean的生命周期
+<ul>
+<li>初始化时机： 在实际使用该bean的时候，比如：getBean、获取依赖此bean的其他bean需要使用</li>
+<li>销毁时机： 在IOC容器销毁时。（但是通过destroy-method指定的声明周期方法不会被调用，也就是说Spring不提供prototypebean完整的生命周期管理）</li>
+</ul>
+</li>
+<li>如何指定生命周期的回调方法
+<ul>
+<li>xml中的init-method、destroy-method</li>
+<li>注解方式@PostConstrutor、@PreDestroy</li>
+</ul>
+</li>
+<li>指定默认的声明周期回调方法
+<ul>
+<li>在xml中，通过在beans标签上添加default-init-method、default-destory-method来指定</li>
+<li>在注解配置中，没有对应的方法可以设置所有bean默认的生命周期回调</li>
+</ul>
+</li>
+</ul>
+<h2 id="bean懒加载">Bean懒加载</h2>
+<p>lazy-init属性</p>
+<p>默认是false</p>
+<blockquote>
+<p>懒加载配置主要是针对单例的bean，因为它默认是在容器初始化时就被实例化了。</p>
+</blockquote>
+<h2 id="如何优雅的停止非web-spring应用">如何优雅的停止非Web Spring应用</h2>
+<p>添加一个shutdown hook。所有派生自ConfigurableApplicationContext接口的实现类都支持此方法</p>
+<pre><code class="language-java">ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext(&quot;xxx.xml&quot;);
+
+ctx.registerShutdownHook(); //注册停止回调
+
+</code></pre>
+<h1 id="spring-di">Spring DI</h1>
+<h2 id="概述">概述</h2>
+<p>DI的全称是Dependency Injection（依赖注入）。IOC是将我们工程中的所有对象交由Spring来管理，DI是此基础，将对象中的属性、依赖的其他对象也管理起来，自动注入到由Spring帮我们管理的对象中。</p>
+<blockquote>
+<p>将要注入的对象和目标对象都必须是由SpringIOC管理的bean.</p>
+</blockquote>
+<h2 id="di的细节实现">DI的细节实现</h2>
+<h3 id="构造参数注入">构造参数注入</h3>
+<p>将一个bean创建过程中构造方法需要的参数，通过Spring DI的方式，自动注入到构造方法中。</p>
+<h3 id="setter注入">Setter注入</h3>
+<p>先通过一个无参的构造方法创建对象，然后通过属性的setter方法，将属性值注入到对象上。</p>
+<h3 id="支持注入的类型">支持注入的类型</h3>
+<ul>
+<li>
+<p>普通字面量</p>
+<ul>
+<li>String</li>
+<li>Integer(int)</li>
+<li>Long(long)</li>
+<li>Byte(byte)</li>
+<li>...</li>
+</ul>
+</li>
+<li>
+<p>集和类型</p>
+<ul>
+<li>
+<p>List</p>
+<pre><code class="language-xml">&lt;bean id=&quot;xxx&quot; class=&quot;xx.xxx.xxx.AA&quot;&gt;&lt;/bean&gt;
+&lt;bean&gt;
+    &lt;property name=&quot;hobbies&quot;&gt;
+    	&lt;list&gt;
+        	&lt;value&gt;简单类型值&lt;/value&gt;
+            &lt;bean&gt;内部bean&lt;/bean&gt;
+            &lt;ref bean=&quot;xxx&quot; /&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+
+</code></pre>
+</li>
+<li>
+<p>Map</p>
+<pre><code class="language-xml">&lt;bean id=&quot;xxx&quot; class=&quot;xx.xxx.xxx.AA&quot;&gt;&lt;/bean&gt;
+&lt;bean&gt;
+    &lt;property name=&quot;gameTitle&quot;&gt;
+    	&lt;map&gt;
+        	&lt;entry key=&quot;王者荣耀&quot; value=&quot;荣耀王者&quot; /&gt;
+            &lt;entry key=&quot;王者荣耀&quot; value-ref=&quot;xxx&quot; /&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+
+</code></pre>
+</li>
+<li>
+<p>Set</p>
+<pre><code class="language-xml">&lt;bean id=&quot;xxx&quot; class=&quot;xx.xxx.xxx.AA&quot;&gt;&lt;/bean&gt;
+&lt;bean&gt;
+    &lt;property name=&quot;hobbies&quot;&gt;
+    	&lt;!-- set用法和List类似， 里面可以注入普通字面量值、也可以是一个bean引用，或者内部bean、或者是一个set、list、Properties  --&gt;
+        &lt;set&gt;
+        	&lt;value&gt;简单类型值&lt;/value&gt;
+            &lt;bean&gt;内部bean&lt;/bean&gt;
+            &lt;ref bean=&quot;xxx&quot; /&gt;
+        &lt;/set&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+
+</code></pre>
+</li>
+<li>
+<p>java.util.Properties</p>
+<pre><code class="language-xml">&lt;!-- props标签是用来注入java.util.Properties类型的属性，用法和map类似，但是属性值是在标签中间写 --&gt;
+&lt;property name=&quot;gameNick&quot;&gt;
+    &lt;props&gt;
+        &lt;prop key=&quot;王者荣耀&quot;&gt;最擅长1V5&lt;/prop&gt;
+        &lt;prop key=&quot;吃鸡&quot;&gt;一枪爆头&lt;/prop&gt;
+    &lt;/props&gt;
+&lt;/property&gt;
+
+</code></pre>
+</li>
+<li>
+<p>注入空置、空字符串</p>
+<pre><code class="language-xml">&lt;property name=&quot;gameNick&quot;&gt;
+    &lt;null /&gt;
+&lt;/property&gt;
+
+
+&lt;property name=&quot;gameNick&quot; value=&quot;&quot; /&gt;
+
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="自动装配">自动装配</h3>
+<h5 id="自动装配支持的策略">自动装配支持的策略</h5>
+<ul>
+<li>
+<p>byType</p>
+<p>按照类型去IOC容器中找需要的bean，如果找到一个，则自动装配；如果没找到，不注入此属性；如果找到了多个匹配类型的bean，就会报错。</p>
+</li>
+<li>
+<p>byName</p>
+<p>按照名称去IOC容器中找需要的bean，如果找到就自动注入；如果没找到，不注入此属性。</p>
+</li>
+<li>
+<p>constructor</p>
+<p>工作原理和byType类似，也是按照类型去IOC容器中找对应的bean。不同的是注入的地方不是setter，而是构造方法的参数。</p>
+</li>
+<li>
+<p>no  （默认值）</p>
+<p>如果没有打开自动注入，默认Spring不会自动装配需要的属性。</p>
+</li>
+</ul>
+<h2 id="xml方式的di">XML方式的DI</h2>
+<h3 id="构造参数注入-2">构造参数注入</h3>
+<ul>
+<li>
+<p>常规写法</p>
+<pre><code class="language-xml">&lt;bean id=&quot;xx&quot; class=&quot;&quot; /&gt;
+&lt;bean class=&quot;com.test.XXX&quot;&gt;
+	&lt;constructor-arg name=&quot;age&quot; value=&quot;45&quot; /&gt;
+    &lt;constructor-arg name=&quot;x&quot; ref=&quot;xx&quot; /&gt;  &lt;!-- 注入引用的bean --&gt;
+    &lt;constructor-arg name=&quot;&quot;&gt;	&lt;!-- 注入内部bean --&gt;
+    	&lt;bean&gt;&lt;/bean&gt;
+    &lt;/constructor-arg&gt;
+    &lt;constructor-arg name=&quot;&quot;&gt;	&lt;!-- 注入list类型构造参数 --&gt;
+    	&lt;list&gt;
+        	
+        &lt;/list&gt;
+    &lt;/constructor-arg&gt;
+    ....
+&lt;/bean&gt;
+
+</code></pre>
+</li>
+<li>
+<p>c命名空间简写</p>
+<pre><code class="language-xml">&lt;bean id=&quot;xx&quot; class=&quot;&quot; /&gt;
+&lt;bean class=&quot;com.test.XXX&quot; c:age=&quot;45&quot; c:x-ref=&quot;xx&quot; /&gt;
+
+</code></pre>
+</li>
+</ul>
+<h3 id="setter方式注入">setter方式注入</h3>
+<p>setter注入能够注入的类型以及写法基本和构造参数注入时的写法一致，只不过将<construtor-arg>标签换成了<property></p>
+<ul>
+<li>
+<p>常规用法</p>
+<pre><code class="language-xml">&lt;bean id=&quot;xx&quot; class=&quot;&quot; /&gt;
+&lt;bean class=&quot;com.test.XXX&quot;&gt;
+	&lt;property name=&quot;age&quot; value=&quot;45&quot; /&gt;
+    &lt;property name=&quot;x&quot; ref=&quot;xx&quot; /&gt;  &lt;!-- 注入引用的bean --&gt;
+    &lt;property name=&quot;&quot;&gt;	&lt;!-- 注入内部bean --&gt;
+    	&lt;bean&gt;&lt;/bean&gt;
+    &lt;/property&gt;
+    &lt;property name=&quot;&quot;&gt;	&lt;!-- 注入list类型构造参数 --&gt;
+    	&lt;list&gt;
+        	
+        &lt;/list&gt;
+    &lt;/property&gt;
+    ....
+&lt;/bean&gt;
+
+</code></pre>
+</li>
+<li>
+<p>p命名空间简写</p>
+<pre><code class="language-xml">&lt;bean id=&quot;xx&quot; class=&quot;&quot; /&gt;
+&lt;bean class=&quot;com.test.XXX&quot; p:age=&quot;45&quot; p:x-ref=&quot;xx&quot; /&gt;
+
+</code></pre>
+</li>
+</ul>
+<h3 id="开启自动装配">开启自动装配</h3>
+<pre><code class="language-xml">&lt;!-- 
+通过给当前的bean添加autowire属性开启自动注入
+可选的值：参见自动装配章节
+ --&gt;
+&lt;bean id=&quot;xx&quot; class=&quot;&quot; autowire=&quot;&quot; /&gt;
+
+</code></pre>
+<h3 id="提高自动装配时的权重">提高自动装配时的权重</h3>
+<pre><code class="language-xml">&lt;!-- 当其他的bean中需要注入一个Test类型的属性，而满足条件的bean有多个时，会优先注入primary=&quot;true&quot;的bean --&gt;
+&lt;bean id=&quot;xx&quot; class=&quot;com.Test&quot; primary=&quot;true&quot; /&gt;
+
+</code></pre>
+<h3 id="按类型自动装配时不参与候选">按类型自动装配时，不参与候选</h3>
+<pre><code class="language-xml">&lt;!-- 当其他的bean中需要注入一个Test类型的属性，而满足条件的bean有多个时，autowire-candidate=&quot;false&quot;的bean会自动退出候选序列 --&gt;
+&lt;bean id=&quot;xx&quot; class=&quot;com.Test&quot; autowire-candidate=&quot;false&quot; /&gt;
+
+</code></pre>
+<h2 id="注解方式的di">注解方式的DI</h2>
+<ul>
+<li>
+<p>构造参数注入</p>
+<p>在构造方法上添加 <code>@Autowired</code>注解，构造方法的参数就会自动注入进来</p>
+</li>
+<li>
+<p>setter方法注入</p>
+<p>方法有两种：</p>
+<ol>
+<li>在属性的setter方法上添加<code>@Autowired</code>注解</li>
+<li>在属性上添加<code>@Autowired</code>注解</li>
+</ol>
+</li>
+</ul>
+<h3 id="提高自动装配时的权重-2">提高自动装配时的权重</h3>
+<pre><code class="language-java">@Primary
+@Component
+public class Test {
+
+
+}
+
+public class Main {
+    
+    @Primary
+    @Bean
+    public void test() {
+        return new Test();
+    }
+    
+}
+
+</code></pre>
+<h2 id="注入外部property文件中的属性值">注入外部Property文件中的属性值</h2>
+<h3 id="在xml中的配置方式">在XML中的配置方式</h3>
+<pre><code class="language-xml">&lt;!-- 添加context命名空间 --&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+
+&lt;!-- 导入外部properties文件到ioc上下文中 --&gt;
+&lt;context:property-placeholder location=&quot;jdbc.properties&quot; /&gt;
+
+&lt;!-- 使用占位符的方式获取properties文件中的属性值 --&gt;
+&lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot; init-method=&quot;init&quot; destroy-method=&quot;close&quot;&gt;
+    &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot; /&gt;
+    &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot; /&gt;
+    &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot; /&gt;
+    &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot; /&gt;
+&lt;/bean&gt;
+
+</code></pre>
+<h3 id="在注解中的配置方式">在注解中的配置方式</h3>
+<p>通过<code>@PropertySource</code>注解可以将外部properties文件导入到上下文中，通过<code>@Value</code>注解可以获取properties文件中的属性值，并注入到当前类的属性中</p>
+<pre><code class="language-java">@Configuration
+@ComponentScan(basePackages = &quot;com.lanou.spring&quot;)
+@PropertySource(&quot;classpath:/jdbc.properties&quot;)
+public class MyConfiguration {
+
+	@Value(&quot;${jdbc.url}&quot;)
+    private String url;
+    @Value(&quot;${jdbc.user}&quot;)
+    private String username;
+    @Value(&quot;${jdbc.password}&quot;)
+    private String password;
+    @Value(&quot;${jdbc.driver}&quot;)
+    private String driverClassName;
+}
+
+</code></pre>
+<h1 id="springaop">SpringAOP</h1>
+<h2 id="概述-2">概述</h2>
+<p>AOP的全称是Aspect Oriented  Programming(面向切面编程)</p>
+<p>OOP语言提供了类与类之间纵向的关系（继承、接口），而AOP补充了横向的关系（比如在不改变目标类中源代码的情况下给com.john.demo.dao包下所有类中以insert和update开头的方法添加事务管理）</p>
+<h3 id="springaop和aspectj的区别">SpringAOP和AspectJ的区别</h3>
+<p>AspectJ是一个专门主打面向切面编程的框架。 它是使用一种特殊的语言(扩展自Java语言)来编写切面代码，后缀是.aj格式，并且需要使用专门的编译器将其编译成jvm可以运行的class文件。</p>
+<p>SpringAOP底层也是使用了AspectJ的方案，但是在上层做了很多封装层面的工作，可以让开发人员直接使用Java代码来编写切面。并且由于使用的是标准的Java语言，所以并不需要在额外安装一个专门的编译器。但是由于开发人员直接接触的是Spring AOP，那么凡是Spring中没有实现的那些AOP功能，我们就用不了了，这种情况下只能跟产品经理撕逼或者去学习原生的AspectJ。</p>
+<h2 id="aop的术语">AOP的术语</h2>
+<ul>
+<li>
+<p>切面（Aspect）</p>
+<p>简单来说，切面就是我们要往目标代码中插入进去的代码。</p>
+</li>
+<li>
+<p>连接点（Join Pointer）</p>
+<p>理论上所有可能会被切入的地方都可以称之为连接点</p>
+</li>
+<li>
+<p>切入点(Pointcut)</p>
+<p>选择某个连接点切入，将切面代码织入进去。这个连接点就叫做切入点。</p>
+</li>
+<li>
+<p>织入(Weaving)</p>
+<p>把切面代码糅合到目标代码中的过程就是织入。</p>
+</li>
+<li>
+<p>通知(Advice)</p>
+<p>通知决定了切面代码织入到目标代码中后，运行的时机(比如是在目标方法执行前，还是执行后)。</p>
+</li>
+</ul>
+<h2 id="在spring中使用aop">在Spring中使用AOP</h2>
+<h3 id="基于xml方式使用">基于XML方式使用</h3>
+<ol>
+<li>
+<p>把aop的schema引入</p>
+<pre><code class="language-xml">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;
+
+</code></pre>
+</li>
+<li>
+<p>创建一个切面类，并且以bean的方式配置到IOC容器中</p>
+<pre><code class="language-java">package com.lanou3g.spring;
+public class MyAspect {
+
+    public void wakeup() {
+        System.out.println(&quot;[前置通知]我刚学习SpringAOP睡着了，刚才谁打了我一下？&quot;);
+    }
+
+
+    public void goToBed() {
+        System.out.println(&quot;[后置通知]SpringAOP太难了，一不小心又睡着了&quot;);
+    }
+
+
+    public void afterRetuing(Object message) {
+        System.out.println(&quot;[后置返回通知]方法执行已经return了，方法返回值是：&quot; + message);
+    }
+
+    public void afterThrowing(Throwable ex) {
+        System.out.println(&quot;[后置异常通知]方法执行出现异常，异常原因：&quot; + ex.getMessage());
+    }
+
+    /**
+     * 环绕通知
+     * 可以接受一个ProceedingJoinPoint参数
+     *      通过此参数可以获取到被切入方法的所有信息
+     *      还可以通过此参数来决定是否调用目标方法
+     */
+    public void aroundAdvice(ProceedingJoinPoint joinPoint) {
+
+        // 连接点参数可以获取到被切入方法的所有信息
+        // 这里演示了如何获取被切入方法的名称
+        String targetMethodName = joinPoint.getSignature().getName();
+        System.out.println(&quot;[环绕通知]被切入的方法名：&quot; + targetMethodName);
+
+        //
+        System.out.println(&quot;[环绕通知]即将开始新的一天， 早起的鸟儿有虫吃！&quot;);
+        try {
+            joinPoint.proceed();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        System.out.println(&quot;[环绕通知]这真是充实的一天， 早睡早起，方能养生！&quot;);
+    }
+}
+
+</code></pre>
+<pre><code class="language-xml">&lt;bean id=&quot;myAspect&quot; class=&quot;com.lanou3g.spring.MyAspect&quot; /&gt;
+
+</code></pre>
+</li>
+<li>
+<p>使用<a href="aop:config">aop:config</a>标签配置aop（将切面、切入点、通知结合到一起）</p>
+<ol>
+<li>定义切入点表达式</li>
+<li><a href="aop:aspect">aop:aspect</a>
+<ol>
+<li>引用外部定义的切面bean</li>
+<li>配置通知，引用切入点表达式</li>
+</ol>
+</li>
+</ol>
+<pre><code class="language-xml">&lt;aop:config&gt;
+    &lt;!-- 切入点表示匹配com.lanou3g.spring包下的所有类中所有以oneDay开头的方法，方法的参数、返回值不限 --&gt;
+	&lt;aop:pointcut id=&quot;myPointcut&quot; expression=&quot;execution(* com.lanou3g.spring..*.oneDay*(..))&quot; /&gt;
+    &lt;aop:aspect ref=&quot;myAspect&quot;&gt;
+    	&lt;!-- 无论是否出现异常，只要被切入的方法开始运行，都会触发此通知 --&gt;
+            &lt;aop:before method=&quot;wakeup&quot; pointcut-ref=&quot;beforeOneDay&quot; /&gt;
+            &lt;!-- 无论是否出现异常，只要被切入的方法运行结束，都会触发此通知 --&gt;
+            &lt;aop:after method=&quot;goToBed&quot; pointcut-ref=&quot;beforeOneDay&quot; /&gt;
+            &lt;!--
+            可以最大限度的对被切入方法附加功能，在方法执行前、后都可以通知（无论是否出现异常）
+            ，还可以获取到被切入方法的所有信息，包括是否调用被切入的方法
+            --&gt;
+            &lt;aop:around method=&quot;aroundAdvice&quot; pointcut-ref=&quot;beforeOneDay&quot; /&gt;
+            &lt;!-- 被切入的方法正常返回值以后，会触发此通知 --&gt;
+            &lt;aop:after-returning method=&quot;afterRetuing&quot; pointcut-ref=&quot;beforeOneDay&quot; returning=&quot;message&quot; /&gt;
+            &lt;!-- 被切入的方法抛出异常以后，会触发此通知，并且不会触发after-returning --&gt;
+            &lt;aop:after-throwing method=&quot;afterThrowing&quot; pointcut-ref=&quot;beforeOneDay&quot; throwing=&quot;ex&quot; /&gt;
+    &lt;/aop:aspect&gt;
+&lt;/aop:config&gt;
+
+</code></pre>
+</li>
+</ol>
+<h3 id="基于注解方式使用">基于注解方式使用</h3>
+<ol>
+<li>
+<p>开启AOP注解支持</p>
+<p>方式一：注解的方式</p>
+<pre><code class="language-xml">@Configuration
+@EnableAspectJAutoProxy
+public class AppConfig {
+
+}
+
+</code></pre>
+<p>方式二：xml中开启</p>
+<pre><code class="language-xml">&lt;aop:aspectj-autoproxy/&gt;
+
+</code></pre>
+<ol start="2">
+<li>定义切面类</li>
+</ol>
+<pre><code class="language-java">/**
+ * 该切面用来插入起床的逻辑
+ */
+@Aspect
+@Component  //@Aspect注解没有将bean交给ioc容器管理的功能
+public class MyAspect {
+
+    @Before(&quot;com.lanou3g.spring.aop.MyPointcut.allOneDayMehtod()&quot;)
+    public void wakeup() {
+        System.out.println(&quot;[前置通知]我刚学习SpringAOP睡着了，刚才谁打了我一下？&quot;);
+    }
+
+    @After(&quot;com.lanou3g.spring.aop.MyPointcut.allOneDayMehtod()&quot;)
+    public void goToBed() {
+        System.out.println(&quot;[后置通知]SpringAOP太难了，一不小心又睡着了&quot;);
+    }
+
+    @AfterReturning(value = &quot;com.lanou3g.spring.aop.MyPointcut.allOneDayMehtod()&quot;, returning = &quot;message&quot;)
+    public void afterRetuing(Object message) {
+        System.out.println(&quot;[后置返回通知]方法执行已经return了，方法返回值是：&quot; + message);
+    }
+
+    @AfterThrowing(value = &quot;com.lanou3g.spring.aop.MyPointcut.allOneDayMehtod()&quot;, throwing = &quot;ex&quot;)
+    public void afterThrowing(Throwable ex) {
+        System.out.println(&quot;[后置异常通知]方法执行出现异常，异常原因：&quot; + ex.getMessage());
+    }
+
+    /**
+     * 环绕通知
+     * 可以接受一个ProceedingJoinPoint参数
+     *      通过此参数可以获取到被切入方法的所有信息
+     *      还可以通过此参数来决定是否调用目标方法
+     */
+//    @Around(&quot;com.lanou3g.spring.aop.MyPointcut.allOneDayMehtod()&quot;)
+    public Object aroundAdvice(ProceedingJoinPoint joinPoint) {
+
+        // 连接点参数可以获取到被切入方法的所有信息
+        // 这里演示了如何获取被切入方法的名称
+        String targetMethodName = joinPoint.getSignature().getName();
+        System.out.println(&quot;[环绕通知]被切入的方法名：&quot; + targetMethodName);
+
+        //
+        System.out.println(&quot;[环绕通知]即将开始新的一天， 早起的鸟儿有虫吃！&quot;);
+        Object ret = null;
+        try {
+            ret = joinPoint.proceed();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        System.out.println(&quot;[环绕通知]这真是充实的一天， 早睡早起，方能养生！&quot;);
+        return ret;
+    }
+}
+
+</code></pre>
+<blockquote>
+<p>注意：@Aspect注解没有将bean交给ioc容器管理的功能，我们需要额外添加一个@Component注解</p>
+</blockquote>
+<ol start="3">
+<li>定义切入点</li>
+</ol>
+<p>官方建议我们将所有的切入点统一定义到一个地方管理，在配置通知时通过引入的方式来使用。方便后期维护（一处修改，处处生效）</p>
+<pre><code class="language-java">@Component
+public class MyPointcut {
+    // 通过@Pointcut注解定义一个切入点
+    @Pointcut(&quot;execution(* oneDay(..))&quot;)
+    public void allOneDayMehtod() {}
+}
+
+</code></pre>
+<ol start="4">
+<li>在切面类中添加要切入的代码</li>
+</ol>
+<blockquote>
+<p>参见定义切面部分</p>
+</blockquote>
+<ol start="5">
+<li>在切入的代码方法上添加通知的注解</li>
+</ol>
+<blockquote>
+<p>参见定义切面部分</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="spring-aop代理机制实现原理">Spring AOP代理机制实现原理</h2>
+<p>Spring AOP底层支持两种动态实现：</p>
+<ul>
+<li>JDK原生的动态代理</li>
+<li>Cglib动态代理</li>
+</ul>
+<blockquote>
+<p>Spring在创建代理对象时，会自动选择要使用哪种代理方案。如果被代理的类实现了接口，那么就用JDK动态代理； 反之就使用Cglib动态代理</p>
+</blockquote>
+<h3 id="jdk原生动态代理">JDK原生动态代理</h3>
+<p>区别静态代理每代理一个类就需要创建一个专门的代理类，动态代理只需要一个通用的代理类，即可代理所有实现了接口的类。</p>
+<p>关键的API:</p>
+<ul>
+<li>
+<p>InvocationHandler: 回调接口</p>
+<pre><code class="language-java">public class MyProxy implements InvacationHandler {
+    /**
+     *  此方法在通过代理对象去调用目标方法时，会自动进入此方法(实际上调用的就是此方法)，目标方法时在此方法中调用的(当然，也可以不调用)。
+
+     *  第一个参数proxy: 代理对象(注意不是目标对象)
+     *  第二个参数method: 被代理的方法对象(方法本身)
+     *  第三个参数args: 代理对象调用时穿进来的参数，用于在代理方法中调用原方法时传入
+     *
+     */
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+            String methodName = method.getName();
+
+            // 模拟在方法运行前执行的操作
+            System.out.println(methodName+ &quot; 开始执行了&quot;);
+
+            Object retVal =  method.invoke(target, args);
+
+            // 模拟在方法运行后执行的操作
+            System.out.println(methodName+ &quot; 执行结束了，返回值： &quot; + retVal);
+
+            return retVal;
+    }
+}
+
+</code></pre>
+</li>
+<li>
+<p>Proxy： 创建代理类的工厂类，用于动态创建代理对象</p>
+<ul>
+<li>
+<p>如何创建代理对象</p>
+<pre><code class="language-java">// 1. 创建代理对象
+// 参数说明：
+//		第一个参数是类加载器
+//		第二个参数是被代理类实现的接口，可以写多个(写几个接口就代表你需要代理从几个接口中实现的方法)
+//        第三个参数是一个实现了InvacationHandler接口的对象，用于回调
+//        当我们通过代理对象去调用目标方法时，会自动执行第三个参数传进来的回调方法
+		
+Object obj = Proxy.newProxyInstance(classLoader, interfaces..., callback);
+
+// 2. 将类型强转成需要代理类的接口类型
+Man man = (Man)obj;
+
+// 3. 通过代理对象去调用原本想调用的方法
+man.oneDay();
+
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="cglib动态代理">Cglib动态代理</h3>
+<p>关键的API</p>
+<ul>
+<li>
+<p>Enhancer: 该类负责动态创建代理</p>
+<ul>
+<li>如何创建代理类</li>
+</ul>
+<pre><code class="language-java">Enhancer enhancer = new Enhancer();	//类似于一个创建代理对象的工厂类
+// 下面三行类似于给工厂对象设置参数
+enhancer.setSuperclass(clazz);	// 让动态创建出来的代理类继承指定的类
+enhancer.setCallback(this);	 // 指定调用代理对象的方法时，进入的回调方法
+return enhancer.create();	// 创建代理对象
+
+</code></pre>
+</li>
+<li>
+<p>MehtodInctercepor: 执行代理对象方法时的回调，作用类似于JDK动态代理中的InvacationHandler</p>
+<pre><code class="language-java">public class MyCglibProxy implements MethodInterceptor {
+
+    // 创建动态代理类的工厂对象
+    private Enhancer enhancer = new Enhancer();
+    public Object getProxy(Class clazz) {
+        enhancer.setSuperclass(clazz);
+        enhancer.setCallback(this);
+        enhancer.setUseCache(false);
+        return enhancer.create();
+    }
+
+    /**
+     *  此方法在通过代理对象去调用目标方法时，会自动进入此方法(实际上调用的就是此方法)，目标方法时在此方法中调用的(当然，也可以不调用)。
+
+     *  第一个参数proxy: 代理对象(注意不是目标对象)
+     *  第二个参数method: 被代理的方法对象(方法本身)
+     *  第三个参数args: 代理对象调用时穿进来的参数，用于在代理方法中调用原方法时传入
+     *  第四个参数methodProxy: 是Cglib提供的一个方法代理对象，代理了第二个参数method,它可以实现直接调用传进来对象的父类上的方法
+     */ 
+    @Override
+    public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+        String methodName = method.getName();
+        System.out.println(methodName + &quot;开始执行了&quot;);
+        //代理类对象实例调用父类方法（其实就是调用被代理类上的方法实现）
+        Object retVal = methodProxy.invokeSuper(proxy, args);
+        System.out.println(methodName + &quot;执行结束了&quot;);
+        return retVal;
+    }
+}
+
+</code></pre>
+</li>
+</ul>
+<h3 id="两种动态代理对比">两种动态代理对比</h3>
+<ul>
+<li>JDK动态代理要求被代理的类必须是至少实现一个接口才能代理</li>
+<li>Cglib动态代理没有上述限制，也就是说他可以代理实现了接口的类，也可以代理没实现接口的类</li>
+<li>JDK动态代理创建代理对象的原理是让创建的代理对象实现和被代理类一样的接口，从而代理接口中的方法</li>
+<li>Cglib动态代理创建代理对象的原理是让创建的代理对象继承被代理的目标类，从而代理从父类(被代理的类)中继承过来的方法</li>
+</ul>
+<h3 id="强制使用cglib方式创建代理">强制使用Cglib方式创建代理</h3>
+<p>如果上下文入口是XML配置文件</p>
+<pre><code class="language-xml">&lt;!-- 方式一. 局部 --&gt;
+&lt;aop:config proxy-target-class=&quot;true&quot;&gt;
+    &lt;!-- other beans defined here... --&gt;
+&lt;/aop:config&gt;
+
+&lt;!-- 方式二. 全局，在开启注解支持的地方添加属性(通过注解配置的AOP) --&gt;
+&lt;aop:aspectj-autoproxy proxy-target-class=&quot;true&quot;/&gt;
+
+</code></pre>
+<p>如果上下文入口是注解类</p>
+<pre><code class="language-java">@EnableAspectJAutoProxy(proxyTargetClass = true) // 开启AOP注解支持,并强制使用cglib代理
+public class MyConfiguration {
+}
+
+</code></pre>
+<h2 id="spring声明式事务">Spring声明式事务</h2>
+<h3 id="在xml中使用声明式事务的步骤">在Xml中使用声明式事务的步骤</h3>
+<ol>
+<li>
+<p>添加tx schema</p>
+<pre><code class="language-xml">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:tx=&quot;http://www.springframework.org/schema/tx&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+</code></pre>
+</li>
+<li>
+<p>配置数据源</p>
+<pre><code class="language-xml">&lt;!-- 导入外部properties文件 --&gt;
+&lt;context:property-placeholder location=&quot;jdbc.properties&quot; /&gt;
+&lt;!-- 配置数据库连接池 --&gt;
+&lt;bean id=&quot;dataSource&quot; class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;
+    &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot; /&gt;
+    &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot; /&gt;
+    &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot; /&gt;
+    &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot; /&gt;
+&lt;/bean&gt;
+
+</code></pre>
+</li>
+<li>
+<p>配置事务管理器</p>
+<pre><code class="language-xml">&lt;!-- 第一步： 配置事务管理器 --&gt;
+&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;&gt;
+    &lt;!-- 事务管理器必须依赖数据源 --&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;
+&lt;/bean&gt;
+
+</code></pre>
+</li>
+<li>
+<p>配置事务通知，同时还能指定一些事务相关的具体属性</p>
+<pre><code class="language-xml">&lt;!-- 第二步： 配置事务通知（不同于我们自己之前配置的前置、后置通知，这个是Spring帮我们封装好的，专门用来做事务管理的通知） --&gt;
+&lt;!-- tx:advice封装了切面和通知相关的逻辑，不需要我们自己再去编写切面和通知的逻辑 --&gt;
+&lt;tx:advice id=&quot;txAdvice&quot; transaction-manager=&quot;transactionManager&quot;&gt;
+    &lt;tx:attributes&gt;
+        &lt;!-- 只有触发了特定异常才回滚事务 --&gt;
+        &lt;tx:method name=&quot;*&quot; rollback-for=&quot;Exception&quot; /&gt;
+        &lt;!-- 触发以下特定异常，不会回滚事务 --&gt;
+        &lt;tx:method name=&quot;*&quot; no-rollback-for=&quot;NullPointerException&quot; /&gt;
+        &lt;!-- 配置只读事务，只能查询，不能修改 --&gt;
+        &lt;tx:method name=&quot;find*&quot; read-only=&quot;true&quot; /&gt;
+        &lt;!-- 配置事务超时时间，超时后事务自动回滚，单位：秒，
+                仅当传播行为propagation设置成REQUIRED或者REQUIRES_NEW的时候有效 --&gt;
+        &lt;tx:method name=&quot;find*&quot; timeout=&quot;500&quot; /&gt;
+    &lt;/tx:attributes&gt;
+&lt;/tx:advice&gt;
+
+</code></pre>
+</li>
+<li>
+<p>配置事务的AOP</p>
+<p>其实就是将Spring给我们封装好的事务切面、通知和切入点整合到一起，通过AOP的方式来工作。</p>
+<pre><code class="language-xml">&lt;!-- 第三步： 配置AOP --&gt;
+&lt;aop:config&gt;
+    &lt;aop:pointcut id=&quot;allServiceMethod&quot; expression=&quot;execution(* com.lanou3g.spring.aoptx..*.*(..))&quot;/&gt;
+    &lt;!-- 这个advisor类似于我们手工配置的aop:aspect，它将切面、通知和切入点做了一个整合 --&gt;
+    &lt;aop:advisor advice-ref=&quot;txAdvice&quot; pointcut-ref=&quot;allServiceMethod&quot; /&gt;
+&lt;/aop:config&gt;
+
+</code></pre>
+</li>
+</ol>
+<h3 id="在注解中使用声明式事务的步骤">在注解中使用声明式事务的步骤</h3>
+<ol>
+<li>
+<p>开启注解事务支持</p>
+<p>开启注解事务支持有两种方式</p>
+<p>方式一： 在xml配置文件中开启</p>
+<pre><code class="language-xml">&lt;!-- 开启事务注解扫描 --&gt;
+&lt;!-- 如果定义的事务管理器名称就叫transactionManager，则此属性可以省略 --&gt;
+&lt;tx:annotation-driven transaction-manager=&quot;txManager&quot; /&gt;
+
+</code></pre>
+<p>方式二：在注解配置类上开启，添加<code>@EnableTransactionManagement</code>注解</p>
+<pre><code class="language-java">@Configuration
+@EnableTransactionManagement
+@ComponentScan(basePackages = &quot;com.lanou3g.spring&quot;)
+@PropertySource(&quot;classpath:jdbc.properties&quot;)
+public class MyConfiguration {
+    
+}
+
+</code></pre>
+</li>
+<li>
+<p>配置数据源</p>
+<pre><code class="language-java">/**
+* 配置数据源
+* @return
+*/
+@Bean
+public DataSource dataSource() {
+    DriverManagerDataSource dataSource = new DriverManagerDataSource();
+    dataSource.setDriverClassName(driver);
+    dataSource.setUrl(url);
+    dataSource.setUsername(user);
+    dataSource.setPassword(password);
+    return dataSource;
+}
+
+</code></pre>
+</li>
+<li>
+<p>配置事务管理器</p>
+<pre><code class="language-java">/**
+ * 配置事务管理器
+ * @param dataSource
+ * @return
+ */
+@Bean
+public PlatformTransactionManager transactionManager(DataSource dataSource) {
+    return new DataSourceTransactionManager(dataSource);
+}
+
+</code></pre>
+</li>
+<li>
+<p>在需要事务管理的方法上添加<code>@Transactional</code>注解</p>
+<pre><code class="language-java">// 凡是xml中支持的事务属性，在注解中都有对应的属性来实现，具体属性含义参见xml配置
+@Transactional(
+    rollbackFor = Exception.class   // 指定哪些异常可以触发事务回滚
+    //noRollbackFor =   // 指定事务不回滚哪些异常
+    //            isolation =   // 指定事务隔离级别
+    //            timeout =     // 指定事务超时时间
+    //            propagation = // 指定事务传播行为
+    //            readOnly = // 指定只读事务
+)
+public void login(User user) {
+
+    // Service中只写业务操作代码，不需要关注事务管理
+    // 1 更新用户表用户最后登录时间
+    user.setLastLoginTime(new Timestamp(System.currentTimeMillis()));
+    userDao.updateUser(user);
+
+    int ret = 9 / 0;  // 模拟操作异常
+
+    // 2 插入登录日志
+    SystemLog log = new SystemLog();
+    log.setAction(&quot;login&quot;);
+    log.setOperator(user.getUserName());
+    log.setCreateTime(new Date());
+    systemLogDao.insertLog(log);
+}
+
+</code></pre>
+<blockquote>
+<p>@Transactional注解除了可以在方法上使用外，还可以在类上。表示类中所有的公开方法都添加此事务管理</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="xml方式的事务和注解方式的事务该选哪个">XML方式的事务和注解方式的事务该选哪个？</h3>
+<ul>
+<li>XML方式的事务
+<ul>
+<li>优点是对代码没有任何侵入性，修改事务相关逻辑时，只需要修改配置文件，无需重新编译代码。另外XML方式可以通过切入点表达式灵活的对大量的类添加事务管理。</li>
+<li>缺点是配置相较于注解方式麻烦一些</li>
+</ul>
+</li>
+<li>注解方式的事务
+<ul>
+<li>优点是配置简单，使用方便</li>
+<li>缺点是无法统一对大量的方法添加事务管理，需要在添加事务的类或方法上一个个添加事务注解，当工程中需要事务管理的代码很多时，工作量就比XML方式还要大。</li>
+</ul>
+</li>
+</ul>
+<h3 id="spring事务的传播行为和隔离级别">Spring事务的传播行为和隔离级别</h3>
+<h4 id="事务的传播行为">事务的传播行为</h4>
+<p>事务传播描述的事务与事务之间的传播关系， 常见的场景是在一个嵌套调用的方法中，外部方法和内部每个方法都添加了事务管理， 不同的传播行为配置，决定了最终是这些方法是使用同一个事务，还是在不同的事务中运行。</p>
+<ul>
+<li>
+<p>​</p>
+<p>支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。</p>
+</li>
+<li>
+<p>PROPAGATION_SUPPORTS</p>
+<p>支持当前事务，如果当前没有事务，就以非事务方式执行。</p>
+</li>
+<li>
+<p>PROPAGATION_MANDATORY</p>
+<p>支持当前事务，如果当前没有事务，就抛出异常。</p>
+</li>
+<li>
+<p>PROPAGATION_REQUIRES_NEW</p>
+<p>新建事务，如果当前存在事务，把当前事务挂起。</p>
+</li>
+<li>
+<p>PROPAGATION_NOT_SUPPORTED</p>
+<p>以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</p>
+</li>
+<li>
+<p>PROPAGATION_NEVER</p>
+<p>以非事务方式执行，如果当前存在事务，则抛出异常。</p>
+</li>
+<li>
+<p>PROPAGATION_NESTED</p>
+<p>如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与PROPAGATION_REQUIRED类似的操作。</p>
+</li>
+</ul>
+<h4 id="事务的隔离级别">事务的隔离级别</h4>
+<p>事务的隔离级别描述的是多个事务之间的可见性问题。比如一个事务还未提交时，其他事务是否能看到被未提交事务修改的数据。</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISOLATION_DEFAULT</td>
+<td>这是一个PlatfromTransactionManager默认的隔离级别，使用数据库默认的事务隔离级别.</td>
+</tr>
+<tr>
+<td>ISOLATION_READ_UNCOMMITTED</td>
+<td>这是事务最低的隔离级别，它允许另外一个事务可以看到这个事务未提交的数据。 这种隔离级别会产生脏读，不可重复读和幻像读。</td>
+</tr>
+<tr>
+<td>ISOLATION_READ_COMMITTED</td>
+<td>保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据。 这种事务隔离级别可以避免脏读出现，但是可能会出现不可重复读和幻像读。</td>
+</tr>
+<tr>
+<td>ISOLATION_REPEATABLE_READ</td>
+<td>这种事务隔离级别可以防止脏读、不可重复读。但是可能出现幻像读。 它保证了一个事务不能修改已经由另一个事务读取但还未提交的数据</td>
+</tr>
+<tr>
+<td>ISOLATION_SERIALIZABLE</td>
+<td>这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。 除了防止脏读，不可重复读外，还避免了幻像读。</td>
+</tr>
+</tbody>
+</table>
+<h5 id="关键词">关键词：</h5>
+<ul>
+<li>幻读（虚读）</li>
+</ul>
+<blockquote>
+<p>事务1读取记录时事务2增加了记录并提交，事务1再次读取时可以看到事务2新增的记录；<br>
+通俗的说，幻读就是指在一个事务内读取了别的事务插入的数据，导致前后读取不一致(insert)</p>
+</blockquote>
+<ul>
+<li>不可重复读取</li>
+</ul>
+<blockquote>
+<p>事务1读取记录时，事务2更新了记录并提交，事务1再次读取时可以看到事务2修改后的记录；<br>
+在一个事务内读取表中的某一行数据,多次读取结果不同.一个事务读取到了另一个事务提交后的数据.</p>
+</blockquote>
+<ul>
+<li>脏读</li>
+</ul>
+<blockquote>
+<p>事务1更新了记录，但没有提交，事务2读取了更新后的行，然后事务T1回滚，现在T2读取无效。<br>
+通俗的说，脏读就是指一个事务读取了一个未提交事务的数据</p>
+</blockquote>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[今日打卡Jquery]]></title>
+        <id>https://yihuaikun.github.io/post/jin-ri-da-qia-jquery</id>
+        <link href="https://yihuaikun.github.io/post/jin-ri-da-qia-jquery">
+        </link>
+        <updated>2019-12-12T12:08:45.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="jquery是什么">Jquery是什么</h1>
+<p>​	 jQuery是一套跨浏览器的JavaScript库，简化HTML与JavaScript之间的操作。[1]由约翰·雷西格（John Resig）在2006年1月的BarCamp NYC上发布第一个版本。当前是由Dave Methvin领导的开发团队进行开发。全球前10,000个访问最高的网站中，有65%使用了jQuery，是当前最受欢迎的JavaScript库.</p>
+<h1 id="为什么要学习jquery">为什么要学习jquery</h1>
+<p>​	在使用javaScript开发的过程中,有许多的缺点</p>
+<pre><code>1.查找元素的方法太少,麻烦.
+2.遍历伪数组很麻烦,通常要嵌套一大推循环
+3.有兼容性问题
+4.想要实现动画效果也很麻烦
+5.代码冗余
+</code></pre>
+<p>jquery有哪些优点呢:</p>
+<pre><code>1.查找元素的方法多种多样
+2.拥有隐式迭代性,因此不再需要手写for循环了
+3.完全没有兼容性问题
+4.实现动画很简单,而且功能很强大
+5.代码简单,粗暴
+</code></pre>
+<h1 id="jquery的入口函数">jquery的入口函数</h1>
+<pre><code>1. 引入jQuery文件
+2. 入口函数
+3. 功能实现
+</code></pre>
+<p>关于jquery的入口函数</p>
+<pre><code class="language-javascript">//第一种写法
+$(document).ready(function(){
+    
+});
+//第二种写法
+$(function() {
+    
+});
+</code></pre>
+<p>jquery入口函数和js入口函数的对比</p>
+<pre><code>1.javaScript的入口函数要等页面所有资源加(包括图片,文件)加载完成菜开始执行
+2.jquery的入口函数只会等待文档树加载完成就开始执行,并不会等待图片,文件的加载
+</code></pre>
+<h1 id="jquery对象与dom对象的区别">jquery对象与DOM对象的区别</h1>
+<pre><code>1.DOM对象:使用javaScript中的方法获取页面的元素返回的就是dom对象
+2.jquery对象:jquery对象就是使用jquery的方法获取页面中的元素返回的对象就是jQuery对象
+3.jQuery对象其实就是DOM对象的包装集(包装了DOM对象的集合(伪数组)
+4.DOM对象与JQuery对象的方法不能混用
+</code></pre>
+<p>DOM对象转换成jQuery对象</p>
+<pre><code class="language-javascript">var $obj = $(domObj);
+</code></pre>
+<p>jQuery对象转换成DOM对象</p>
+<pre><code class="language-javascript">var $li = $(&quot;li&quot;);
+//第一种方法
+$li[0]
+//第二种方法
+$li.get[0]
+</code></pre>
+<h1 id="选择器">选择器</h1>
+<h2 id="什么是jquery选择器">什么是jQuery选择器</h2>
+<p>jQuery选择器是jQuery为我们提供的一组方法，让我们更加方便的获取到页面中的元素。注意：jQuery选择器返回的是jQuery对象。</p>
+<p>jQuery选择器有很多，基本兼容了CSS1到CSS3所有的选择器，并且jQuery还添加了很多更加复杂的选择器。【查看jQuery文档】</p>
+<p>jQuery选择器虽然很多，但是选择器之间可以相互替代，就是说获取一个元素，你会有很多种方法获取到。所以我们平时真正能用到的只是少数的最常用的选择器</p>
+<h2 id="基本选择器">基本选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID选择器</td>
+<td>$(&quot;#id&quot;);</td>
+<td>获取指定ID的元素</td>
+</tr>
+<tr>
+<td>类选择器</td>
+<td>$(&quot;.class'&quot;);</td>
+<td>获取同一类class的元素</td>
+</tr>
+<tr>
+<td>标签选择器</td>
+<td>$(&quot;div&quot;);</td>
+<td>获取同一类标签的所有元素</td>
+</tr>
+<tr>
+<td>并集选择器</td>
+<td>$(&quot;div,p,li&quot;);</td>
+<td>使用逗号分隔,只要符合条件之一就可</td>
+</tr>
+<tr>
+<td>交集选择器</td>
+<td>$(&quot;div.redClass&quot;);</td>
+<td>获取class为redClass的div元素</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>总结:使用跟css的选择器用法一模一样</p>
+</blockquote>
+<h2 id="层级选择器">层级选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子代选择器</td>
+<td>$(&quot;ul&gt;li&quot;);</td>
+<td>使用&gt;,获取儿子层级的元素,注意,并不会获取孙子层级的元素</td>
+</tr>
+<tr>
+<td>后代选择器</td>
+<td>$(&quot;ul li &quot;);</td>
+<td>使用空格,代表后代选择器,获取ul下的所有元素,包括孙子等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="过滤选择器">过滤选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:eq(index)</td>
+<td>$(&quot;li:eq(2)&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li的元素中,选择索引号为2的元素,索引号index从0开始</td>
+</tr>
+<tr>
+<td>:odd</td>
+<td>$(&quot;li:odd&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li元素中,选择索号为奇数的元素</td>
+</tr>
+<tr>
+<td>:even</td>
+<td>$(&quot;li:even&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li元素中,选择索引为偶数的元素</td>
+</tr>
+</tbody>
+</table>
+<h2 id="筛选选择器方法">筛选选择器(方法)</h2>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>children(selector)</td>
+<td>$(“ul”).children(“li”)</td>
+<td>相当于$(“ul&gt;li”)，子类选择器</td>
+</tr>
+<tr>
+<td>find(selector)</td>
+<td>$(“ul”).find(“li”);</td>
+<td>相当于$(“ul li”),后代选择器</td>
+</tr>
+<tr>
+<td>siblings(selector)</td>
+<td>$(“#first”).siblings(“li”);</td>
+<td>查找兄弟节点，不包括自己本身。</td>
+</tr>
+<tr>
+<td>parent()</td>
+<td>$(“#first”).parent();</td>
+<td>查找父亲</td>
+</tr>
+<tr>
+<td>eq(index)</td>
+<td>$(“li”).eq(2);</td>
+<td>相当于$(“li:eq(2)”),index从0开始</td>
+</tr>
+<tr>
+<td>next()</td>
+<td>$(“li”).next()</td>
+<td>找下一个兄弟</td>
+</tr>
+<tr>
+<td>prev()</td>
+<td>$(“li”).prev()</td>
+<td>找上一次兄弟</td>
+</tr>
+</tbody>
+</table>
+<p>筛选选择器的功能与过滤选择器有点类似,但是用法不一样,</p>
+</blockquote>
+<h1 id="dom操作">DOM操作</h1>
+<pre><code> DOM操作
+	1. 内容操作
+		1. html(): 获取/设置元素的标签体内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt;  --&gt; &lt;font&gt;内容&lt;/font&gt;
+		2. text(): 获取/设置元素的标签体纯文本内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt; --&gt; 内容
+		3. val()： 获取/设置元素的value属性值
+	2. 属性操作
+		1. 通用属性操作
+			1. attr(): 获取/设置元素的属性
+			2. removeAttr():删除属性
+			3. prop():获取/设置元素的属性
+			4. removeProp():删除属性
+
+			* attr和prop区别？
+				1. 如果操作的是元素的固有属性，则建议使用prop
+				2. 如果操作的是元素自定义的属性，则建议使用attr
+		2. 对class属性操作
+			1. addClass():添加class属性值
+			2. removeClass():删除class属性值
+			3. toggleClass():切换class属性
+				* toggleClass(&quot;one&quot;): 
+					* 判断如果元素对象上存在class=&quot;one&quot;，则将属性值one删除掉。  如果元素对象上不存在class=&quot;one&quot;，则添加
+			4. css():
+	3. CRUD操作:
+		1. append():父元素将子元素追加到末尾
+			* 对象1.append(对象2): 将对象2添加到对象1元素内部，并且在末尾
+		2. prepend():父元素将子元素追加到开头
+			* 对象1.prepend(对象2):将对象2添加到对象1元素内部，并且在开头
+		3. appendTo():
+			* 对象1.appendTo(对象2):将对象1添加到对象2内部，并且在末尾
+		4. prependTo()：
+			* 对象1.prependTo(对象2):将对象1添加到对象2内部，并且在开头
+</code></pre>
+<pre><code>	5. after():添加元素到元素后边
+			* 对象1.after(对象2)： 将对象2添加到对象1后边。对象1和对象2是兄弟关系
+		6. before():添加元素到元素前边
+			* 对象1.before(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
+		7. insertAfter()
+			* 对象1.insertAfter(对象2)：将对象2添加到对象1后边。对象1和对象2是兄弟关系
+		8. insertBefore()
+			* 对象1.insertBefore(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
+
+		9. remove():移除元素
+			* 对象.remove():将对象删除掉
+		10. empty():清空元素的所有后代元素。
+			* 对象.empty():将对象的后代元素全部清空，但是保留当前对象以及其属性节点
+</code></pre>
+<h1 id="动画">动画</h1>
+<pre><code>1. 动画
+	1. 三种方式显示和隐藏元素
+		1. 默认显示和隐藏方式
+			1. show([speed,[easing],[fn]])
+				1. 参数：
+					1. speed：动画的速度。三个预定义的值(&quot;slow&quot;,&quot;normal&quot;, &quot;fast&quot;)或表示动画时长的毫秒数值(如：1000)
+					2. easing：用来指定切换效果，默认是&quot;swing&quot;，可用参数&quot;linear&quot;
+						* swing：动画执行时效果是 先慢，中间快，最后又慢
+						* linear：动画执行时速度是匀速的
+					3. fn：在动画完成时执行的函数，每个元素执行一次。
+
+			2. hide([speed,[easing],[fn]])
+			3. toggle([speed],[easing],[fn])
+		
+		2. 滑动显示和隐藏方式
+			1. slideDown([speed],[easing],[fn])
+			2. slideUp([speed,[easing],[fn]])
+			3. slideToggle([speed],[easing],[fn])
+
+		3. 淡入淡出显示和隐藏方式
+			1. fadeIn([speed],[easing],[fn])
+			2. fadeOut([speed],[easing],[fn])
+			3. fadeToggle([speed,[easing],[fn]])
+</code></pre>
+<pre><code>2. 遍历
+	1. js的遍历方式
+		* for(初始化值;循环结束条件;步长)
+	2. jq的遍历方式
+		1. jq对象.each(callback)
+			1. 语法：
+				jquery对象.each(function(index,element){});
+					* index:就是元素在集合中的索引
+					* element：就是集合中的每一个元素对象
+
+					* this：集合中的每一个元素对象
+			2. 回调函数返回值：
+				* true:如果当前function返回为false，则结束循环(break)。
+				* false:如果当前function返回为true，则结束本次循环，继续下次循环(continue)
+		2. $.each(object, [callback])
+		3. for..of: jquery 3.0 版本之后提供的方式
+			for(元素对象 of 容器对象)
+	
+3. 事件绑定
+	1. jquery标准的绑定方式
+		* jq对象.事件方法(回调函数)；
+		* 注：如果调用事件方法，不传递回调函数，则会触发浏览器默认行为。
+			* 表单对象.submit();//让表单提交
+	2. on绑定事件/off解除绑定
+		* jq对象.on(&quot;事件名称&quot;,回调函数)
+		* jq对象.off(&quot;事件名称&quot;)
+			* 如果off方法不传递任何参数，则将组件上的所有事件全部解绑
+	3. 事件切换：toggle
+		* jq对象.toggle(fn1,fn2...)
+			* 当单击jq对象对应的组件后，会执行fn1.第二次点击会执行fn2.....
+			
+		* 注意：1.9版本 .toggle() 方法删除,jQuery Migrate（迁移）插件可以恢复此功能。
+			 &lt;script src=&quot;../js/jquery-migrate-1.0.0.js&quot; type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[前端篇之-JS]]></title>
+        <id>https://yihuaikun.github.io/post/qian-duan-pian-zhi-js</id>
+        <link href="https://yihuaikun.github.io/post/qian-duan-pian-zhi-js">
+        </link>
+        <updated>2019-12-12T11:57:52.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="前端学习总结">前端学习总结</h1>
+<h2 id="js基础学习">js基础学习</h2>
+<pre><code>* 概念:   一门客户端脚本语言
+  	* 运行在客户端的浏览器中,每一个浏览器都有javaScript的解析引擎
+  	* 脚本语言:不需要编译,直接就可以被浏览器解析
+* 功能:
+  * 可以用来增强用户和Html页面的交互过程,可以控制html元素,让页面有一些动态效果,增强用户的体验.
+
+* javaScript发展历史:
+  1. 1992年，Nombase公司，开发出第一门客户端脚本语言，专门用于表单的校验。命名为 ： C--	，后来更名为：ScriptEase
+  2. 1995年，Netscape(网景)公司，开发了一门客户端脚本语言：LiveScript。后来，请来SUN公司的专家，修改LiveScript，命名为JavaScript
+  3. 1996年，微软抄袭JavaScript开发出JScript语言
+  4. 1997年，ECMA(欧洲计算机制造商协会)，制定出客户端脚本语言的标准：ECMAScript，就是统一了所有客户端脚本语言的编码方式。
+
+</code></pre>
+<h2 id="ecmascript客户端脚本语言标准">ECMAScript:客户端脚本语言标准</h2>
+<h3 id="和html结合方式">和Html结合方式</h3>
+<pre><code>1.与html结合方式
+	1.内部JS:
+		*定义&lt;script&gt;,标签体内容就是JS代码
+	2.外部JS
+		*定义&lt;script&gt;,通过src属性引入外部JS文件
+		
+	注意:
+		1.&lt;script&gt;可以定义在html页面的任何地方,但是定义的位置会影响执行顺序.
+		2.&lt;script&gt;可以定义多个
+</code></pre>
+<h3 id="javascript注释">javaScript注释</h3>
+<pre><code>1.在js中的注释一共两种类型
+	*单行注释: //注释内容
+	*多行注释:/*注释内容*/
+</code></pre>
+<h3 id="数据类型">数据类型</h3>
+<pre><code>1.原始数据类型(基本数据类型)
+	1.number :数字.整数/小数/NaN(not a number一个不是数字的数据类型)
+	2.string:字符串.字符串 &quot;abc&quot; &quot;a&quot; 'abc'
+	3.boolean:true或者false
+	4.null:一个对象为空的占位符
+	5.undefined:未定义.如果一个变量没有初始化值,则会被默认赋值为underfined
+2.引用数据类型对象
+</code></pre>
+<h3 id="变量">变量</h3>
+<pre><code>1.变量:一小块的存储数据的内存空间
+	*java语言是强类型语言,而JavaScript是弱类型语言
+		* 强类型:在开辟变量存储空间时,定义了空间将来存储数据的数据类型,只能存储固定类型的数据
+		* 弱类型:在开辟变量存储空间时,不定义空间将来存储的数据类型,可以存放任意的数据类型
+		
+	* 语法:
+		* var 变量名称  = 初始化值;
+	*typeof运算符:获取变量的类型
+		*注意:null运算后得到的是object
+</code></pre>
+<h3 id="运算符">运算符</h3>
+<pre><code>1.一元运算符:只有一个运算数的运算符
+	++,--,+(正号)
+		* ++ -- :自增(自减)
+			* ++(--) 在前,先自增(自减),再运算
+			* ++(--)在后,先运算,在自增(自减)
+注意:在JS中,如果运算数不是运算符所要求的类型,那么JS引擎会自动将运算数进行类型转换
+	*其他类型的转number
+		* string转number:按照字面值转换,如果字面值不是数字,则转换为NaN(不是数字的数字)
+		* boolean转number:true转换为1,false转换为0
+2.算数运算符
+	+ - * / %....
+3.赋值运算符
+	= += -+ *= /=....
+4.比较运算符
+	&gt; &lt; &gt;= &lt;= == ===(全等于)
+	*比较方式
+		1.类型相同:直接比较
+			* 字符串:按照字典顺序比较.按位逐一比较,直到得出大小为止
+		2.类型不同 :先进行类型转换,在比较
+			* ===: 全等于.在比较之前,先判断类型,如果类型不一样,则直接返回false
+5.逻辑运算符
+	&amp;&amp; || !
+		* 其他类型转换Boolean
+			1.number :0或NaN为假,其他为真
+			2.string:除了空字符串(&quot;&quot;),其他都是true
+			3.null&amp;undefined:都是false
+			4.对象:对象都是true
+6.三元运算符
+	? : 表达式
+	var a = 3;
+    var b = 4;
+    var c  = a &gt; b ? 1:0;
+    *语法:
+    	* 表达式 ? 值1:值2;
+    	* 判断表达式的值,如果true则取值1,如果false则取值为2
+		
+</code></pre>
+<h3 id="流程控制语句">流程控制语句</h3>
+<pre><code>1.if....else....
+2.switch:
+	*在java中,switch语句可以接受的数据类型:byte int short char,枚举(1.5),String(1.7)
+		*switch(变量)
+			case 值:
+	*在JS中,switch语句可以接受任意数据类型
+ 3.while
+ 4.do...while
+ 5.for
+	
+</code></pre>
+<p>使用for循环代码演示</p>
+<pre><code class="language-Html">	&lt;!DOCTYPE html&gt;
+		&lt;html lang=&quot;en&quot;&gt;
+		&lt;head&gt;
+		    &lt;meta charset=&quot;UTF-8&quot;&gt;
+		    &lt;title&gt;99乘法表&lt;/title&gt;
+		    &lt;style&gt;
+		        td{
+		            border: 1px solid;
+		        }
+		
+		    &lt;/style&gt;
+		
+		    &lt;script&gt;
+		
+		        document.write(&quot;&lt;table  align='center'&gt;&quot;);
+					        //1.完成基本的for循环嵌套，展示乘法表
+		        for (var i = 1; i &lt;= 9 ; i++) {
+		            document.write(&quot;&lt;tr&gt;&quot;);
+		            for (var j = 1; j &lt;=i ; j++) {
+		                document.write(&quot;&lt;td&gt;&quot;);
+		
+		                //输出  1 * 1 = 1
+		                document.write(i + &quot; * &quot; + j + &quot; = &quot; + ( i*j) +&quot;&amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;);
+		
+		                document.write(&quot;&lt;/td&gt;&quot;);
+		            }
+		            /*//输出换行
+		            document.write(&quot;&lt;br&gt;&quot;);*/
+		
+		            document.write(&quot;&lt;/tr&gt;&quot;);
+		        }
+		
+		        //2.完成表格嵌套
+		        document.write(&quot;&lt;/table&gt;&quot;);
+		
+		    &lt;/script&gt;
+		&lt;/head&gt;
+		&lt;body&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h2 id="基本对象">基本对象</h2>
+<h3 id="js创建对象的几种方式">js创建对象的几种方式</h3>
+<pre><code class="language-javascript">1.Object构造函数创建
+	var Person  = new Object();
+	Person.name = 'yhk';
+	Person.age = 21
+</code></pre>
+<pre><code class="language-javascript">2:使用对象字面量表示法来创建对象
+	var Person ={};//等同于var Person = new Object();
+	var Person = {
+        name:'yhk',
+        age:21
+	}
+</code></pre>
+<blockquote>
+<p>对象字面量是对象定义的一种简写形式,第一种和第二种创建形式的缺点是就是:<strong>他们用同一个接口创建很多对象,会产生大量重复的代码,如果你有500个对象,那么你就要输入500多次很多相同的代码</strong></p>
+</blockquote>
+<pre><code class="language-javascript">3.使用工厂模式创建
+	function createPerson(name,age,job) {
+        var o = new Object();
+        o.name = name;
+        o.age = age;
+        o.job = job;
+        this.sayName = function() {
+            alert(this.name);
+        };
+		return o;
+    }
+	var person1 = new Person('TOM',29,'Teacher');
+	var person1 = new Person('LUCK',18,'Student');
+</code></pre>
+<blockquote>
+<p>在使用工厂模式创建对象的时候，我们都可以注意到，在createPerson函数中，返回的是一个对象。那么我们就无法判断返回的对象究竟是一个什么样的类型。于是就出现了第四种创建对象的模式</p>
+</blockquote>
+<pre><code class="language-javascript">4.使用构造函数创建
+	function Person(name,age,job) {
+		this.name = name;
+		this.age = age;
+		this.job = job;
+		this.sayName = function() {
+            alert(this.name);
+		};
+	}
+</code></pre>
+<pre><code>1.Function:函数(方法)对象
+	1.创建:
+		1.var fun = new Function(形式参数列表,方法体);
+		2.
+			functon 方法名称(形式参数列表) {
+                方法体
+			}
+		3. 
+			var 方法名 = function(形式参数列表) {
+                方法体
+			}
+	2. 方法
+	3.属性
+		length:代表形参的个数
+	4.特点
+		1.方法定义是,形参的类型不用写,返回值类型不同写
+		2.方法是一个对象,如果定义名称相同的方法,会覆盖
+		3.在JS中,方法的调用只与方法的名称有关,和参数列表无关
+		4.在方法声明中有一个隐藏的内置对象(数组),arguments,封装所有的实际参数
+	5.调用
+		方法名称(实际参数列表);
+</code></pre>
+<h3 id="array数组的对象">Array:数组的对象</h3>
+<pre><code>1.创建:
+	1. var arr = new Array(元素列表);
+	2. var arr = new Array(默认长度);
+	3. var arr = [元素列表];
+2.方法
+	join(参数):将数组中的元素按照指定的分割符拼接为字符串
+	push() :向数组的末尾添加一个或者更多的元素,并返回数组的长度
+3.属性
+	length:数组的长度
+4.特点
+	
+</code></pre>
+<h3 id="date日期对象">Date:日期对象</h3>
+<pre><code>1.创建
+	var date = new Date();
+2.方法
+	toLocaleString():返回当前date对应的时间本地字符串格式
+	 getTime():获取毫秒值。返回当前如期对象描述的时间到1970年1月1日零点的毫秒值差
+</code></pre>
+<h3 id="math数学对象">Math:数学对象</h3>
+<pre><code> 1. 创建：
+ 		* 特点：Math对象不用创建，直接使用。  Math.方法名();
+
+2. 方法：
+	random():返回 0 ~ 1 之间的随机数。 含0不含1
+	ceil(x)：对数进行上舍入。
+	floor(x)：对数进行下舍入。
+	round(x)：把数四舍五入为最接近的整数。
+3. 属性：
+	PI
+</code></pre>
+<h3 id="regexp正则表达式对象">RegExp:正则表达式对象</h3>
+<pre><code>1. 正则表达式：定义字符串的组成规则。
+	1. 单个字符:[]
+			如： [a] [ab] [a-zA-Z0-9_]
+        * 特殊符号代表特殊含义的单个字符:
+        \d:单个数字字符 [0-9]
+        \w:单个单词字符[a-zA-Z0-9_]
+    2. 量词符号：
+        ?：表示出现0次或1次
+        *：表示出现0次或多次
+        +：出现1次或多次
+        {m,n}:表示 m&lt;= 数量 &lt;= n
+        * m如果缺省： {,n}:最多n次
+        * n如果缺省：{m,} 最少m次
+    3. 开始结束符号
+        * ^:开始
+        * $:结束
+2. 正则对象：
+1. 创建
+	1. var reg = new RegExp(&quot;正则表达式&quot;);
+	2. var reg = /正则表达式/;
+2. 方法	
+	1. test(参数):验证指定的字符串是否符合正则定义的规范	
+</code></pre>
+<h3 id="global全局对象">Global全局对象</h3>
+<pre><code>1. 特点：全局对象，这个Global中封装的方法不需要对象就可以直接调用。  方法名();
+2. 方法：
+        encodeURI():url编码
+        decodeURI():url解码
+
+        encodeURIComponent():url编码,编码的字符更多
+        decodeURIComponent():url解码
+
+        parseInt():将字符串转为数字
+        * 逐一判断每一个字符是否是数字，直到不是数字为止，将前边数字部分转为number
+        isNaN():判断一个值是否是NaN
+        * NaN六亲不认，连自己都不认。NaN参与的==比较全部问false
+
+        eval():讲 JavaScript 字符串，并把它作为脚本代码来执行。
+ 3. URL编码	
+    蓝鸥 =  %E4%BC%A0%E6%99%BA%E6%92%AD%E5%AE%A2
+</code></pre>
+<h1 id="bom">BOM</h1>
+<pre><code>1.概念:Browser object Model 浏览器对象模型
+	*将浏览器的各个组成部分封装成对象
+2.组成
+	* window:窗口对象
+	* Navigator:浏览器对象
+	* Screen:显示器屏幕对象
+	* History：历史记录对象
+	* Location：地址栏对象
+</code></pre>
+<h3 id="window窗口对象">window:窗口对象</h3>
+<pre><code>  1. 创建
+    2. 方法
+         1. 与弹出框有关的方法：
+            alert()	显示带有一段消息和一个确认按钮的警告框。
+            confirm()	显示带有一段消息以及确认按钮和取消按钮的对话框。
+                * 如果用户点击确定按钮，则方法返回true
+                * 如果用户点击取消按钮，则方法返回false
+            prompt()	显示可提示用户输入的对话框。
+                * 返回值：获取用户输入的值
+         2. 与打开关闭有关的方法：
+            close()	关闭浏览器窗口。
+                * 谁调用我 ，我关谁
+            open()	打开一个新的浏览器窗口
+                * 返回新的Window对象
+         3. 与定时器有关的方式
+            setTimeout()	在指定的毫秒数后调用函数或计算表达式。
+                * 参数：
+                    1. js代码或者方法对象
+                    2. 毫秒值
+                * 返回值：唯一标识，用于取消定时器
+            clearTimeout()	取消由 setTimeout() 方法设置的 timeout。
+
+            setInterval()	按照指定的周期（以毫秒计）来调用函数或计算表达式。
+            clearInterval()	取消由 setInterval() 设置的 timeout。
+
+    3. 属性：
+        1. 获取其他BOM对象：
+            history
+            location
+            Navigator
+            Screen:
+        2. 获取DOM对象
+            document
+    4. 特点
+        * Window对象不需要创建可以直接使用 window使用。 window.方法名();
+        * window引用可以省略。  方法名();
+</code></pre>
+<h3 id="localtion地址栏对象">Localtion:地址栏对象</h3>
+<pre><code>1.创建(获取)
+	1.window.location
+	2.location
+2.方法
+	* reload()重新加载当前文档.刷新
+3.属性
+	* href 设置或返回完整的URL
+</code></pre>
+<h3 id="history历史记录对象">History:历史记录对象</h3>
+<pre><code> 1. 创建(获取)：
+        1. window.history
+        2. history
+
+    2. 方法：
+        * back()	加载 history 列表中的前一个 URL。
+        * forward()	加载 history 列表中的下一个 URL。
+        * go(参数)	加载 history 列表中的某个具体页面。
+            * 参数：
+                * 正数：前进几个历史记录
+                * 负数：后退几个历史记录
+    3. 属性：
+        * length	返回当前窗口历史列表中的 URL 数量。
+</code></pre>
+<h1 id="dom">DOM</h1>
+<pre><code>* 概念： Document Object Model 文档对象模型
+	* 将标记语言文档的各个组成部分，封装为对象。可以使用这些对象，对标记语言文档进行CRUD的动态操作
+
+* W3C DOM 标准被分为 3 个不同的部分：
+
+	* 核心 DOM - 针对任何结构化文档的标准模型
+		* Document：文档对象
+		* Element：元素对象
+		* Attribute：属性对象
+		* Text：文本对象
+		* Comment:注释对象
+
+		* Node：节点对象，其他5个的父对象
+	* XML DOM - 针对 XML 文档的标准模型
+	* HTML DOM - 针对 HTML 文档的标准模型
+</code></pre>
+<h3 id="核心bom模型">核心BOM模型</h3>
+<pre><code>*核心BOM模型
+	* Document：文档对象
+		1. 创建(获取)：在html dom模型中可以使用window对象来获取
+			1. window.document
+			2. document
+		2. 方法：
+			1. 获取Element对象：
+				1. getElementById()	： 根据id属性值获取元素对象。id属性值一般唯一
+				2. getElementsByTagName()：根据元素名称获取元素对象们。返回值是一个数组
+				3. getElementsByClassName():根据Class属性值获取元素对象们。返回值是一个数组
+				4. getElementsByName(): 根据name属性值获取元素对象们。返回值是一个数组
+			2. 创建其他DOM对象：
+				createAttribute(name)
+            	createComment()
+            	createElement()
+            	createTextNode()
+		3. 属性
+	* Element：元素对象
+		1. 获取/创建：通过document来获取和创建
+		2. 方法：
+			1. removeAttribute()：删除属性
+			2. setAttribute()：设置属性
+	* Node：节点对象，其他5个的父对象
+		* 特点：所有dom对象都可以被认为是一个节点
+		* 方法：
+			* CRUD dom树：
+				* appendChild()：向节点的子节点列表的结尾添加新的子节点。
+				* removeChild()	：删除（并返回）当前节点的指定子节点。
+				* replaceChild()：用新节点替换一个子节点。
+		* 属性：
+			* parentNode 返回节点的父节点。
+</code></pre>
+<h1 id="html-dom">HTML DOM</h1>
+<pre><code>HTML DOM
+	1.标签体的设置和获取:innerHTML
+	2.使用html元素对象的属性
+	3.控制元素的样式
+		1.使用元素的style属性来设置
+			如:
+				//修改样式方式1
+				div1.style.border = &quot;1px solid red&quot;;
+				div1.style.width = &quot;200px&quot;;
+				//font-size ---&gt; size
+				div1.style.fontSize = &quot;20px&quot;;
+			2.提琴定义好选择器的样式,通过元素的className属性来设置
+</code></pre>
+<h1 id="事件监听机制">事件监听机制</h1>
+<pre><code>概念:某些组件被执行了某些操作后,触发某些代码的执行
+	* 事件:某些操作. 如:单击,双击,键盘按下了,鼠标移动了
+	* 事件源:事件发生的源头.比如按钮,文本输入框.....
+	* 监听器:代码
+	* 注册监听:将事件,事件源,监听器结合在一起.当事件源上发生了某个事件,则触发执行某个监听器的代码
+			
+</code></pre>
+<pre><code>常见的事件:
+	1.点击事件:
+		1.onclick:单击事件
+		2.ondbclick:双击事件
+	2.焦点事件:
+		1. onblur:失去焦点
+		2. onfocus:元素获得焦点
+	3.加载事件
+		1.onload:一张页面或者一幅图像完成加载
+	4.鼠标事件
+		1.onmousedown 鼠标按下事件
+		2.onmouseup 鼠标按键被松开
+		3.onmousemove 鼠标被移动
+		4.onmouseover 鼠标移到某个元素之上
+		5.onmouseout 鼠标从某元素移开
+	5.键盘事件
+    	1.onkeydown 某个键盘按键被松开
+    	2.onkeyup 某个键盘按键被松开
+    	3.onkeypress 某个键盘按键被按下并松开
+    6.选择和改变事件
+    	1.onchange 域的内容被改变
+    	2.onselect 文本被选中
+    7.表单事件
+    	1.onsubmit 确认按钮被点击
+    	2.onreset 重置按钮被点击
+    	
+		
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[SpringCloud-入门篇2]]></title>
         <id>https://yihuaikun.github.io/post/springcloud-ru-men-pian-2</id>

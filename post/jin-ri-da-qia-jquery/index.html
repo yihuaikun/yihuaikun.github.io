@@ -1,0 +1,480 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>今日打卡Jquery | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576153368591">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576153368591" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              今日打卡Jquery
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="jquery是什么">Jquery是什么</h1>
+<p>​	 jQuery是一套跨浏览器的JavaScript库，简化HTML与JavaScript之间的操作。[1]由约翰·雷西格（John Resig）在2006年1月的BarCamp NYC上发布第一个版本。当前是由Dave Methvin领导的开发团队进行开发。全球前10,000个访问最高的网站中，有65%使用了jQuery，是当前最受欢迎的JavaScript库.</p>
+<h1 id="为什么要学习jquery">为什么要学习jquery</h1>
+<p>​	在使用javaScript开发的过程中,有许多的缺点</p>
+<pre><code>1.查找元素的方法太少,麻烦.
+2.遍历伪数组很麻烦,通常要嵌套一大推循环
+3.有兼容性问题
+4.想要实现动画效果也很麻烦
+5.代码冗余
+</code></pre>
+<p>jquery有哪些优点呢:</p>
+<pre><code>1.查找元素的方法多种多样
+2.拥有隐式迭代性,因此不再需要手写for循环了
+3.完全没有兼容性问题
+4.实现动画很简单,而且功能很强大
+5.代码简单,粗暴
+</code></pre>
+<h1 id="jquery的入口函数">jquery的入口函数</h1>
+<pre><code>1. 引入jQuery文件
+2. 入口函数
+3. 功能实现
+</code></pre>
+<p>关于jquery的入口函数</p>
+<pre><code class="language-javascript">//第一种写法
+$(document).ready(function(){
+    
+});
+//第二种写法
+$(function() {
+    
+});
+</code></pre>
+<p>jquery入口函数和js入口函数的对比</p>
+<pre><code>1.javaScript的入口函数要等页面所有资源加(包括图片,文件)加载完成菜开始执行
+2.jquery的入口函数只会等待文档树加载完成就开始执行,并不会等待图片,文件的加载
+</code></pre>
+<h1 id="jquery对象与dom对象的区别">jquery对象与DOM对象的区别</h1>
+<pre><code>1.DOM对象:使用javaScript中的方法获取页面的元素返回的就是dom对象
+2.jquery对象:jquery对象就是使用jquery的方法获取页面中的元素返回的对象就是jQuery对象
+3.jQuery对象其实就是DOM对象的包装集(包装了DOM对象的集合(伪数组)
+4.DOM对象与JQuery对象的方法不能混用
+</code></pre>
+<p>DOM对象转换成jQuery对象</p>
+<pre><code class="language-javascript">var $obj = $(domObj);
+</code></pre>
+<p>jQuery对象转换成DOM对象</p>
+<pre><code class="language-javascript">var $li = $(&quot;li&quot;);
+//第一种方法
+$li[0]
+//第二种方法
+$li.get[0]
+</code></pre>
+<h1 id="选择器">选择器</h1>
+<h2 id="什么是jquery选择器">什么是jQuery选择器</h2>
+<p>jQuery选择器是jQuery为我们提供的一组方法，让我们更加方便的获取到页面中的元素。注意：jQuery选择器返回的是jQuery对象。</p>
+<p>jQuery选择器有很多，基本兼容了CSS1到CSS3所有的选择器，并且jQuery还添加了很多更加复杂的选择器。【查看jQuery文档】</p>
+<p>jQuery选择器虽然很多，但是选择器之间可以相互替代，就是说获取一个元素，你会有很多种方法获取到。所以我们平时真正能用到的只是少数的最常用的选择器</p>
+<h2 id="基本选择器">基本选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID选择器</td>
+<td>$(&quot;#id&quot;);</td>
+<td>获取指定ID的元素</td>
+</tr>
+<tr>
+<td>类选择器</td>
+<td>$(&quot;.class'&quot;);</td>
+<td>获取同一类class的元素</td>
+</tr>
+<tr>
+<td>标签选择器</td>
+<td>$(&quot;div&quot;);</td>
+<td>获取同一类标签的所有元素</td>
+</tr>
+<tr>
+<td>并集选择器</td>
+<td>$(&quot;div,p,li&quot;);</td>
+<td>使用逗号分隔,只要符合条件之一就可</td>
+</tr>
+<tr>
+<td>交集选择器</td>
+<td>$(&quot;div.redClass&quot;);</td>
+<td>获取class为redClass的div元素</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>总结:使用跟css的选择器用法一模一样</p>
+</blockquote>
+<h2 id="层级选择器">层级选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子代选择器</td>
+<td>$(&quot;ul&gt;li&quot;);</td>
+<td>使用&gt;,获取儿子层级的元素,注意,并不会获取孙子层级的元素</td>
+</tr>
+<tr>
+<td>后代选择器</td>
+<td>$(&quot;ul li &quot;);</td>
+<td>使用空格,代表后代选择器,获取ul下的所有元素,包括孙子等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="过滤选择器">过滤选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:eq(index)</td>
+<td>$(&quot;li:eq(2)&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li的元素中,选择索引号为2的元素,索引号index从0开始</td>
+</tr>
+<tr>
+<td>:odd</td>
+<td>$(&quot;li:odd&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li元素中,选择索号为奇数的元素</td>
+</tr>
+<tr>
+<td>:even</td>
+<td>$(&quot;li:even&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li元素中,选择索引为偶数的元素</td>
+</tr>
+</tbody>
+</table>
+<h2 id="筛选选择器方法">筛选选择器(方法)</h2>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>children(selector)</td>
+<td>$(“ul”).children(“li”)</td>
+<td>相当于$(“ul&gt;li”)，子类选择器</td>
+</tr>
+<tr>
+<td>find(selector)</td>
+<td>$(“ul”).find(“li”);</td>
+<td>相当于$(“ul li”),后代选择器</td>
+</tr>
+<tr>
+<td>siblings(selector)</td>
+<td>$(“#first”).siblings(“li”);</td>
+<td>查找兄弟节点，不包括自己本身。</td>
+</tr>
+<tr>
+<td>parent()</td>
+<td>$(“#first”).parent();</td>
+<td>查找父亲</td>
+</tr>
+<tr>
+<td>eq(index)</td>
+<td>$(“li”).eq(2);</td>
+<td>相当于$(“li:eq(2)”),index从0开始</td>
+</tr>
+<tr>
+<td>next()</td>
+<td>$(“li”).next()</td>
+<td>找下一个兄弟</td>
+</tr>
+<tr>
+<td>prev()</td>
+<td>$(“li”).prev()</td>
+<td>找上一次兄弟</td>
+</tr>
+</tbody>
+</table>
+<p>筛选选择器的功能与过滤选择器有点类似,但是用法不一样,</p>
+</blockquote>
+<h1 id="dom操作">DOM操作</h1>
+<pre><code> DOM操作
+	1. 内容操作
+		1. html(): 获取/设置元素的标签体内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt;  --&gt; &lt;font&gt;内容&lt;/font&gt;
+		2. text(): 获取/设置元素的标签体纯文本内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt; --&gt; 内容
+		3. val()： 获取/设置元素的value属性值
+	2. 属性操作
+		1. 通用属性操作
+			1. attr(): 获取/设置元素的属性
+			2. removeAttr():删除属性
+			3. prop():获取/设置元素的属性
+			4. removeProp():删除属性
+
+			* attr和prop区别？
+				1. 如果操作的是元素的固有属性，则建议使用prop
+				2. 如果操作的是元素自定义的属性，则建议使用attr
+		2. 对class属性操作
+			1. addClass():添加class属性值
+			2. removeClass():删除class属性值
+			3. toggleClass():切换class属性
+				* toggleClass(&quot;one&quot;): 
+					* 判断如果元素对象上存在class=&quot;one&quot;，则将属性值one删除掉。  如果元素对象上不存在class=&quot;one&quot;，则添加
+			4. css():
+	3. CRUD操作:
+		1. append():父元素将子元素追加到末尾
+			* 对象1.append(对象2): 将对象2添加到对象1元素内部，并且在末尾
+		2. prepend():父元素将子元素追加到开头
+			* 对象1.prepend(对象2):将对象2添加到对象1元素内部，并且在开头
+		3. appendTo():
+			* 对象1.appendTo(对象2):将对象1添加到对象2内部，并且在末尾
+		4. prependTo()：
+			* 对象1.prependTo(对象2):将对象1添加到对象2内部，并且在开头
+</code></pre>
+<pre><code>	5. after():添加元素到元素后边
+			* 对象1.after(对象2)： 将对象2添加到对象1后边。对象1和对象2是兄弟关系
+		6. before():添加元素到元素前边
+			* 对象1.before(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
+		7. insertAfter()
+			* 对象1.insertAfter(对象2)：将对象2添加到对象1后边。对象1和对象2是兄弟关系
+		8. insertBefore()
+			* 对象1.insertBefore(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
+
+		9. remove():移除元素
+			* 对象.remove():将对象删除掉
+		10. empty():清空元素的所有后代元素。
+			* 对象.empty():将对象的后代元素全部清空，但是保留当前对象以及其属性节点
+</code></pre>
+<h1 id="动画">动画</h1>
+<pre><code>1. 动画
+	1. 三种方式显示和隐藏元素
+		1. 默认显示和隐藏方式
+			1. show([speed,[easing],[fn]])
+				1. 参数：
+					1. speed：动画的速度。三个预定义的值(&quot;slow&quot;,&quot;normal&quot;, &quot;fast&quot;)或表示动画时长的毫秒数值(如：1000)
+					2. easing：用来指定切换效果，默认是&quot;swing&quot;，可用参数&quot;linear&quot;
+						* swing：动画执行时效果是 先慢，中间快，最后又慢
+						* linear：动画执行时速度是匀速的
+					3. fn：在动画完成时执行的函数，每个元素执行一次。
+
+			2. hide([speed,[easing],[fn]])
+			3. toggle([speed],[easing],[fn])
+		
+		2. 滑动显示和隐藏方式
+			1. slideDown([speed],[easing],[fn])
+			2. slideUp([speed,[easing],[fn]])
+			3. slideToggle([speed],[easing],[fn])
+
+		3. 淡入淡出显示和隐藏方式
+			1. fadeIn([speed],[easing],[fn])
+			2. fadeOut([speed],[easing],[fn])
+			3. fadeToggle([speed,[easing],[fn]])
+</code></pre>
+<pre><code>2. 遍历
+	1. js的遍历方式
+		* for(初始化值;循环结束条件;步长)
+	2. jq的遍历方式
+		1. jq对象.each(callback)
+			1. 语法：
+				jquery对象.each(function(index,element){});
+					* index:就是元素在集合中的索引
+					* element：就是集合中的每一个元素对象
+
+					* this：集合中的每一个元素对象
+			2. 回调函数返回值：
+				* true:如果当前function返回为false，则结束循环(break)。
+				* false:如果当前function返回为true，则结束本次循环，继续下次循环(continue)
+		2. $.each(object, [callback])
+		3. for..of: jquery 3.0 版本之后提供的方式
+			for(元素对象 of 容器对象)
+	
+3. 事件绑定
+	1. jquery标准的绑定方式
+		* jq对象.事件方法(回调函数)；
+		* 注：如果调用事件方法，不传递回调函数，则会触发浏览器默认行为。
+			* 表单对象.submit();//让表单提交
+	2. on绑定事件/off解除绑定
+		* jq对象.on(&quot;事件名称&quot;,回调函数)
+		* jq对象.off(&quot;事件名称&quot;)
+			* 如果off方法不传递任何参数，则将组件上的所有事件全部解绑
+	3. 事件切换：toggle
+		* jq对象.toggle(fn1,fn2...)
+			* 当单击jq对象对应的组件后，会执行fn1.第二次点击会执行fn2.....
+			
+		* 注意：1.9版本 .toggle() 方法删除,jQuery Migrate（迁移）插件可以恢复此功能。
+			 &lt;script src=&quot;../js/jquery-migrate-1.0.0.js&quot; type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#jquery%E6%98%AF%E4%BB%80%E4%B9%88">Jquery是什么</a></li>
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AD%A6%E4%B9%A0jquery">为什么要学习jquery</a></li>
+<li><a href="#jquery%E7%9A%84%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0">jquery的入口函数</a></li>
+<li><a href="#jquery%E5%AF%B9%E8%B1%A1%E4%B8%8Edom%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%8C%BA%E5%88%AB">jquery对象与DOM对象的区别</a></li>
+<li><a href="#%E9%80%89%E6%8B%A9%E5%99%A8">选择器</a>
+<ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AFjquery%E9%80%89%E6%8B%A9%E5%99%A8">什么是jQuery选择器</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E9%80%89%E6%8B%A9%E5%99%A8">基本选择器</a></li>
+<li><a href="#%E5%B1%82%E7%BA%A7%E9%80%89%E6%8B%A9%E5%99%A8">层级选择器</a></li>
+<li><a href="#%E8%BF%87%E6%BB%A4%E9%80%89%E6%8B%A9%E5%99%A8">过滤选择器</a></li>
+<li><a href="#%E7%AD%9B%E9%80%89%E9%80%89%E6%8B%A9%E5%99%A8%E6%96%B9%E6%B3%95">筛选选择器(方法)</a></li>
+</ul>
+</li>
+<li><a href="#dom%E6%93%8D%E4%BD%9C">DOM操作</a></li>
+<li><a href="#%E5%8A%A8%E7%94%BB">动画</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/qian-duan-pian-zhi-js">
+              <h3 class="post-title">
+                前端篇之-JS
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
