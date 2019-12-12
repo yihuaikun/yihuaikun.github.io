@@ -1,0 +1,291 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title> nginx反向代理 | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576153653580">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576153653580" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+               nginx反向代理
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="nginx反向代理布置项目">nginx反向代理布置项目</h1>
+<h2 id="springboot项目通过命令运行"><strong>springboot项目通过命令运行</strong>:</h2>
+<p>mvn spring-boot:run</p>
+<p>ps:这里需要找到项目文件的地方然后cmd,输入:mvc spring-boot:run,运行完之后然后就能访问了</p>
+<h4 id="2直接运行main方法"><strong>2.直接运行main方法</strong></h4>
+<h4 id="3打包运行"><strong>3.打包运行</strong></h4>
+<h5 id="打包成jar包">打包成jar包</h5>
+<p>​	1&gt;导入插件</p>
+<pre><code class="language-xml">    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+</code></pre>
+<p>2&gt;先打包:通过命令:mvn package或着在lifecycle中直接打包</p>
+<p>命令行:java -jar 什么路径下/xxx.jar</p>
+<p>ps:注意这里打完包之后要看包所在的路径,-jar 之后时打包的路径+&quot;/&quot;+打完包后的名字</p>
+<p><strong>出现面错误</strong>,原来的命令时:java -jar spring-boot-study01-0.0.1-SNAPSHOT.jar</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-CiuJgREn-1574775788908)(D:\总结\spring-boot\命令运行jar包出错.png)]</p>
+<p><strong>正确的是</strong>:java -jar target/spring-boot-study01-0.0.1-SNAPSHOT.jar</p>
+<p><strong>语法是</strong>:java -jar 包的路径/打完包的全名</p>
+<p><strong>ps:打完包编译文件target下看打包全名:</strong></p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-oTLufWtQ-1574775788910)(D:\总结\spring-boot\打包后包的所在处png.png)]</p>
+<h5 id="打包成war包">打包成war包</h5>
+<p>1.加依赖:注意这里tomcat加provided,防止tomcat包打包在war包中</p>
+<pre><code class="language-xml"> &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+ &lt;/dependency&gt;
+</code></pre>
+<p>2.让启动类继承SpringBootInitializer然后重写configure方法</p>
+<pre><code class="language-java">import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
+
+//@SpringBootApplication
+
+@EnableAutoConfiguration
+@ComponentScan
+public class SpringBootStudy01Application extends SpringBootServletInitializer {
+    public static void main(String[] args) {
+        //开启banner启动
+        SpringApplication.run(SpringBootStudy01Application.class, args);
+        //关闭banner启动
+//        SpringApplicationBuilder springApplicationBuilder = new SpringApplicationBuilder(SpringBootStudy01Application.class);
+//        springApplicationBuilder.bannerMode(Banner.Mode.OFF).run(args);
+    }
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(SpringBootStudy01Application.class);
+    }
+}
+</code></pre>
+<p>3.clear一下然后package</p>
+<p>4.结果</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-phGYtBLZ-1574775788911)(D:\总结\spring-boot\打包成war包.png)]</p>
+<p>5.放在tomcat下webapps修改下名字为:spring-boot-study01.war</p>
+<p>6.进入tomcat的bin下启动程序</p>
+<h2 id="在linux中布置项目">在linux中布置项目</h2>
+<h3 id="创建目录">创建目录</h3>
+<p>​	首先需要创建一个目录,把打成的java项目的jar包放在下面</p>
+<h3 id="配置nginx的nginxconfig文件">配置nginx的nginx.config文件</h3>
+<pre><code>1.进入nginx的conf文件然后
+</code></pre>
+<pre><code class="language-linux">sudo vim nginx.conf
+</code></pre>
+<p>​	2.在nginx支持的http协议下修改文件为</p>
+<pre><code class="language-XML">server{
+     listen     81;
+     server_name  security.taotao.com;
+     location /{
+       proxy_pass http://127.0.0.1:8081/;
+     }
+   }
+</code></pre>
+<p>3.进入sbin目录重新启动nginx让配置文件生效</p>
+<pre><code class="language-linux">#这样也能停止nginx但是相当于kill,不给nginx做停止前的处理时间直接杀死
+./nginx -s stop
+
+#建议用quit命令完整的停止nginx,因为quit支持nginx停止前做处理工作
+./nginx -s quit
+./nginx
+</code></pre>
+<p>不想停止但是又想让配置文件生效也可以这样做</p>
+<pre><code class="language-linux">./nginx -s reload
+</code></pre>
+<h3 id="上传打包的项目">上传打包的项目</h3>
+<pre><code class="language-linux">rz -be
+</code></pre>
+<h3 id="运行项目">运行项目</h3>
+<pre><code class="language-linux">java -jar /home/projectjar/security01-0.0.1-SNAPSHOT.jar
+</code></pre>
+<p>访问http://ip:81就能看到<br>
+<img src="https://img-blog.csdnimg.cn/20191126214325217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E5%B8%83%E7%BD%AE%E9%A1%B9%E7%9B%AE">nginx反向代理布置项目</a>
+<ul>
+<li><a href="#springboot%E9%A1%B9%E7%9B%AE%E9%80%9A%E8%BF%87%E5%91%BD%E4%BB%A4%E8%BF%90%E8%A1%8C"><strong>springboot项目通过命令运行</strong>:</a><br>
+*
+<ul>
+<li><a href="#2%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8Cmain%E6%96%B9%E6%B3%95"><strong>2.直接运行main方法</strong></a></li>
+<li><a href="#3%E6%89%93%E5%8C%85%E8%BF%90%E8%A1%8C"><strong>3.打包运行</strong></a>
+<ul>
+<li><a href="#%E6%89%93%E5%8C%85%E6%88%90jar%E5%8C%85">打包成jar包</a></li>
+<li><a href="#%E6%89%93%E5%8C%85%E6%88%90war%E5%8C%85">打包成war包</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%9C%A8linux%E4%B8%AD%E5%B8%83%E7%BD%AE%E9%A1%B9%E7%9B%AE">在linux中布置项目</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95">创建目录</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEnginx%E7%9A%84nginxconfig%E6%96%87%E4%BB%B6">配置nginx的nginx.config文件</a></li>
+<li><a href="#%E4%B8%8A%E4%BC%A0%E6%89%93%E5%8C%85%E7%9A%84%E9%A1%B9%E7%9B%AE">上传打包的项目</a></li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E9%A1%B9%E7%9B%AE">运行项目</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/nginx">
+              <h3 class="post-title">
+                nginx
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

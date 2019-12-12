@@ -1,0 +1,333 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HttpClient | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576153653580">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576153653580" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              HttpClient
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="httpclient">HttpClient</h1>
+<h2 id="httpclient简介与了解">HttpClient简介与了解</h2>
+<h3 id="什么是httpclient">什么是HttpClient</h3>
+<p>​		HTTP 协议可能是现在 Internet 上使用得最多、最重要的协议了，越来越多的 Java 应用程序需要直接通过 HTTP 协议来访问网络资源。虽然在 JDK 的 java net包中已经提供了访问 HTTP 协议的基本功能，但是对于大部分应用程序来说，JDK 库本身提供的功能还不够丰富和灵活。HttpClient 是 Apache Jakarta Common 下的子项目，用来提供高效的、最新的、功能丰富的支持 HTTP 协议的客户端编程工具包，并且它支持 HTTP 协议最新的版本和建议。</p>
+<h3 id="误解">误解</h3>
+<p>​		HttpClient 不是浏览器，它是客户端的 HTTP 传输库。它的目的在于发送、接受 HTTP 信息。如果没有明确设置，或者<br>
+重新格式化请求 / 重写定位 URI， 或其它不涉及 HTTP 传输的功能，HttpClient 不会去解析内容，运行嵌入在 HTML 页面的 javascript 代码，获取内容类型（content type）。</p>
+<h3 id="应用的范围">应用的范围</h3>
+<ul>
+<li>
+<p>客户端 HTTP 传输库基于 <a href="http://hc.apache.org/httpcomponents-core-ga/index.html">HttpCore</a></p>
+<p>​        HttpCore是一组低层HTTP传输组件，可用于构建自定义客户端和服务器端HTTP服务，占用最少。HttpCore支持两种I/O模型:基于经典Java I/O的阻塞I/O模型和基于Java NIO的非阻塞事件驱动I/O模型</p>
+</li>
+<li>
+<p>基于传统（阻塞式）I/O</p>
+</li>
+<li>
+<p>内容无关</p>
+</li>
+</ul>
+<h2 id="知识点">知识点</h2>
+<p>使用到依赖再java</p>
+<pre><code class="language-xml">	&lt;dependency&gt;
+      &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
+      &lt;artifactId&gt;httpclient&lt;/artifactId&gt;
+      &lt;version&gt;4.5.10&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<h2 id="http请求">HTTP请求:</h2>
+<h3 id="个人对http请求的理解">个人对Http请求的理解:</h3>
+<p>​		1.HTTP请求格式:HTTP 请求都有一个请求行，包含一个方法名，请求 URI 和 HTTP 协议版本,例如:http://服务器的ip:端口/请求端口路径?参数</p>
+<p>​		2.HttpClient 支持所有的定义在 HTTP/1.1 规范的 HTTP 原装方法： GET, HEAD, POST, PUT, DELETE, TRACE 和 OPTIONS。每一个方法都有相应的类：HttpGet, HttpHead, HttpPost, HttpPut, HttpDelete, HttpTrace 和 HttpOptions。</p>
+<p>​		3.请求 URI 是通用资源标识符，用来定位要响应请求的资源。HTTP 请求的 URI 包含协议，主机名，可选的端口号，资源路径，</p>
+<h3 id="uribuilder的-api">UriBuilder的 API</h3>
+<pre><code class="language-java">URI uri = new URIBuilder()
+        .setScheme(&quot;http&quot;)
+        .setHost(&quot;www.google.com&quot;)
+        .setPath(&quot;/search&quot;)
+        .setParameter(&quot;q&quot;, &quot;httpclient&quot;)
+        .setParameter(&quot;btnG&quot;, &quot;Google Search&quot;)
+        .setParameter(&quot;aq&quot;, &quot;f&quot;)
+        .setParameter(&quot;oq&quot;, &quot;&quot;)
+        .build();
+HttpGet httpGet = new HttpGet(uri);
+System.out.println(httpGet.getURI());
+</code></pre>
+<p>输出是</p>
+<pre><code class="language-java">http://www.google.com/search?hl=en&amp;q=httpclient&amp;btnG=Google Search...
+</code></pre>
+<h3 id="http响应">Http响应</h3>
+<p>例子</p>
+<pre><code class="language-java">@RestController
+public class httpClientController {
+    @GetMapping(&quot;/data&quot;)
+    public void getData() throws URISyntaxException {
+        CloseableHttpResponse response = null;
+        try(  //创建客户端:
+                CloseableHttpClient httpClient = HttpClients.createDefault();//执行请求
+                ) {
+            //创建请求
+            HttpGet httpGet = new HttpGet(&quot;http://localhost:8084/getData&quot;);
+            //执行请求并返回CloseableHttpResponse对象,对象里面有目标数据
+             response = httpClient.execute(httpGet);
+            System.out.println(response.getStatusLine().getStatusCode());
+            //获得实体,即传过来的数据
+            HttpEntity entity = response.getEntity();
+            if(entity != null){
+                System.out.println(&quot;实体的长度 :&quot; + entity.getContentLength());
+                System.out.println(&quot;实体的内容 :&quot; + EntityUtils.toString(entity,&quot;UTF-8&quot;));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<p>​		HTTP 响应是服务器在收到并解析了客户端的请求信息后返回给客户端的信息。消息的第一行包含了协议的版本号，后面有一个数字</p>
+<h4 id="http-实体">HTTP 实体</h4>
+<p>​		导航栏里面的参数数数据类型都是String类型的.</p>
+<p>​		HTTP 消息能够携带与请求或响应相关的内容实体。这些实体能在某些请求和某些响应中找到，因为它们是可选的。<br>
+使用实体的请求指的是封装请求的实体。HTTP 协议规定了两种实体封装请求方法：POST 和 PUT。响应通常被认为是封装内容的实体。当然这个规定也有例外，比如 HEAD 方法的响应和204 No Content，304 Not Modified， 205 Reset Content 响应</p>
+<p><strong>HttpClient 能按照它们的内容来源分辨出三种实体：</strong></p>
+<ul>
+<li>
+<p>streamed: 该内容是从一个流中获取的，或者是突然生成的**。特别的，这一类包含了正被 HTTP 响应接受的实体。**流式实体通常不能复现。也就是说这类</p>
+</li>
+<li>
+<p>self-contained: 内存中的，或者不是通过连接及其它实体获得的内容。自包含（Self-Contained）实体一般可以复现。<br>
+这一类实体绝大多数是用于封装 HTTP 请求的实体。</p>
+</li>
+<li>
+<p>wrapping: 从其它实体中获取的内容</p>
+<p>​	当从 HTTP 响应发出内容时，这个分类对管理连接就很重要了。对于应用生成的那些请求实体，它们只用 HttpClient 发送，流式（Streamed）和自包含（self-contained）之间的区别就不那么重要了。这时，建议将不重复的实体划为流式（streamed）<strong>，可重复的实体划为自包含的（self-contained）。</strong></p>
+</li>
+</ul>
+<p>可重复的实体<strong>HttpEntity</strong>:当Httpclient之情请求后返回结果CloseableHttpResponse response对象,里面包含了这个实体,里面包含了想要的实体内容.然后使用<strong>EntityUtils</strong>类解析HttpEntity,里面还可以定义编码格式</p>
+<p><strong>缓存</strong></p>
+<p>​		有时候多次读取实体内容很必要。这是实体内容就需要用某种方式缓存着，要么在内存里，要么在硬盘里。最简单的方式是将原始实体<code>BufferedHttpEntity</code> 类封装。这就会把原始实体的内容放在内存缓冲区里。在其它任何方面，实体封装器都有一个原始的实体。</p>
+<pre><code class="language-java">CloseableHttpResponse response = httpclient.excute(httpget);
+HttpEntity entity = response.getEntity();
+if(entity != null) {
+    entity = new BufferedHttpEntity(entity);
+}
+</code></pre>
+<h2 id="应用场景">应用场景</h2>
+<p>​		商场门户的开发和后台开发还有服务层的结合都需要这项技术:门户一般只放静态页面,一般不放mapper和pojo,不做任何持久层处理,制作业务逻辑,然后又专门的服务层处理,这是一般门户对应多个服务层,进行通信交互数据.</p>
+<h1 id="问题">问题</h1>
+<h2 id="httpclient的url中带参数问题">Httpclient的url中带参数问题</h2>
+<p>例如</p>
+<pre><code class="language-java"> @Override
+    public TaotaoResult createService(Order order) {
+        String orderJson = JsonUtils.objectToJson(order);
+        //调用订单系统服务提交订单
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        String resultStr = null;
+        /**
+         * ORDER_BASE_URL=http://localhost:8085
+         * ORDER_CREATE_URL=/order/create
+         */
+        HttpPost httpPost = new HttpPost(ORDER_BASE_URL + ORDER_CREATE_URL);
+        try {
+            httpPost.setEntity(new StringEntity(orderJson, ContentType.APPLICATION_JSON));
+            CloseableHttpResponse resp = httpClient.execute(httpPost);
+            HttpEntity entity = resp.getEntity();
+            resultStr = EntityUtils.toString(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //转换成java对象
+        TaotaoResult taotaoResult = TaotaoResult.format(resultStr);
+        return taotaoResult;
+    }
+
+</code></pre>
+<p>上面请求的地址是http://localhost:8085/order/create+一个对象参数,这时我们要知道,Entity(实体),无论是返回值还是请求参数都是String类型的,这是需要我们手动转一下参数.在spring中我们无论返回值还是参数都是默认支持json,所以不用转,但是这个后端技术(HttpClient)需要我们手动转一下.</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#httpclient">HttpClient</a>
+<ul>
+<li><a href="#httpclient%E7%AE%80%E4%BB%8B%E4%B8%8E%E4%BA%86%E8%A7%A3">HttpClient简介与了解</a>
+<ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AFhttpclient">什么是HttpClient</a></li>
+<li><a href="#%E8%AF%AF%E8%A7%A3">误解</a></li>
+<li><a href="#%E5%BA%94%E7%94%A8%E7%9A%84%E8%8C%83%E5%9B%B4">应用的范围</a></li>
+</ul>
+</li>
+<li><a href="#%E7%9F%A5%E8%AF%86%E7%82%B9">知识点</a></li>
+<li><a href="#http%E8%AF%B7%E6%B1%82">HTTP请求:</a>
+<ul>
+<li><a href="#%E4%B8%AA%E4%BA%BA%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E7%90%86%E8%A7%A3">个人对Http请求的理解:</a></li>
+<li><a href="#uribuilder%E7%9A%84-api">UriBuilder的 API</a></li>
+<li><a href="#http%E5%93%8D%E5%BA%94">Http响应</a>
+<ul>
+<li><a href="#http-%E5%AE%9E%E4%BD%93">HTTP 实体</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">应用场景</a></li>
+</ul>
+</li>
+<li><a href="#%E9%97%AE%E9%A2%98">问题</a>
+<ul>
+<li><a href="#httpclient%E7%9A%84url%E4%B8%AD%E5%B8%A6%E5%8F%82%E6%95%B0%E9%97%AE%E9%A2%98">Httpclient的url中带参数问题</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/dan-dian-deng-lu-yu-redis-ji-qun-huan-cun">
+              <h3 class="post-title">
+                单点登陆与redis集群缓存
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

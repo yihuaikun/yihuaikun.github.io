@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yihuaikun.github.io</id>
     <title>向java工程师迈进</title>
-    <updated>2019-12-12T12:22:54.788Z</updated>
+    <updated>2019-12-12T12:27:38.340Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yihuaikun.github.io"/>
     <link rel="self" href="https://yihuaikun.github.io/atom.xml"/>
@@ -10,6 +10,1637 @@
     <logo>https://yihuaikun.github.io/images/avatar.png</logo>
     <icon>https://yihuaikun.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, 向java工程师迈进</rights>
+    <entry>
+        <title type="html"><![CDATA[Mybatis逆向工程]]></title>
+        <id>https://yihuaikun.github.io/post/mybatis-ni-xiang-gong-cheng</id>
+        <link href="https://yihuaikun.github.io/post/mybatis-ni-xiang-gong-cheng">
+        </link>
+        <updated>2019-12-12T12:27:22.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="mybatis逆向工程">Mybatis逆向工程</h1>
+<p>mybatis需要程序员自己编写sql语句，mybatis官方提供逆向工程，可以针对单表自动生成mybatis执行所需要的代码（mapper.java、mapper.xml、pojo…），可以让程序员将更多的精力放在繁杂的业务逻辑上。</p>
+<pre><code>    企业实际开发中，常用的逆向工程方式：由数据库的表生成java代码。
+
+    之所以强调单表两个字，是因为Mybatis逆向工程生成的Mapper所进行的操作都是针对单表的，也许你可能会觉得那这就有点鸡肋了，但是在大型项目中，很少有复杂的多表关联查询，所以作用还是很大的。
+</code></pre>
+<p>在IDEA中的应用</p>
+<h2 id="1加依赖坐标">1.加依赖(坐标)</h2>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;8.0.17&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.3.7&lt;/version&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+<h2 id="yml中的配置">yml中的配置</h2>
+<pre><code class="language-yml">spring:
+  application:
+    name: security-unit03
+  datasource:
+    name: root
+    url: jdbc:mysql://localhost:3306/day05?characterEncoding=utf8&amp;serverTimezone=UTC
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath*:/mappers/*.xml
+
+</code></pre>
+<h2 id="把配置文件放在sources下">把配置文件放在sources下</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE generatorConfiguration
+        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
+
+&lt;generatorConfiguration&gt;
+
+    &lt;!-- 引入第三方依赖包 --&gt;
+
+    		&lt;classPathEntry location=&quot;D:\JAVAWEB\mybatis逆向工程\mybatis_genarator\lib\mysql-connector-java-8.0.12.jar&quot; /&gt;
+
+
+    &lt;!--
+     targetRuntime常用值:
+        MyBatis3Simple(只生成基本的CRUD和少量的动态SQL)
+        MyBatis3(生成完整的CRUD，包含CriteriaAPI方法Example后缀的方法)
+     --&gt;
+    &lt;context id=&quot;localhost_mysql&quot; targetRuntime=&quot;MyBatis3&quot;&gt;
+
+        &lt;!-- 不生成注释 --&gt;
+        &lt;commentGenerator&gt;&lt;!--注解编辑器--&gt;
+            &lt;property name=&quot;suppressAllComments&quot; value=&quot;true&quot; /&gt;
+        &lt;/commentGenerator&gt;
+
+        &lt;jdbcConnection driverClass=&quot;com.mysql.cj.jdbc.Driver&quot;
+                        connectionURL=&quot;jdbc:mysql://localhost:3306/day05?characterEncoding=utf8&amp;amp;serverTimezone=UTC&quot;
+                        userId=&quot;root&quot;
+                        password=&quot;123456&quot;&gt;
+            &lt;property name=&quot;nullCatalogMeansCurrent&quot; value=&quot;true&quot;/&gt;
+        &lt;/jdbcConnection&gt;
+
+        &lt;javaTypeResolver &gt;
+            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot; /&gt;
+        &lt;/javaTypeResolver&gt;
+
+        &lt;!-- 生成实体类 --&gt;
+        &lt;javaModelGenerator targetPackage=&quot;com.security.lession.pojo&quot; targetProject=&quot;../security-unit04/src/main/java&quot;&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot; /&gt;
+        &lt;/javaModelGenerator&gt;
+
+        &lt;!-- 生成XML Mapper --&gt;
+        &lt;sqlMapGenerator targetPackage=&quot;src/main/resources/mappers&quot; targetProject=&quot;.&quot;&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+        &lt;/sqlMapGenerator&gt;
+
+        &lt;!-- 生成Mapper接口 --&gt;
+        &lt;!-- 生成的Mapper类型：ANNOTATEDMAPPER（注解）、MIXEDMAPPER（混合）、XMLMAPPER（XML） --&gt;
+        &lt;javaClientGenerator type=&quot;XMLMAPPER&quot; targetPackage=&quot;com.security.lession.mapper&quot;  targetProject=&quot;src/main/java&quot;&gt;
+            &lt;!-- 是否将数据库中的schema作为包名的一部分，默认就是false --&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+        &lt;/javaClientGenerator&gt;
+
+
+        &lt;!--&lt;table schema=&quot;lanou&quot; tableName=&quot;message&quot; domainObjectName=&quot;Message&quot;&gt;
+            &amp;lt;!&amp;ndash; 是否用数据库中的字段名作为POJO属性名(不自动转小驼峰)，默认值是false &amp;ndash;&amp;gt;
+
+            &amp;lt;!&amp;ndash;
+            &lt;property name=&quot;useActualColumnNames&quot; value=&quot;true&quot;/&gt;
+            &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+
+            &amp;lt;!&amp;ndash; 此标签用于在生成代码时忽略数据库中的某个字段 &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash;
+            &lt;ignoreColumn column=&quot;FRED&quot; /&gt;
+            &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash; 通过此标签重写mybatis从数据库读到的元信息，自定义列相关配置，包括(名称、类型) &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash;
+            &lt;columnOverride column=&quot;aa&quot; property=&quot;sname&quot; /&gt;
+            &amp;ndash;&amp;gt;
+
+            &lt;/table&gt;--&gt;
+
+        &lt;table schema=&quot;&quot; tableName=&quot;student&quot;&gt;
+            &lt;!-- 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 --&gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+&lt;!--        &lt;table schema=&quot;&quot; tableName=&quot;tb_content_category&quot;&gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_cat&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_desc&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_param&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_param_item&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_order&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_order_item&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_order_shipping&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_user&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;--&gt;
+    &lt;/context&gt;
+&lt;/generatorConfiguration&gt;
+</code></pre>
+<h2 id="出现的问题">出现的问题</h2>
+<p>1.用完之后建议注掉插件</p>
+<p>2.找不到数据库驱动,在上面的配置文件中加上</p>
+<pre><code class="language-xml">    		&lt;classPathEntry location=&quot;D:\JAVAWEB\mybatis逆向工程\mybatis_genarator\lib\mysql-connector-java-8.0.12.jar&quot; /&gt;
+
+
+</code></pre>
+<p>上面的数据库的jar包是硬盘上的位置即可,没有的话可以去下载个,一般本地仓库都有.</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[ nginx反向代理]]></title>
+        <id>https://yihuaikun.github.io/post/nginx-fan-xiang-dai-li</id>
+        <link href="https://yihuaikun.github.io/post/nginx-fan-xiang-dai-li">
+        </link>
+        <updated>2019-12-12T12:26:30.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="nginx反向代理布置项目">nginx反向代理布置项目</h1>
+<h2 id="springboot项目通过命令运行"><strong>springboot项目通过命令运行</strong>:</h2>
+<p>mvn spring-boot:run</p>
+<p>ps:这里需要找到项目文件的地方然后cmd,输入:mvc spring-boot:run,运行完之后然后就能访问了</p>
+<h4 id="2直接运行main方法"><strong>2.直接运行main方法</strong></h4>
+<h4 id="3打包运行"><strong>3.打包运行</strong></h4>
+<h5 id="打包成jar包">打包成jar包</h5>
+<p>​	1&gt;导入插件</p>
+<pre><code class="language-xml">    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+</code></pre>
+<p>2&gt;先打包:通过命令:mvn package或着在lifecycle中直接打包</p>
+<p>命令行:java -jar 什么路径下/xxx.jar</p>
+<p>ps:注意这里打完包之后要看包所在的路径,-jar 之后时打包的路径+&quot;/&quot;+打完包后的名字</p>
+<p><strong>出现面错误</strong>,原来的命令时:java -jar spring-boot-study01-0.0.1-SNAPSHOT.jar</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-CiuJgREn-1574775788908)(D:\总结\spring-boot\命令运行jar包出错.png)]</p>
+<p><strong>正确的是</strong>:java -jar target/spring-boot-study01-0.0.1-SNAPSHOT.jar</p>
+<p><strong>语法是</strong>:java -jar 包的路径/打完包的全名</p>
+<p><strong>ps:打完包编译文件target下看打包全名:</strong></p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-oTLufWtQ-1574775788910)(D:\总结\spring-boot\打包后包的所在处png.png)]</p>
+<h5 id="打包成war包">打包成war包</h5>
+<p>1.加依赖:注意这里tomcat加provided,防止tomcat包打包在war包中</p>
+<pre><code class="language-xml"> &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+ &lt;/dependency&gt;
+</code></pre>
+<p>2.让启动类继承SpringBootInitializer然后重写configure方法</p>
+<pre><code class="language-java">import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
+
+//@SpringBootApplication
+
+@EnableAutoConfiguration
+@ComponentScan
+public class SpringBootStudy01Application extends SpringBootServletInitializer {
+    public static void main(String[] args) {
+        //开启banner启动
+        SpringApplication.run(SpringBootStudy01Application.class, args);
+        //关闭banner启动
+//        SpringApplicationBuilder springApplicationBuilder = new SpringApplicationBuilder(SpringBootStudy01Application.class);
+//        springApplicationBuilder.bannerMode(Banner.Mode.OFF).run(args);
+    }
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(SpringBootStudy01Application.class);
+    }
+}
+</code></pre>
+<p>3.clear一下然后package</p>
+<p>4.结果</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-phGYtBLZ-1574775788911)(D:\总结\spring-boot\打包成war包.png)]</p>
+<p>5.放在tomcat下webapps修改下名字为:spring-boot-study01.war</p>
+<p>6.进入tomcat的bin下启动程序</p>
+<h2 id="在linux中布置项目">在linux中布置项目</h2>
+<h3 id="创建目录">创建目录</h3>
+<p>​	首先需要创建一个目录,把打成的java项目的jar包放在下面</p>
+<h3 id="配置nginx的nginxconfig文件">配置nginx的nginx.config文件</h3>
+<pre><code>1.进入nginx的conf文件然后
+</code></pre>
+<pre><code class="language-linux">sudo vim nginx.conf
+</code></pre>
+<p>​	2.在nginx支持的http协议下修改文件为</p>
+<pre><code class="language-XML">server{
+     listen     81;
+     server_name  security.taotao.com;
+     location /{
+       proxy_pass http://127.0.0.1:8081/;
+     }
+   }
+</code></pre>
+<p>3.进入sbin目录重新启动nginx让配置文件生效</p>
+<pre><code class="language-linux">#这样也能停止nginx但是相当于kill,不给nginx做停止前的处理时间直接杀死
+./nginx -s stop
+
+#建议用quit命令完整的停止nginx,因为quit支持nginx停止前做处理工作
+./nginx -s quit
+./nginx
+</code></pre>
+<p>不想停止但是又想让配置文件生效也可以这样做</p>
+<pre><code class="language-linux">./nginx -s reload
+</code></pre>
+<h3 id="上传打包的项目">上传打包的项目</h3>
+<pre><code class="language-linux">rz -be
+</code></pre>
+<h3 id="运行项目">运行项目</h3>
+<pre><code class="language-linux">java -jar /home/projectjar/security01-0.0.1-SNAPSHOT.jar
+</code></pre>
+<p>访问http://ip:81就能看到<br>
+<img src="https://img-blog.csdnimg.cn/20191126214325217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[nginx]]></title>
+        <id>https://yihuaikun.github.io/post/nginx</id>
+        <link href="https://yihuaikun.github.io/post/nginx">
+        </link>
+        <updated>2019-12-12T12:25:49.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="nginx学习">nginx学习</h1>
+<h2 id="nginx安装">nginx安装</h2>
+<p>nginx是C语言开发，建议在linux上运行，本教程使用Centos6.5作为安装环境。</p>
+<p>n  gcc</p>
+<p>​         安装nginx需要先将官网下载的源码进行编译，编译依赖gcc环境，如果没有gcc环境，需要安装gcc：yum install gcc-c++</p>
+<p>n  PCRE</p>
+<p>​         PCRE(Perl Compatible Regular Expressions)是一个Perl库，包括 perl 兼容的正则表达式库。nginx的http模块使用pcre来解析正则表达式，所以需要在linux上安装pcre库。</p>
+<p><strong>yum install -y pcre pcre-devel</strong></p>
+<p>注：pcre-devel是使用pcre开发的一个二次开发库。nginx也需要此库。</p>
+<p>n  zlib</p>
+<p>​         zlib库提供了很多种压缩和解压缩的方式，nginx使用zlib对http包的内容进行gzip，所以需要在linux上安装zlib库。</p>
+<p><strong>yum install -y zlib zlib-devel</strong></p>
+<p>n  openssl</p>
+<p>​         OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及SSL协议，并提供丰富的应用程序供测试或其它目的使用。</p>
+<p>​         nginx不仅支持http协议，还支持https（即在ssl协议上传输http），所以需要在linux安装openssl库。</p>
+<p><strong>yum install -y openssl openssl-devel</strong></p>
+<h3 id="1-编译安装">1 .编译安装</h3>
+<p>将nginx-1.8.0.tar.gz拷贝至linux服务器。</p>
+<p>解压：</p>
+<p>tar -zxvf nginx-1.8.0.tar.gz</p>
+<p>cd nginx-1.8.0</p>
+<p>1、  configure</p>
+<p>./configure --help查询详细参数（参考本教程附录部分：nginx编译参数）</p>
+<pre><code class="language-nginx">./configure \
+--prefix=/usr/local/nginx \
+--pid-path=/var/run/nginx/nginx.pid \
+--lock-path=/var/lock/nginx.lock \
+--error-log-path=/var/log/nginx/error.log \
+--http-log-path=/var/log/nginx/access.log \
+--with-http_gzip_static_module \
+--http-client-body-temp-path=/var/temp/nginx/client \
+--http-proxy-temp-path=/var/temp/nginx/proxy \
+--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
+--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
+--http-scgi-temp-path=/var/temp/nginx/scgi
+
+</code></pre>
+<p><strong>注意：上边将临时文件目录指定为/var/temp/nginx</strong>**，需要在/var<strong>下创建temp及nginx目录</strong></p>
+<ol start="2">
+<li>编译安装</li>
+</ol>
+<pre><code class="language-linux">make
+
+make  install 
+</code></pre>
+<p>安装成功查看安装目录 ：</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191126211843957.png" alt="在这里插入图片描述"></figure>
+<h1 id="3-启动nginx">3 启动nginx</h1>
+<p>cd /usr/local/nginx/sbin/</p>
+<p>./nginx</p>
+<p>查询nginx进程：<br>
+<img src="https://img-blog.csdnimg.cn/20191126212127870.jpg" alt="在这里插入图片描述"></p>
+<p>15098是nginx主进程的进程id，15099是nginx工作进程的进程id</p>
+<p><strong>注意：执行./nginx<strong><strong>启动nginx</strong></strong>，这里可以-c<strong><strong>指定加载的nginx</strong></strong>配置文件，如下：</strong></p>
+<p><strong>./nginx -c /usr/local/nginx/conf/nginx.conf</strong></p>
+<p><strong>如果不指定-c</strong>**，nginx<strong><strong>在启动时默认加载conf/nginx.conf</strong></strong>文件，此文件的地址也可以在编译安装nginx<strong><strong>时指定./configure</strong></strong>的参数（--conf-path=** <strong>指向配置文件（nginx.conf</strong>**））**</p>
+<h1 id="4-停止nginx">4 停止nginx</h1>
+<p>方式1，快速停止：</p>
+<p>cd /usr/local/nginx/sbin</p>
+<p>./nginx -s stop</p>
+<p>此方式相当于先查出nginx进程id再使用kill命令强制杀掉进程。</p>
+<p>方式2，完整停止(建议使用)：</p>
+<p>cd /usr/local/nginx/sbin</p>
+<p>./nginx -s quit</p>
+<p>此方式停止步骤是待nginx进程处理任务完毕进行停止。</p>
+<h1 id="5-重启nginx">5 重启nginx</h1>
+<p>方式1，先停止再启动（建议使用）：</p>
+<p>对nginx进行重启相当于先停止nginx再启动nginx，即先执行停止命令再执行启动命令。</p>
+<p>如下：</p>
+<p>./nginx -s quit</p>
+<p>./nginx</p>
+<p>方式2，重新加载配置文件：</p>
+<p>当nginx的配置文件nginx.conf修改后，要想让配置生效需要重启nginx，使用-s reload不用先停止nginx再启动nginx即可将配置信息在nginx中生效，如下：</p>
+<p>./nginx -s reload</p>
+<h1 id="6-测试">6 测试</h1>
+<p>nginx安装成功，启动nginx，即可访问虚拟机上的nginx：</p>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191126212245196.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>到这说明nginx上安装成功。</p>
+<h1 id="7-开机自启动nginx">7 开机自启动nginx</h1>
+<h2 id="71-编写shell脚本">7.1 编写shell脚本</h2>
+<p>这里使用的是编写shell脚本的方式来处理</p>
+<p>vi /etc/init.d/nginx  (输入下面的代码)</p>
+<pre><code class="language-linux">#!/bin/bash
+# nginx Startup script for the Nginx HTTP Server
+# it is v.0.0.2 version.
+# chkconfig: - 85 15
+# description: Nginx is a high-performance web and proxy server.
+#              It has a lot of features, but it's not for everyone.
+# processname: nginx
+# pidfile: /var/run/nginx.pid
+# config: /usr/local/nginx/conf/nginx.conf
+nginxd=/usr/local/nginx/sbin/nginx
+nginx_config=/usr/local/nginx/conf/nginx.conf
+nginx_pid=/var/run/nginx.pid
+RETVAL=0
+prog=&quot;nginx&quot;
+# Source function library.
+. /etc/rc.d/init.d/functions
+# Source networking configuration.
+. /etc/sysconfig/network
+# Check that networking is up.
+[ ${NETWORKING} = &quot;no&quot; ] &amp;&amp; exit 0
+[ -x $nginxd ] || exit 0
+# Start nginx daemons functions.
+start() {
+if [ -e $nginx_pid ];then
+   echo &quot;nginx already running....&quot;
+   exit 1
+fi
+   echo -n $&quot;Starting $prog: &quot;
+   daemon $nginxd -c ${nginx_config}
+   RETVAL=$?
+   echo
+   [ $RETVAL = 0 ] &amp;&amp; touch /var/lock/subsys/nginx
+   return $RETVAL
+}
+# Stop nginx daemons functions.
+stop() {
+        echo -n $&quot;Stopping $prog: &quot;
+        killproc $nginxd
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] &amp;&amp; rm -f /var/lock/subsys/nginx /var/run/nginx.pid
+}
+# reload nginx service functions.
+reload() {
+    echo -n $&quot;Reloading $prog: &quot;
+    #kill -HUP `cat ${nginx_pid}`
+    killproc $nginxd -HUP
+    RETVAL=$?
+    echo
+}
+# See how we were called.
+case &quot;$1&quot; in
+start)
+        start
+        ;;
+stop)
+        stop
+        ;;
+reload)
+        reload
+        ;;
+restart)
+        stop
+        start
+        ;;
+status)
+        status $prog
+        RETVAL=$?
+        ;;
+*)
+        echo $&quot;Usage: $prog {start|stop|restart|reload|status|help}&quot;
+        exit 1
+esac
+exit $RETVAL
+
+</code></pre>
+<p>:wq  保存并退出</p>
+<h2 id="72-设置文件的访问权限">7.2 设置文件的访问权限</h2>
+<p>chmod a+x /etc/init.d/nginx   (a+x ==&gt; all user can execute  所有用户可执行)</p>
+<p>这样在控制台就很容易的操作nginx了：查看Nginx当前状态、启动Nginx、停止Nginx、重启Nginx…</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191126212523315.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>如果修改了nginx的配置文件nginx.conf，也可以使用上面的命令重新加载新的配置文件并运行，可以将此命令加入到rc.local文件中，这样开机的时候nginx就默认启动了</p>
+<h2 id="73-加入到rclocal文件中">7.3 加入到rc.local文件中</h2>
+<p>vi /etc/rc.local</p>
+<p>加入一行  /etc/init.d/nginx start    保存并退出，下次重启会生效。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[redis]]></title>
+        <id>https://yihuaikun.github.io/post/redis</id>
+        <link href="https://yihuaikun.github.io/post/redis">
+        </link>
+        <updated>2019-12-12T12:24:38.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="1-redis介绍">1. redis介绍</h1>
+<h2 id="11-什么是redis">1.1. 什么是redis</h2>
+<blockquote>
+<p>Redis是用C语言开发的一个开源的高性能键值对（key-value）数据库。它通过提供多种键值数据类型来适应不同场景下的存储需求</p>
+</blockquote>
+<h3 id="redis支持的键值数据类型">Redis支持的键值数据类型</h3>
+<p>字符串类型</p>
+<p>散列类型  (对应Java中的Object，它主要用来存储对象)</p>
+<p>列表类型  （List）</p>
+<p>集合类型    (Set)</p>
+<p>有序集合类型。 (TreeSet)</p>
+<h2 id="12-redis的应用场景">1.2. redis的应用场景</h2>
+<p>缓存（数据查询、短连接、新闻内容、商品内容等等）。（最多使用）</p>
+<p>分布式集群架构中的session分离。</p>
+<p>聊天室的在线好友列表。</p>
+<p>任务队列。（秒杀、抢购、12306等等）</p>
+<p>应用排行榜。</p>
+<p>网站访问统计。</p>
+<p>数据过期处理（可以精确到毫秒）</p>
+<h1 id="2-redis的安装">2. Redis的安装</h1>
+<h2 id="21-在windows上安装">2.1 在Windows上安装</h2>
+<p>Redis官方只提供了Linux和macos的版本，并没有提供Windows安装包，但是微软的github仓库中我们可以下载到Windows上可用的Redis程序包，但已经很久没有更新，建议仅用来作为开发练手，不要用于实际的生产环境中。</p>
+<p>下载地址： https://github.com/microsoftarchive/redis/tags</p>
+<p>下载后直接解压就可以用了</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191125091710786.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h2 id="22-在linux上安装">2.2 在Linux上安装</h2>
+<p>redis是C语言开发，建议在linux上运行，示例使用CentOS7作为安装环境。</p>
+<ol>
+<li>
+<p>安装redis需要先将官网下载的源码进行编译，编译依赖gcc环境，如果没有gcc环境，需要安装gcc</p>
+<pre><code class="language-bash">yum install gcc-c++
+</code></pre>
+<blockquote>
+<p>阿里云的CentOS7默认已经内置了gcc，可以跳过这一步</p>
+</blockquote>
+</li>
+<li>
+<p>下载redis</p>
+<p>从官网下载</p>
+<p>http://download.redis.io/releases/redis-5.0.5.tar.gz</p>
+<p>将redis-5.0.5.tar.gz拷贝任意路径下，如 /home/john/opt/</p>
+</li>
+<li>
+<p>解压源码</p>
+<pre><code class="language-bash">cd /home/john/opt/
+tar -zxvf redis-5.0.5.tar.gz  
+</code></pre>
+</li>
+<li>
+<p>进入解压后的目录进行编译安装</p>
+<pre><code class="language-bash">cd /home/john/opt/redis-5.0.5/src
+make # 编译源代码
+make install  # 安装
+# 上面两步也可以直接通过 make &amp;&amp; make install两步并一步执行
+</code></pre>
+<blockquote>
+<p>Redis默认的安装目录是/usr/local/bin， 我们在执行make install命令时添加prefix参数可修改默认安装位置，如： make PREFIX=/usr/local/redis install</p>
+</blockquote>
+</li>
+</ol>
+<h1 id="3-redis单机启动">3. redis单机启动</h1>
+<p>redis.conf是redis的配置文件，默认在redis源码包解压后的根目录有一份redis.conf文件，我们可将其拷贝一份到上一步中redis的安装目录</p>
+<pre><code class="language-bash">cp /home/john/opt/redis-5.0.5/src/redis.conf /usr/local/bin
+</code></pre>
+<p>我们装完redis以后，默认的安装路径是/usr/local/bin，系统会自动来此目录寻找命令，所以我们不需要在配置环境变量，在任意目录都可以使用redis相关的命令，如redis-server、redis-cli</p>
+<h2 id="31-前端模式启动">3.1.   前端模式启动</h2>
+<p>启动命令：</p>
+<pre><code class="language-bash">redis-server /usr/local/bin/redis.conf
+</code></pre>
+<p>通过上面的命令启动，redis将以前端模式启动，前端模式启动的缺点是ssh命令窗口关闭则redis-server程序结束，不推荐使用此方法。</p>
+<h2 id="32-后端模式启动">3.2.   后端模式启动</h2>
+<h3 id="321-开启远程连接">3.2.1 开启远程连接</h3>
+<ul>
+<li>注释掉 bind 127.0.0.1这行</li>
+<li>关闭保护模式  将protected-mode yes 改成 protected-mode no</li>
+</ul>
+<h3 id="322-添加密码验证">3.2.2 添加密码验证</h3>
+<p>放开 # requirepass foobared 这行注释，将后面的foobared改成你自己需要设置的密码</p>
+<p>客户端连接时，需要添加-a 参数指定密码才能连上来。</p>
+<h3 id="323-开启后台守护进程运行模式">3.2.3 开启后台守护进程运行模式</h3>
+<p>将 # daemonize no 这行放开注释， 并且改成 yes， Redis server将以后台方式运行。</p>
+<h3 id="324-指定日志文件">3.2.4 指定日志文件</h3>
+<p>将 logfile &quot;&quot; 改成 logfile &quot;你需要的redis日志文件名称&quot;， 默认的空字符串代表输出到前端控制台（标准输出）</p>
+<p>修改redis.conf配置文件， daemonize yes 以后端模式启动。</p>
+<h3 id="325-启动">3.2.5 启动</h3>
+<p>启动命令和前端启动一样，只不过控制台不会输出任何信息，而且命令结束，如果没有异常会马上退出。</p>
+<h1 id="5-redis集群">5.   redis集群</h1>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191125091753812.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h2 id="51-集群原理">5.1. 集群原理</h2>
+<h3 id="511-redis-cluster架构图">5.1.1.   redis-cluster架构图</h3>
+<p>架构细节:</p>
+<ol>
+<li>所有的redis节点彼此互联(PING-PONG机制),内部使用二进制协议优化传输速度和带宽.</li>
+<li>节点的fail是通过集群中超过半数的节点检测失效时才生效.</li>
+<li>客户端与redis节点直连,不需要中间proxy层.客户端不需要连接集群所有节点,连接集群中任何一个可用节点即可</li>
+<li>redis-cluster把所有的物理节点映射到[0-16383]slot上,cluster 负责维护node&lt;-&gt;slot&lt;-&gt;value  Redis 集群中内置了 16384 个哈希槽，当需要在 Redis 集群中放置一个 key-value 时，redis 先对 key 使用 crc16 算法算出一个结果，然后把结果对 16384 求余数，这样每个 key 都会对应一个编号在 0-16383 之间的哈希槽，redis 会根据节点数量大致均等的将哈希槽映射到不同的节点</li>
+</ol>
+<h3 id="512-redis-cluster投票容错">5.1.2.   redis-cluster投票:容错</h3>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191125091815748.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<ol>
+<li>投票过程是集群中所有master参与,如果半数以上master节点与master节点通信超过(cluster-node-timeout),认为当前master节点挂掉.</li>
+<li>什么时候整个集群不可用(cluster_state:fail)?
+<ol>
+<li>如果集群任意master挂掉,且当前master没有slave.集群进入fail状态,也可以理解成集群的slot映射[0-16383]不完成时进入fail状态</li>
+<li>如果集群超过半数以上master挂掉，无论是否有slave集群进入fail状态.</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p>当集群不可用时,所有对集群的操作做都不可用，收到((error) CLUSTERDOWN The cluster is down)错误</p>
+</blockquote>
+<h2 id="53-创建集群">5.3. 创建集群</h2>
+<h3 id="531-集群结点规划">5.3.1.   集群结点规划</h3>
+<p>这里在同一台服务器用不同的端口表示不同的redis服务器(伪集群)，如下：</p>
+<pre><code>主节点：192.168.101.3:7001 192.168.101.3:7002 192.168.101.3:7003
+
+从节点：192.168.101.3:7004 192.168.101.3:7005 192.168.101.3:7006
+</code></pre>
+<h3 id="532-修改配置">5.3.2 修改配置</h3>
+<p>修改redis.conf配置文件</p>
+<pre><code class="language-conf">port 7001  # 将每个节点的端口号改成不一样的(因为同一台机器上一个端口只能被一个进程绑定)
+cluster-enabled yes #是否开启集群模式
+cluster-config-file nodes.conf	#集群配置文件名称
+cluster-node-timeout 5000	#集群中节点间投票通信的超时时间
+appendonly yes  #配置集群中当前节点仅开启AOF持久化模式
+pidfile /var/run/redis_7001.pid  #将pid文件改成不同的名称，建议和当前节点的端口号对应
+</code></pre>
+<h3 id="533-创建集群目录">5.3.3 创建集群目录</h3>
+<p>在/usr/local下创建redis-cluster目录，其下创建7001、7002。。7006目录，如下：</p>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191125091842510.png" alt="在这里插入图片描述"></figure>
+<p>将redis安装目录bin下的文件拷贝到每个700X目录内，并且将配置文件也拷贝一份到每个700X目录</p>
+<pre><code class="language-bash">cp /usr/local/bin/redis/redis* /usr/local/redis-cluster/7001
+cp /home/john/opt/redis-5.0.5/src/redis.conf /usr/local/redis-cluster/7001
+</code></pre>
+<p>修改每个700X目录下的redis.conf配置文件中的端口号和pid文件路径</p>
+<h3 id="534-启动每个节点redis服务">5.3.4.   启动每个节点redis服务</h3>
+<p>进入/usr/local/redis_cluster目录下，编写启动集群脚本：start_redis_cluster.sh</p>
+<p>cd /usr/local/redis_cluster</p>
+<p>vim start_redis_cluster.sh</p>
+<pre><code class="language-bash">#!/bin/bash
+
+work_dir=`pwd`
+
+echo &quot;开始启动redis集群中的每个节点&quot;
+for idx in {1..6}
+do
+    cd $work_dir
+    cd &quot;./700$idx&quot; &amp;&amp; ./redis-server ./redis.conf
+    if [ $? != 0 ] 
+    then
+        echo &quot;启动700$idx节点失败，停止启动集群&quot;
+        exit 1
+    fi  
+    echo &quot;启动700$idx&quot;
+done
+echo &quot;所有集群节点启动完成&quot;
+
+</code></pre>
+<p>编辑完成后，按ESC切换到命令模式， 输入ZZ 或者 :wq保存退出。</p>
+<p>启动Redis集群中所有节点</p>
+<pre><code class="language-bash">./start_redis_cluster.sh 
+
+</code></pre>
+<p>查看redis进程：</p>
+<p>ps aux | grep redis</p>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191125091920330.png" alt="在这里插入图片描述"></figure>
+<h3 id="534-执行创建集群命令">5.3.4.   执行创建集群命令</h3>
+<p>Redis 5开始，集群不需要依赖Ruby，官方直接提供了集群管理支持</p>
+<pre><code class="language-bash">redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 \
+127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006 \
+--cluster-replicas 1
+
+</code></pre>
+<blockquote>
+<p>注意，这里用127.0.0.1仅适用于在本机练习集群搭建，真实环境下需要换成外公网IP，否则无法远程连接到你的redis集群</p>
+</blockquote>
+<p>命令说明：</p>
+<p>redis集群至少需要3个主节点，每个主节点有一个从节点总共6个节点</p>
+<p>--cluster-replicas指定为1表示为集群中每个master都指定一个slave，也就是说上面6个节点会有3个主节点和对应的3个从节点</p>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191125092008537.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>如果一切正常，最后会看到如下输出</p>
+<pre><code class="language-bash">[OK] All 16384 slots covered.
+
+</code></pre>
+<h4 id="可能会遇到的错误">可能会遇到的错误</h4>
+<p>错误一：</p>
+<p>如果创建redis集群的时候，ip用的是127.0.0.1，那么你在用Java客户端远程操作Redis集群的时候，会死活连不上，一直是报<strong>127.0.0.1:7001</strong>无法连接</p>
+<p>解决办法：创建Redis集群时，创建命令中传入的节点IP参数列表使用外部可以访问的IP</p>
+<p>错误二：</p>
+<p>如果执行时报如下错误：</p>
+<p>[ERR] Node XXXXXX is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0</p>
+<p>解决方法是删除生成的配置文件nodes.conf，如果不行则说明现在创建的节点包括了旧集群的结点信息，需要删除redis的持久化文件后再重启redis，比如：appendonly.aof、dump.rdb</p>
+<h2 id="54-停止redis集群">5.4. 停止Redis集群</h2>
+<p>在/usr/local/redis_cluster目录下，创建脚本文件：stop_redis_cluster.sh</p>
+<p>输入以下内容：</p>
+<pre><code class="language-bash">#!/bin/bash
+
+work_dir=`pwd`
+
+count=0
+err_count=0
+echo &quot;开始停止redis集群&quot;
+for idx in {1..6}
+do
+    cd $work_dir
+    cd &quot;./700$idx&quot; &amp;&amp; ./redis-cli -c -p &quot;700$idx&quot; shutdown
+    if [ $? != 0 ] 
+    then
+        echo &quot;停止700$idx节点失败&quot;
+        let err_count++
+    fi  
+    echo &quot;停止700$idx节点&quot;
+    let count++
+done
+echo &quot;Redis集群一共有$count个节点，成功停止`expr $count - $err_count`个节点，有$err_count个节点停止失败.&quot;
+
+</code></pre>
+<p>执行此脚本可以停止redis集群</p>
+<h2 id="55-查询集群信息">5.5. 查询集群信息</h2>
+<p>集群创建成功登陆任意redis结点查询集群中的节点情况。</p>
+<p>客户端以集群方式登陆：</p>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20191125092056434.png" alt="在这里插入图片描述"></figure>
+<p>说明：</p>
+<p><code>./redis-cli -c -h 192.168.101.3 -p 7001</code>，其中<code>-c</code>表示以集群方式连接redis，<code>-h</code>指定ip地址，<code>-p</code>指定端口号</p>
+<h3 id="551-查看集群状态相关命令">5.5.1 查看集群状态相关命令</h3>
+<p>cluster nodes 查询集群结点信息</p>
+<p>cluster info 查询集群状态信息</p>
+<h2 id="56-添加主节点">5.6. 添加主节点</h2>
+<p>集群创建成功后可以向集群中添加节点，下面是添加一个master主节点</p>
+<p>添加7007节点，参考集群节点规划章节添加一个“7007”目录作为新节点。</p>
+<p>Redis 5 添加主节点命令：</p>
+<p>语法：</p>
+<pre><code>redis-cli –cluster add-node 要添加节点的ip:端口 集群中当前存在的任何一个节点的ip和端口
+
+</code></pre>
+<p>示例：</p>
+<pre><code class="language-bash">redis-cli --cluster add-node 10.10.14.166:7006 10.10.14.166:7000
+
+</code></pre>
+<p>输出结果</p>
+<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20191125092216235.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>查看集群结点发现7007已添加到集群中：<br>
+<img src="https://img-blog.csdnimg.cn/20191125092232728.png" alt="在这里插入图片描述"></p>
+<p>注意：新添加的master node有以下两个特征</p>
+<ol>
+<li>由于它没有分配hash槽，所以该节点无法存储任何数据</li>
+<li>由于它没有分配hash槽，所以在其他从节点要升级成主节点的过程中，该节点不参与投票（没有投票权）</li>
+</ol>
+<h3 id="561-hash槽重新分配">5.6.1.   hash槽重新分配</h3>
+<p>添加完主节点需要对主节点进行hash槽分配这样该主节才可以存储数据。</p>
+<p>redis集群有16384个槽，集群中的每个结点分配自已的槽，通过查看集群结点（cluster nodes命令）可以看到槽占用情况。 可以看到新添加的7007节点并没有分配到hash槽</p>
+<figure data-type="image" tabindex="9"><img src="https://img-blog.csdnimg.cn/20191125092303198.png" alt="在这里插入图片描述"></figure>
+<p>给刚添加的7007结点分配槽</p>
+<p>第一步：连接上集群</p>
+<pre><code class="language-bash">redis-cli --cluster reshard 127.0.0.1:7001  #（连接集群中任意一个可用结点就行）
+
+</code></pre>
+<p>第二步：输入要分配的槽数量</p>
+<figure data-type="image" tabindex="10"><img src="https://img-blog.csdnimg.cn/20191125092413603.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>输入 500表示分配500个槽</p>
+<p>第三步：输入接收槽的结点id</p>
+<figure data-type="image" tabindex="11"><img src="https://img-blog.csdnimg.cn/20191125092439556.png" alt="在这里插入图片描述"></figure>
+<p>这里准备给7007分配槽，通过cluster nodes查看7007结点id为15b809eadae88955e36bcdbb8144f61bbbaf38fb</p>
+<p>输入：15b809eadae88955e36bcdbb8144f61bbbaf38fb</p>
+<p>第四步：输入源结点id<br>
+<img src="https://img-blog.csdnimg.cn/20191125092457924.png" alt="在这里插入图片描述"></p>
+<p>这里输入all</p>
+<p>第五步：输入yes开始移动槽到目标结点id</p>
+<figure data-type="image" tabindex="12"><img src="https://img-blog.csdnimg.cn/20191125092517748.png" alt="在这里插入图片描述"></figure>
+<p>至此，新添加的7007 master节点的hash槽就分配完毕，可以存储数据了！</p>
+<p>关于Redis 集群的hash slots相关知识，可以参阅：</p>
+<p><a href="https://www.cnblogs.com/abc-begin/p/8203613.html">redis hash slot（虚拟桶）</a></p>
+<p><a href="https://www.jianshu.com/p/fe7b7800473e">Redis Cluster及hash slot 算法</a></p>
+<h2 id="57-添加从节点">5.7. 添加从节点</h2>
+<p>集群创建成功后可以向集群中添加节点，下面是添加一个slave从节点。</p>
+<p>添加7008从结点，将7008作为7007的从结点。</p>
+<p>Redis 5中添加从节点命令：</p>
+<p>语法：</p>
+<pre><code class="language-bash">redis-cli –cluster add-node 要添加节点的ip:端口 集群中任意已有master的ip和端口 --cluster-slave [--cluster-master-id masterid]
+
+</code></pre>
+<p>示例：</p>
+<p>添加一个从节点，不指定目标主节点</p>
+<pre><code class="language-bash">redis-cli --cluster add-node 10.10.14.166:7008 10.10.14.166:7001 --cluster-slave
+
+</code></pre>
+<blockquote>
+<p>注意：该命令只是向集群中添加了一个从节点，但并没有指名要作为哪个master node的从节点，Redis集群会将其添加到集群中随机挑一个从节点较少的master node上，作为其从节点</p>
+</blockquote>
+<p>添加一个从节点，并指定所属主节点</p>
+<pre><code class="language-bash">redis-cli --cluster add-node 10.10.14.166:7008 10.10.14.166:7001 --cluster-slave --cluster-master-id 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e
+
+</code></pre>
+<blockquote>
+<p>我们通过增加了一个cluster-master-id参数，指定从节点要添加到哪个主节点上。主节点的ID可以通过cluster nodes查看到</p>
+</blockquote>
+<p>注意：如果原来该结点在集群中的配置信息已经生成cluster-config-file指定的配置文件中（如果cluster-config-file没有指定则默认为nodes.conf），这时可能会报错：</p>
+<p>[ERR] Node XXXXXX is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0</p>
+<p>解决方法是删除生成的配置文件nodes.conf，删除后再执行添加从节点指令</p>
+<p>查看集群中的结点可以发现，刚添加的7008为7007的从节点</p>
+<h2 id="58-删除结点">5.8. 删除结点：</h2>
+<p>Redis5以后删除节点命令：</p>
+<p>语法：</p>
+<pre><code class="language-bash">redis-cli --cluster del-node ip:port node_id
+
+</code></pre>
+<blockquote>
+<p>注：上面的ip:port为集群中存在的任意节点，node_id是你要删除的节点的id</p>
+</blockquote>
+<p>示例：</p>
+<pre><code class="language-bash">redis-cli --cluster del-node 10.10.14.166:7001 d3b977fd46386db84fd85b9240deb602087c8617
+
+</code></pre>
+<p>删除已经占有hash槽的结点会失败，报错如下：</p>
+<p>[ERR] Node 127.0.0.1:7005 is not empty! Reshard data away and try again.</p>
+<p>需要将该结点占用的hash槽分配出去（参考hash槽重新分配章节）。</p>
+<h1 id="6-redis持久化策略">6. Redis持久化策略</h1>
+<h2 id="61-rdb快照模式">6.1 RDB快照模式</h2>
+<p>缺省情况情况下，Redis把数据快照存放在磁盘上的二进制文件中，文件名为dump.rdb。你可以配置Redis的持久化策略，例如数据集中每N秒钟有超过M次更新，就将数据写入磁盘；或者你可以手工调用命令SAVE或BGSAVE。</p>
+<h3 id="611-工作步骤">6.1.1 工作步骤</h3>
+<ol>
+<li>Redis forks；</li>
+<li>子进程开始将数据写到临时RDB文件中；</li>
+<li>当子进程完成写RDB文件，用新文件替换老文件；</li>
+<li>当RedisServer重新启动时，读取RDB文件恢复到内存中。</li>
+</ol>
+<figure data-type="image" tabindex="13"><img src="https://img-blog.csdnimg.cn/20191125092749581.png" alt="在这里插入图片描述"></figure>
+<h3 id="612-配置参数">6.1.2 配置参数</h3>
+<pre><code>save 900 1           #在900秒(15分钟)之后，如果至少有1个key发生变化，则dump内存快照。
+
+save 300 10          #在300秒(5分钟)之后，如果至少有10个key发生变化，则dump内存快照。
+
+save 60 10000        #在60秒(1分钟)之后，如果至少有10000个key发生变化，则dump内存快照。
+
+# save &quot;&quot;  			 # 将上面三个配置注释掉，只保留一个save &quot;&quot;， 代表禁用RDB快照模式
+
+</code></pre>
+<h2 id="62-aof模式">6.2 AOF模式</h2>
+<p>快照模式并不十分健壮，当系统停止，或者无意中Redis被kill掉，最后写入Redis的数据就会丢失。这对某些应用也许不是大问题，但对于要求高可靠性的应用来说，</p>
+<p>Redis就不是一个合适的选择。</p>
+<p>Append-only-file 模式是另一种选择。</p>
+<p>你可以在配置文件中打开AOF模式</p>
+<h3 id="621-工作步骤">6.2.1 工作步骤</h3>
+<ol>
+<li>Redis客户端发送读写命令</li>
+<li>RedisServer接收并执行命令，同时同步记录命令到AOF文件中</li>
+<li>Redis重新启动时读取AOF文件，执行其中每一条指令完成数据恢复</li>
+</ol>
+<figure data-type="image" tabindex="14"><img src="https://img-blog.csdnimg.cn/20191125092809644.png" alt="在这里插入图片描述"></figure>
+<h3 id="622-配置参数">6.2.2 配置参数</h3>
+<pre><code># appendfsync always    # 命令过来后，立刻写入AOF文件（会强制flush操作系统IO缓冲）
+appendfsync everysec	# 默认策略， 每秒钟将缓存的命令写入到AOF文件中
+# appendfsync no        # 关闭AOF备份
+
+</code></pre>
+<h2 id="63-rdb模式与aof模式的对比">6.3 RDB模式与AOF模式的对比</h2>
+<h3 id="631-rdb模式的优点">6.3.1 RDB模式的优点</h3>
+<ol>
+<li>一旦采用该方式，那么你的整个Redis数据库将只包含一个文件，这对于文件备份而言是非常完美的。比如，你可能打算每个小时归档一次最近24小时的数据，同时还要每天归档一次最近30天的数据。通过这样的备份策略，一旦系统出现灾难性故障，我们可以非常容易的进行恢复。</li>
+<li>对于灾难恢复而言，RDB是非常不错的选择。因为我们可以非常轻松的将一个单独的文件压缩后再转移到其它存储介质上。</li>
+<li>性能最大化。对于Redis的服务进程而言，在开始持久化时，它唯一需要做的只是fork出子进程，之后再由子进程完成这些持久化的工作，这样就可以极大的避免服务进程执行IO操作了。</li>
+<li>相比于AOF机制，如果数据集很大，RDB的启动效率会更高。</li>
+</ol>
+<h3 id="632-rdb模式的缺点">6.3.2 RDB模式的缺点</h3>
+<ol>
+<li>如果你想保证数据的高可用性，即最大限度的避免数据丢失，那么RDB将不是一个很好的选择。因为系统一旦在定时持久化之前出现宕机现象，此前没有来得及写入磁盘的数据都将丢失。</li>
+<li>由于RDB是通过fork子进程来协助完成数据持久化工作的，因此，如果当数据集较大时，可能会导致整个服务器停止服务几百毫秒，甚至是1秒钟。</li>
+</ol>
+<h3 id="633-aof模式的优点">6.3.3 AOF模式的优点</h3>
+<ol>
+<li>该机制可以带来更高的数据安全性，即数据持久性。Redis中提供了3中同步策略，即每秒同步、每修改同步和不同步。事实上，每秒同步也是异步完成的，其效率也是非常高的，所差的是一旦系统出现宕机现象，那么这一秒钟之内修改的数据将会丢失。而每修改同步，我们可以将其视为同步持久化，即每次发生的数据变化都会被立即记录到磁盘中。可以预见，这种方式在效率上是最低的。至于无同步，无需多言，我想大家都能正确的理解它。</li>
+<li>由于该机制对日志文件的写入操作采用的是append模式，因此在写入过程中即使出现宕机现象，也不会破坏日志文件中已经存在的内容。然而如果我们本次操作只是写入了一半数据就出现了系统崩溃问题，不用担心，在Redis下一次启动之前，我们可以通过redis-check-aof工具来帮助我们解决数据一致性的问题。</li>
+<li>如果日志过大，Redis可以自动启用rewrite机制。即Redis以append模式不断的将修改数据写入到老的磁盘文件中，同时Redis还会创建一个新的文件用于记录此期间有哪些修改命令被执行。因此在进行rewrite切换时可以更好的保证数据安全性。</li>
+<li>AOF包含一个格式清晰、易于理解的日志文件用于记录所有的修改操作。事实上，我们也可以通过该文件完成数据的重建。</li>
+</ol>
+<h3 id="634-aof模式的缺点">6.3.4 AOF模式的缺点</h3>
+<ol>
+<li>对于相同数量的数据集而言，AOF文件通常要大于RDB文件。RDB 在恢复大数据集时的速度比 AOF 的恢复速度要快。</li>
+<li>根据同步策略的不同，AOF在运行效率上往往会慢于RDB。总之，每秒同步策略的效率是比较高的，同步禁用策略的效率和RDB一样高效。</li>
+</ol>
+<blockquote>
+<p>二者选择的标准，就是看系统是愿意牺牲一些性能，换取更高的缓存一致性（aof），还是愿意写操作频繁的时候，不启用备份来换取更高的性能，待手动运行save的时候，再做备份（rdb）。rdb这个就更有些 eventually consistent的意思了。</p>
+</blockquote>
+<blockquote>
+<h4 id="如果rdb文件和aof同时存在当redis重启的时候会优先载入aof文件来恢复原始的数据因为在通常情况下aof文件保存的数据集要比rdb文件完整">如果RDB文件和AOF同时存在，当redis重启的时候会优先载入AOF文件来恢复原始的数据,因为在通常情况下AOF文件保存的数据集要比RDB文件完整</h4>
+</blockquote>
+<h1 id="7-通过springboot操作redis">7. 通过SpringBoot操作redis</h1>
+<p>注： 下面的教程以最新的SpringBoot版本 2.2.0为例</p>
+<pre><code class="language-xml">&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.2.0.RELEASE&lt;/version&gt;
+&lt;/parent&gt;
+
+</code></pre>
+<h2 id="71-sringboot操作单机版redis">7.1. SringBoot操作单机版Redis</h2>
+<h3 id="711-引入依赖">7.1.1   引入依赖</h3>
+<pre><code class="language-xml">&lt;!-- SpringBoot2以后，默认的redis客户端已经由jedis改成了lettuce，下面依赖会把lettuce-core也添加进来 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;!-- 如果项目中用到了redis连接池，需要添加如下依赖 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+    &lt;artifactId&gt;commons-pool2&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+</code></pre>
+<h3 id="712-springboot配置">7.1.2   SpringBoot配置</h3>
+<p>application.yml</p>
+<pre><code class="language-yml">spring:
+    redis:
+    host: www.taotao.com
+#    port: 6379		# 如果端口号不是默认端口需要制定
+#    password: xxx	# 如果redis服务端开启了口令验证，需要添加
+    lettuce:
+      pool:			# 如果使用redis连接池，需要添加apche的common-pool2依赖
+        max-idle: 2
+        max-wait: 1000ms
+
+</code></pre>
+<h3 id="713-java代码">7.1.3.   Java代码</h3>
+<p>通过创建单实例jedis对象连接redis服务，如下代码：</p>
+<pre><code class="language-java">@Slf4j
+@SpringBootTest
+public class TestRedisClient {
+
+   @Autowired
+   private StringRedisTemplate redisTemplate;
+
+   @Test
+   public void testRedis() {
+      Set&lt;String&gt; keys = redisTemplate.keys(&quot;*&quot;);
+      log.info(&quot;操作前存在的keys: &quot; + keys);
+
+      String key = &quot;lanou_F4&quot;;
+
+      redisTemplate.opsForList().rightPushAll(key, new String[]{&quot;宋超&quot;, &quot;国胜&quot;, &quot;国伟&quot;, &quot;高飞&quot;});
+
+      long size = redisTemplate.opsForList().size(key);
+      log.info(&quot;当前&quot;+key+&quot;值的数量： &quot; + size);
+
+      List&lt;String&gt; values = redisTemplate.opsForList().range(key, 0, size);
+      log.info(&quot;当前&quot; + key +&quot;的值： &quot; + values);
+
+      keys = redisTemplate.keys(&quot;*&quot;);
+      log.info(&quot;操作后存在的keys: &quot; + keys);
+   }
+}
+
+</code></pre>
+<h2 id="72-springboot操作redis集群">7.2. SpringBoot操作Redis集群</h2>
+<h3 id="721-引入依赖">7.2.1. 引入依赖</h3>
+<pre><code class="language-xml">&lt;dependencies&gt;
+        &lt;!-- 添加spring-boot-starter-data-redis依赖 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+            &lt;!-- 排除掉lettuce客户端相关依赖 --&gt;
+            &lt;!-- lettuce客户端连接阿里云上自建的redis集群会有连接超时的问题 --&gt;
+            &lt;exclusions&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;io.lettuce&lt;/groupId&gt;
+                    &lt;artifactId&gt;lettuce-core&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+        &lt;!-- 替换成jedis客户端 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;redis.clients&lt;/groupId&gt;
+            &lt;artifactId&gt;jedis&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- redis连接池依赖 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+            &lt;artifactId&gt;commons-pool2&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+</code></pre>
+<h3 id="722-springboot配置">7.2.2. SpringBoot配置</h3>
+<p>application.yml</p>
+<pre><code class="language-yml">spring:
+  redis:
+    jedis:
+      pool: # 配置redis连接池相关参数
+        max-idle: 2
+        max-active: 10
+        min-idle: 1
+    cluster:
+      nodes: teacher.lanou.com:7001,teacher.lanou.com:7002,teacher.lanou.com:7003,teacher.lanou.com:7004,teacher.lanou.com:7005,teacher.lanou.com:7006
+
+</code></pre>
+<h3 id="723-java代码">7.2.3. Java代码</h3>
+<pre><code class="language-java">@SpringBootTest
+class SpringbootRedisApplicationTests {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+
+    @Test
+    public void testPutKV() {
+        ValueOperations&lt;String, String&gt; ops = redisTemplate.opsForValue();
+        ops.set(&quot;name&quot;, &quot;张三&quot;);
+        String name = ops.get(&quot;name&quot;);
+        Assertions.assertEquals(&quot;张三&quot;, name, &quot;应该返回张三&quot;);
+    }
+
+    @Test
+    public void testOpsForList() {
+        ListOperations&lt;String, String&gt; ops = redisTemplate.opsForList();
+        ops.rightPush(&quot;yanfa3&quot;, &quot;王康健&quot;);
+        ops.leftPush(&quot;yanfa3&quot;, &quot;于漫漫&quot;);
+        ops.rightPushAll(&quot;yanfa3&quot;, &quot;李光&quot;, &quot;星辰&quot;, &quot;鹏杰&quot;, &quot;士军&quot;);
+
+        Assertions.assertEquals(6, ops.size(&quot;yanfa3&quot;), &quot;应该是由6个元素才对&quot;);
+
+        List&lt;String&gt; stuNames = ops.range(&quot;yanfa3&quot;, 0, -1);
+        stuNames.forEach((v) -&gt; {
+            System.out.println(v);
+        });
+
+    }
+}
+
+</code></pre>
+<blockquote>
+<p>集群模式只是依赖和配置不同，在代码中使用的API没有什么区别</p>
+</blockquote>
+<h2 id="73-外部连接不上redis的解决方法">7.3. 外部连接不上redis的解决方法</h2>
+<p>由于linux防火墙默认开启，redis的服务端口6379并不在开放规则之内，所有需要将此端口开放访问或者关闭防火墙。</p>
+<p>查看防火墙状态：sevice iptables status</p>
+<p>关闭防火墙命令：sevice iptables stop</p>
+<p>如果是修改防火墙规则，可以修改：/etc/sysconfig/iptables文件</p>
+<h1 id="8-系统添加缓存逻辑示例">8.   系统添加缓存逻辑示例</h1>
+<p>添加缓存逻辑的原则：缓存逻辑不能影响正常的业务逻辑执行。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HttpClient]]></title>
+        <id>https://yihuaikun.github.io/post/httpclient</id>
+        <link href="https://yihuaikun.github.io/post/httpclient">
+        </link>
+        <updated>2019-12-12T12:23:58.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="httpclient">HttpClient</h1>
+<h2 id="httpclient简介与了解">HttpClient简介与了解</h2>
+<h3 id="什么是httpclient">什么是HttpClient</h3>
+<p>​		HTTP 协议可能是现在 Internet 上使用得最多、最重要的协议了，越来越多的 Java 应用程序需要直接通过 HTTP 协议来访问网络资源。虽然在 JDK 的 java net包中已经提供了访问 HTTP 协议的基本功能，但是对于大部分应用程序来说，JDK 库本身提供的功能还不够丰富和灵活。HttpClient 是 Apache Jakarta Common 下的子项目，用来提供高效的、最新的、功能丰富的支持 HTTP 协议的客户端编程工具包，并且它支持 HTTP 协议最新的版本和建议。</p>
+<h3 id="误解">误解</h3>
+<p>​		HttpClient 不是浏览器，它是客户端的 HTTP 传输库。它的目的在于发送、接受 HTTP 信息。如果没有明确设置，或者<br>
+重新格式化请求 / 重写定位 URI， 或其它不涉及 HTTP 传输的功能，HttpClient 不会去解析内容，运行嵌入在 HTML 页面的 javascript 代码，获取内容类型（content type）。</p>
+<h3 id="应用的范围">应用的范围</h3>
+<ul>
+<li>
+<p>客户端 HTTP 传输库基于 <a href="http://hc.apache.org/httpcomponents-core-ga/index.html">HttpCore</a></p>
+<p>​        HttpCore是一组低层HTTP传输组件，可用于构建自定义客户端和服务器端HTTP服务，占用最少。HttpCore支持两种I/O模型:基于经典Java I/O的阻塞I/O模型和基于Java NIO的非阻塞事件驱动I/O模型</p>
+</li>
+<li>
+<p>基于传统（阻塞式）I/O</p>
+</li>
+<li>
+<p>内容无关</p>
+</li>
+</ul>
+<h2 id="知识点">知识点</h2>
+<p>使用到依赖再java</p>
+<pre><code class="language-xml">	&lt;dependency&gt;
+      &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
+      &lt;artifactId&gt;httpclient&lt;/artifactId&gt;
+      &lt;version&gt;4.5.10&lt;/version&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<h2 id="http请求">HTTP请求:</h2>
+<h3 id="个人对http请求的理解">个人对Http请求的理解:</h3>
+<p>​		1.HTTP请求格式:HTTP 请求都有一个请求行，包含一个方法名，请求 URI 和 HTTP 协议版本,例如:http://服务器的ip:端口/请求端口路径?参数</p>
+<p>​		2.HttpClient 支持所有的定义在 HTTP/1.1 规范的 HTTP 原装方法： GET, HEAD, POST, PUT, DELETE, TRACE 和 OPTIONS。每一个方法都有相应的类：HttpGet, HttpHead, HttpPost, HttpPut, HttpDelete, HttpTrace 和 HttpOptions。</p>
+<p>​		3.请求 URI 是通用资源标识符，用来定位要响应请求的资源。HTTP 请求的 URI 包含协议，主机名，可选的端口号，资源路径，</p>
+<h3 id="uribuilder的-api">UriBuilder的 API</h3>
+<pre><code class="language-java">URI uri = new URIBuilder()
+        .setScheme(&quot;http&quot;)
+        .setHost(&quot;www.google.com&quot;)
+        .setPath(&quot;/search&quot;)
+        .setParameter(&quot;q&quot;, &quot;httpclient&quot;)
+        .setParameter(&quot;btnG&quot;, &quot;Google Search&quot;)
+        .setParameter(&quot;aq&quot;, &quot;f&quot;)
+        .setParameter(&quot;oq&quot;, &quot;&quot;)
+        .build();
+HttpGet httpGet = new HttpGet(uri);
+System.out.println(httpGet.getURI());
+</code></pre>
+<p>输出是</p>
+<pre><code class="language-java">http://www.google.com/search?hl=en&amp;q=httpclient&amp;btnG=Google Search...
+</code></pre>
+<h3 id="http响应">Http响应</h3>
+<p>例子</p>
+<pre><code class="language-java">@RestController
+public class httpClientController {
+    @GetMapping(&quot;/data&quot;)
+    public void getData() throws URISyntaxException {
+        CloseableHttpResponse response = null;
+        try(  //创建客户端:
+                CloseableHttpClient httpClient = HttpClients.createDefault();//执行请求
+                ) {
+            //创建请求
+            HttpGet httpGet = new HttpGet(&quot;http://localhost:8084/getData&quot;);
+            //执行请求并返回CloseableHttpResponse对象,对象里面有目标数据
+             response = httpClient.execute(httpGet);
+            System.out.println(response.getStatusLine().getStatusCode());
+            //获得实体,即传过来的数据
+            HttpEntity entity = response.getEntity();
+            if(entity != null){
+                System.out.println(&quot;实体的长度 :&quot; + entity.getContentLength());
+                System.out.println(&quot;实体的内容 :&quot; + EntityUtils.toString(entity,&quot;UTF-8&quot;));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<p>​		HTTP 响应是服务器在收到并解析了客户端的请求信息后返回给客户端的信息。消息的第一行包含了协议的版本号，后面有一个数字</p>
+<h4 id="http-实体">HTTP 实体</h4>
+<p>​		导航栏里面的参数数数据类型都是String类型的.</p>
+<p>​		HTTP 消息能够携带与请求或响应相关的内容实体。这些实体能在某些请求和某些响应中找到，因为它们是可选的。<br>
+使用实体的请求指的是封装请求的实体。HTTP 协议规定了两种实体封装请求方法：POST 和 PUT。响应通常被认为是封装内容的实体。当然这个规定也有例外，比如 HEAD 方法的响应和204 No Content，304 Not Modified， 205 Reset Content 响应</p>
+<p><strong>HttpClient 能按照它们的内容来源分辨出三种实体：</strong></p>
+<ul>
+<li>
+<p>streamed: 该内容是从一个流中获取的，或者是突然生成的**。特别的，这一类包含了正被 HTTP 响应接受的实体。**流式实体通常不能复现。也就是说这类</p>
+</li>
+<li>
+<p>self-contained: 内存中的，或者不是通过连接及其它实体获得的内容。自包含（Self-Contained）实体一般可以复现。<br>
+这一类实体绝大多数是用于封装 HTTP 请求的实体。</p>
+</li>
+<li>
+<p>wrapping: 从其它实体中获取的内容</p>
+<p>​	当从 HTTP 响应发出内容时，这个分类对管理连接就很重要了。对于应用生成的那些请求实体，它们只用 HttpClient 发送，流式（Streamed）和自包含（self-contained）之间的区别就不那么重要了。这时，建议将不重复的实体划为流式（streamed）<strong>，可重复的实体划为自包含的（self-contained）。</strong></p>
+</li>
+</ul>
+<p>可重复的实体<strong>HttpEntity</strong>:当Httpclient之情请求后返回结果CloseableHttpResponse response对象,里面包含了这个实体,里面包含了想要的实体内容.然后使用<strong>EntityUtils</strong>类解析HttpEntity,里面还可以定义编码格式</p>
+<p><strong>缓存</strong></p>
+<p>​		有时候多次读取实体内容很必要。这是实体内容就需要用某种方式缓存着，要么在内存里，要么在硬盘里。最简单的方式是将原始实体<code>BufferedHttpEntity</code> 类封装。这就会把原始实体的内容放在内存缓冲区里。在其它任何方面，实体封装器都有一个原始的实体。</p>
+<pre><code class="language-java">CloseableHttpResponse response = httpclient.excute(httpget);
+HttpEntity entity = response.getEntity();
+if(entity != null) {
+    entity = new BufferedHttpEntity(entity);
+}
+</code></pre>
+<h2 id="应用场景">应用场景</h2>
+<p>​		商场门户的开发和后台开发还有服务层的结合都需要这项技术:门户一般只放静态页面,一般不放mapper和pojo,不做任何持久层处理,制作业务逻辑,然后又专门的服务层处理,这是一般门户对应多个服务层,进行通信交互数据.</p>
+<h1 id="问题">问题</h1>
+<h2 id="httpclient的url中带参数问题">Httpclient的url中带参数问题</h2>
+<p>例如</p>
+<pre><code class="language-java"> @Override
+    public TaotaoResult createService(Order order) {
+        String orderJson = JsonUtils.objectToJson(order);
+        //调用订单系统服务提交订单
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        String resultStr = null;
+        /**
+         * ORDER_BASE_URL=http://localhost:8085
+         * ORDER_CREATE_URL=/order/create
+         */
+        HttpPost httpPost = new HttpPost(ORDER_BASE_URL + ORDER_CREATE_URL);
+        try {
+            httpPost.setEntity(new StringEntity(orderJson, ContentType.APPLICATION_JSON));
+            CloseableHttpResponse resp = httpClient.execute(httpPost);
+            HttpEntity entity = resp.getEntity();
+            resultStr = EntityUtils.toString(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //转换成java对象
+        TaotaoResult taotaoResult = TaotaoResult.format(resultStr);
+        return taotaoResult;
+    }
+
+</code></pre>
+<p>上面请求的地址是http://localhost:8085/order/create+一个对象参数,这时我们要知道,Entity(实体),无论是返回值还是请求参数都是String类型的,这是需要我们手动转一下参数.在spring中我们无论返回值还是参数都是默认支持json,所以不用转,但是这个后端技术(HttpClient)需要我们手动转一下.</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[单点登陆与redis集群缓存]]></title>
+        <id>https://yihuaikun.github.io/post/dan-dian-deng-lu-yu-redis-ji-qun-huan-cun</id>
+        <link href="https://yihuaikun.github.io/post/dan-dian-deng-lu-yu-redis-ji-qun-huan-cun">
+        </link>
+        <updated>2019-12-12T12:23:18.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="单点登录sso">单点登录SSO</h1>
+<p>​		单点登录:SSO英文全称Single Sign On，单点登录。SSO是在多个应用系统中，用户只需要登录一次就可以访问所有相互信任的应用系统。它包括可以将这次主要的登录映射到其他应用中用于同一个用户的登录的机制。它是目前比较流行的企业业务整合的解决方案之一。</p>
+<p>​		单点登录解决的问题:分布式session的共享问题,简单的说是解决了一个服务器一登陆的问题,实现多功能系统的一次登陆可访问多个服务的问题.</p>
+<h2 id="环境的搭配">环境的搭配</h2>
+<p>需要的依赖</p>
+<pre><code class="language-xml">    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+            &lt;version&gt;2.2.1.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+            &lt;artifactId&gt;commons-lang3&lt;/artifactId&gt;
+            &lt;version&gt;3.9&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;fastjson&lt;/artifactId&gt;
+            &lt;version&gt;1.2.62&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;redis.clients&lt;/groupId&gt;
+            &lt;artifactId&gt;jedis&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+            &lt;artifactId&gt;commons-pool2&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+            &lt;exclusions&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;org.junit.vintage&lt;/groupId&gt;
+                    &lt;artifactId&gt;junit-vintage-engine&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.lettuce&lt;/groupId&gt;
+            &lt;artifactId&gt;lettuce-core&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.tomcat.embed&lt;/groupId&gt;
+            &lt;artifactId&gt;tomcat-embed-jasper&lt;/artifactId&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre>
+<p>1.redis集群的搭建</p>
+<p>2.在java中的配置</p>
+<pre><code class="language-yml">server:
+  port: 10000
+spring:
+  datasource:
+    username: root
+    url: jdbc:mysql://localhost:3306/taotao?characterEncoding=utf8&amp;serverTimezone=UTC
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    #    redis.cluster集群的节点
+    cluster:
+      nodes: 
+      # 这里写你的redis集群的ip和端口号以&quot;,&quot;分割
+    jedis:
+      pool:
+        #      连接池最大数量
+        max-active: 10
+        #        连接池最小空闲连接
+        min-idle: 1
+        max-idle: 2
+        #        连接池最大阻塞时间
+        max-wait: -1
+    password: xxxxx
+    host: redis集群的ip地址
+    timeout: 1000
+    commandTimeout: 5000
+</code></pre>
+<p>3.在java中的配置文件</p>
+<pre><code class="language-java">package com.sso.taotaossostudying;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPoolConfig;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@Configuration
+@ConditionalOnClass({JedisCluster.class})
+@Component
+public class RedisConfig {
+    @Value(&quot;${spring.redis.cluster.nodes}&quot;)
+    private String clusterNodes;
+    @Value(&quot;${spring.redis.password}&quot;)
+    private String password;
+    @Value(&quot;${spring.redis.timeout}&quot;)
+    private int timeout;
+    @Value(&quot;${spring.redis.commandTimeout}&quot;)
+    private int commandTimeout;
+    @Bean
+    public JedisCluster getJedisCluster() {
+        String[] cNodes = clusterNodes.split(&quot;,&quot;);
+        Set&lt;HostAndPort&gt; nodes = new HashSet&lt;&gt;();
+        //分割出集群节点
+        for (String node : cNodes) {
+            String[] hp = node.split(&quot;:&quot;);
+            nodes.add(new HostAndPort(hp[0], Integer.parseInt(hp[1])));
+        }
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        //创建集群对象。没有密码的请使用这一个
+        // JedisCluster jedisCluster = new JedisCluster(nodes,commandTimeout);
+        //有密码的请使用这一个。 我这里是redis有密码的所以我使用的这一个
+        return new JedisCluster(nodes,commandTimeout,commandTimeout,5,password, jedisPoolConfig);
+    }
+}
+
+</code></pre>
+<p>ps:需要注意的是上面解决了jedis和jediscluster的一些问题得到的配置,redis集群加密的配置.</p>
+<h2 id="单点登陆流程图">单点登陆流程图</h2>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191125090924348.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h2 id="代码实现方面">代码实现方面</h2>
+<h3 id="登陆界面的实现">登陆界面的实现</h3>
+<pre><code class="language-java">@Controller
+public class LoginUriController {
+    @RequestMapping(&quot;/user/login&quot;)
+    public String uritoLogin(HttpServletRequest req, @RequestParam(required = false) String url , Model model){
+        try {
+            req.setCharacterEncoding(&quot;utf-8&quot;);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        System.out.println(url);
+        //把请求的uri放进来用于登陆成功后返回登陆时的页面
+        model.addAttribute(&quot;url&quot;,url);
+        return &quot;login&quot;;
+    }
+}
+
+</code></pre>
+<p>需要注意的是:</p>
+<p>​	<strong>url和uri的区别:</strong></p>
+<p>​		1.url在java中指是请求的全路径,uri指的是请求lujing,及handler上面的拦截路径</p>
+<p>​		2.URI，是uniform resource identifier，统一资源标识符，用来唯一的标识一个资源。而URL是uniform resource locator，统一资源定位器，它是一种具体的URI，即URL可以用来标识一个资源，而且还指明了如何locate这个资源。</p>
+<p>​	<strong>一定要获得请求的路径</strong></p>
+<p>​		获得请求的路径,通过location.href=xxx.xxx.com,来返回登陆处的功能,用户体验更好一些,</p>
+<p>京东,淘宝都是这样做的.以参数的方式来获得从哪里得到发起请求的地址url,然后登陆后重新回到登陆处,比如去购物车去付款发现没登陆账号,然后去登陆,登陆后重新回到支付的页面进行购物.</p>
+<h3 id="前端部分">前端部分</h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot; xmlns:th=&quot;http://thymeleaf.org&quot; &gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;登陆界面&lt;/title&gt;
+&lt;/head&gt;
+&lt;script src=&quot;https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js&quot;&gt;&lt;/script&gt;
+&lt;body&gt;
+&lt;form action=&quot;/login&quot;&gt;
+    用户名: &lt;input type=&quot;text&quot; name=&quot;username&quot; &gt; &lt;/br&gt;
+    密码:   &lt;input type=&quot;password&quot; name=&quot;password&quot; &gt; &lt;/br&gt;
+    &lt;input type=&quot;submit&quot;&gt; &lt;a href=&quot;register.html&quot;&gt;注册&lt;/a&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;script&gt;
+    //注意这里的thymeleaf的取值方式
+    var url = $(&quot;#uri&quot;).val();
+    console.log(url)
+    function login() {
+        var data = $(&quot;form&quot;).serialize();
+        console.log(data);
+        $.getJSON(&quot;/login&quot;,data,function (ret) {
+            if(ret.status == 200){
+                if(url == undefined){
+                    location.href = &quot;http://localhost:10001&quot;;
+                }else{
+                    location.href = url;
+                }
+            }else{
+                alert(ret.msg);
+            }
+        })
+    }
+    $(&quot;form&quot;).submit( function () {
+        login();
+        return false;
+    } );
+&lt;/script&gt;
+&lt;/html&gt;
+</code></pre>
+<p>需要注意的是:</p>
+<p>1.注意ajax的使用</p>
+<p>2.登陆按钮的禁止跳转</p>
+<p>3.前端做非空和非法判断</p>
+<h3 id="登陆信息的处理">登陆信息的处理</h3>
+<p>controller层的处理</p>
+<pre><code class="language-java"> @RequestMapping(&quot;/login&quot;)
+    public SSOResult login(String username, String password, HttpServletResponse resp){
+        return loginService.login(username,password,resp);
+    }
+</code></pre>
+<p>需要注意的是:</p>
+<p>​	<strong>要把用户信息保存在session或cookie中,需要用到HttpServletResponse的对象</strong></p>
+<p>service层对信息的处理</p>
+<p>1.校验用户信息的正确性(即密码的校验需要连接数据库),正确后生成token(UUID)</p>
+<p>2.把用户信息封装成对象(可以用md5堆成加密对用户信息加密),然后放到redis中</p>
+<p><strong>注意</strong>:最好不要把密码放进去,因为上面已经验证过密码的正确性,所以最好就是把用户不隐私的信息放进去即可.token做key,用户对像做value</p>
+<p>3.把token放到cookie中即可.</p>
+<p>​		注意:cookie是在分布式的一级域名下,达到系统共享,访问其他服务,能从cookie中拿到token,然后去redis中拿用户信息.</p>
+<p>4.需要注意的还有就是cookie和redis的有效期的设置,redis对内存要求比较高,这样的话我们对redis处理应该细致化.cookie中的token能否有效取决于redis中(token,用户对象)是否存在.不存在就失效或连接超时,需要重新登陆.</p>
+<pre><code class="language-java">    @Override
+    public SSOResult login(String username, String password, HttpServletResponse resp) {
+        /**
+         * 去数据库查找数据
+         */
+        if(StringUtils.isBlank(username) || StringUtils.isBlank(password)){
+            return new SSOResult(&quot;用户名或密码不能为空&quot;,500);
+        }
+        if(StringUtils.isBlank(username)){
+            return new SSOResult(&quot;用户名不能为空&quot;,500);
+        }
+        if(StringUtils.equals(username,&quot;zahngsan&quot;) &amp;&amp; !StringUtils.equals(password,&quot;123456&quot;)){
+            return new SSOResult(&quot;密码不正确&quot;,500);
+        }
+        /**
+         * 登陆成功后封装数据
+         */
+        //设置token
+        String token = UUID.randomUUID().toString();
+        UserInfo userInfo= new UserInfo();
+        userInfo.setNickname(&quot;laozhang&quot;);
+        userInfo.setUsername(&quot;zhangsan&quot;);
+
+        String user = JSON.toJSONString(userInfo);
+
+        //一般情况下不把password放在redis中,不安全
+       // userInfo.setPassword(&quot;123456&quot;);
+        jedis.setex(token,60,user);
+
+        /**
+         * 将token放入cookie,cookie的domain一般是一级域名下
+         * 如果不知道domain是什么,启动一下项目,去application中找一下就行
+         * 只是把token放到cookie中,然后其他服务用到,只能拿token去redis中拿数据,
+         * 如果redis的keyshixiao了,那就要重新返回登陆界面重新登陆
+         */
+        Cookie tokenCookie = new Cookie(&quot;token&quot;,token);
+        tokenCookie.setDomain(&quot;localhost&quot;);
+        tokenCookie.setMaxAge(60);
+        resp.addCookie(tokenCookie);
+        return new SSOResult(&quot;登陆成功&quot;,200);
+    }
+
+</code></pre>
+<p>总结:这里,面最后的返回码和上边前端相吻合,通过后处理后 返回到登陆时的界面.</p>
+<p><strong>到此简单的登陆就做好了,对单点登陆应用是在拦截器中的使用</strong></p>
+<h3 id="登陆的效果实现">登陆的效果实现</h3>
+<p>在门户系统中开登陆的口</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;a href=&quot;http://localhost:10000/user/login&quot;&gt;登陆&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>服务到sso做上边的登陆处理之后回到门户</p>
+<h2 id="比如订单的处理">比如订单的处理</h2>
+<p>看订单我们需要有用户信息,然后验证通过后才能看订单,这样我们就要在拦截器中来让用户的看订单请求去sso拿用户信息</p>
+<p>请求接口前端:</p>
+<pre><code class="language-java">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!--请求查看订单页面--&gt;
+&lt;a href=&quot;/order/all&quot; &gt;查看订单&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p>拦截这个路径处理用户身份信息,这是我们只有能唯一得到的时存储用户信息的cookie</p>
+<p>拦截器的配置</p>
+<pre><code class="language-java">@SpringBootApplication
+public class SsoDoorApplication implements WebMvcConfigurer 
+    @Autowired
+    private OrderInterceptor orderInterceptor;
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
+    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(orderInterceptor).addPathPatterns(&quot;/order/**&quot;);
+    }
+    public static void main(String[] args) {
+        SpringApplication.run(SsoDoorApplication.class, args);
+    }
+}
+
+
+</code></pre>
+<p>在拦截器中的请求</p>
+<pre><code class="language-java">@Component
+public class OrderInterceptor implements HandlerInterceptor {
+    private String url = &quot;http://localhost:10000/user/login&quot;;
+    private String getDataUrl = &quot;http://localhost:10000/get_user_by_token&quot;;
+    @Autowired
+    private RestTemplate restTemplate;
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        StringBuffer requestURL = request.getRequestURL();
+        response.setContentType(&quot;text/html;charset=UTF-8&quot;);
+        PrintWriter writer = response.getWriter();
+        /**
+         * 拿到cookie获得token
+         * 两种结果cookie过期,然后重定向到登陆界面
+         * token存在,拿着token去sso服务要用户信息
+         */
+        Cookie[] cookies = request.getCookies();
+        String token = null;
+        String restUri = url + &quot;?&quot; + requestURL;
+        if (cookies == null) {
+            writer.println(&quot;&lt;script&gt; alert('你还没登陆,请登陆!');location.href='&quot; + restUri + &quot;'&lt;/script&gt;&quot;);
+        } else {
+            for (Cookie cookie : cookies) {
+                /**
+                 *拿到token
+                 */
+                if (cookie.getName().equals(&quot;token&quot;)) {
+                    token = cookie.getValue();
+                    break;
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        if (token == null) {
+            writer.println(&quot;&lt;script&gt; alert('会话超时,请重新登陆!');location.href='&quot; + restUri + &quot;'&lt;/script&gt;&quot;);
+            return false;
+        }
+        /**
+         * 判断token是否存在
+         */
+        if (token != null) {
+            /**
+             * 存在的话就发起请求去sso拿信息
+             */
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet httpGet = new HttpGet(getDataUrl+&quot;token=&quot;+token);
+            CloseableHttpResponse resp = httpClient.execute(httpGet);
+            HttpEntity entity = resp.getEntity();
+            String userInfo = EntityUtils.toString(entity);
+            UserInfo user = JSON.parseObject(userInfo, UserInfo.class);
+            /**
+             * 两种情况,一种是redis中的key过期了,一种是获得了用户的信息
+             * 没有获得告诉用户,会话超时请重新登陆
+             * 正常情况下让它通过去该处理的controller
+             */
+            if (userInfo != null) {
+                return true;
+            }else {
+                writer.println(&quot;&lt;script&gt; alert('会话超时,请重新登陆!');location.href='&quot; + url + &quot;'&lt;/script&gt;&quot;);
+                return false;
+            }
+        }
+        return false;
+    }
+}
+
+</code></pre>
+<p><strong>上面需要注意的时情况的划分,然后就是带参数的script语句的拼写</strong></p>
+<p><strong>还有就是HttpClient的使用,省时间url直接写上去</strong></p>
+<p>获得信息的接口(sso中)</p>
+<pre><code class="language-java">  @RequestMapping(&quot;/get_user_by_token&quot;)
+    public UserInfo getData(@RequestParam String token){
+        return loginService.getData(token);
+    }
+
+</code></pre>
+<p>service中</p>
+<pre><code class="language-java">    /**
+     * 本文档用于查找用户信息,从redis中查找,如果没有返回null
+     * @param token
+     * @return
+     */
+    @Override
+    public UserInfo getData(String token) {
+        String user = jedis.get(token);
+        UserInfo userInfo = JSON.parseObject(user, UserInfo.class);
+        if(userInfo != null){
+            return userInfo;
+        }
+        return null;
+    }
+
+</code></pre>
+<p>所有的处理结束后</p>
+<p>zhengque放行,不zhengque就返回就登陆界面</p>
+<p>zhengque后的简单处理</p>
+<pre><code class="language-java">@Controller
+public class OrderController {
+
+    @RequestMapping(&quot;/order/all&quot;)
+    public String toOrder(){
+        return &quot;order&quot;;
+    }
+
+}
+
+
+</code></pre>
+<p>前端展示xiaog</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;订单页面&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;pre&gt;
+         1.香蕉50斤
+         2.苹果50斤
+         3.三只松鼠50包
+         4.提子50斤
+         5.瓜子50斤
+            共计250
+    &lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html
+
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[SpringMvc]]></title>
         <id>https://yihuaikun.github.io/post/springmvc</id>
@@ -3651,3527 +5282,6 @@ public void login(User user) {
 <p>事务1更新了记录，但没有提交，事务2读取了更新后的行，然后事务T1回滚，现在T2读取无效。<br>
 通俗的说，脏读就是指一个事务读取了一个未提交事务的数据</p>
 </blockquote>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[今日打卡Jquery]]></title>
-        <id>https://yihuaikun.github.io/post/jin-ri-da-qia-jquery</id>
-        <link href="https://yihuaikun.github.io/post/jin-ri-da-qia-jquery">
-        </link>
-        <updated>2019-12-12T12:08:45.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="jquery是什么">Jquery是什么</h1>
-<p>​	 jQuery是一套跨浏览器的JavaScript库，简化HTML与JavaScript之间的操作。[1]由约翰·雷西格（John Resig）在2006年1月的BarCamp NYC上发布第一个版本。当前是由Dave Methvin领导的开发团队进行开发。全球前10,000个访问最高的网站中，有65%使用了jQuery，是当前最受欢迎的JavaScript库.</p>
-<h1 id="为什么要学习jquery">为什么要学习jquery</h1>
-<p>​	在使用javaScript开发的过程中,有许多的缺点</p>
-<pre><code>1.查找元素的方法太少,麻烦.
-2.遍历伪数组很麻烦,通常要嵌套一大推循环
-3.有兼容性问题
-4.想要实现动画效果也很麻烦
-5.代码冗余
-</code></pre>
-<p>jquery有哪些优点呢:</p>
-<pre><code>1.查找元素的方法多种多样
-2.拥有隐式迭代性,因此不再需要手写for循环了
-3.完全没有兼容性问题
-4.实现动画很简单,而且功能很强大
-5.代码简单,粗暴
-</code></pre>
-<h1 id="jquery的入口函数">jquery的入口函数</h1>
-<pre><code>1. 引入jQuery文件
-2. 入口函数
-3. 功能实现
-</code></pre>
-<p>关于jquery的入口函数</p>
-<pre><code class="language-javascript">//第一种写法
-$(document).ready(function(){
-    
-});
-//第二种写法
-$(function() {
-    
-});
-</code></pre>
-<p>jquery入口函数和js入口函数的对比</p>
-<pre><code>1.javaScript的入口函数要等页面所有资源加(包括图片,文件)加载完成菜开始执行
-2.jquery的入口函数只会等待文档树加载完成就开始执行,并不会等待图片,文件的加载
-</code></pre>
-<h1 id="jquery对象与dom对象的区别">jquery对象与DOM对象的区别</h1>
-<pre><code>1.DOM对象:使用javaScript中的方法获取页面的元素返回的就是dom对象
-2.jquery对象:jquery对象就是使用jquery的方法获取页面中的元素返回的对象就是jQuery对象
-3.jQuery对象其实就是DOM对象的包装集(包装了DOM对象的集合(伪数组)
-4.DOM对象与JQuery对象的方法不能混用
-</code></pre>
-<p>DOM对象转换成jQuery对象</p>
-<pre><code class="language-javascript">var $obj = $(domObj);
-</code></pre>
-<p>jQuery对象转换成DOM对象</p>
-<pre><code class="language-javascript">var $li = $(&quot;li&quot;);
-//第一种方法
-$li[0]
-//第二种方法
-$li.get[0]
-</code></pre>
-<h1 id="选择器">选择器</h1>
-<h2 id="什么是jquery选择器">什么是jQuery选择器</h2>
-<p>jQuery选择器是jQuery为我们提供的一组方法，让我们更加方便的获取到页面中的元素。注意：jQuery选择器返回的是jQuery对象。</p>
-<p>jQuery选择器有很多，基本兼容了CSS1到CSS3所有的选择器，并且jQuery还添加了很多更加复杂的选择器。【查看jQuery文档】</p>
-<p>jQuery选择器虽然很多，但是选择器之间可以相互替代，就是说获取一个元素，你会有很多种方法获取到。所以我们平时真正能用到的只是少数的最常用的选择器</p>
-<h2 id="基本选择器">基本选择器</h2>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>用法</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ID选择器</td>
-<td>$(&quot;#id&quot;);</td>
-<td>获取指定ID的元素</td>
-</tr>
-<tr>
-<td>类选择器</td>
-<td>$(&quot;.class'&quot;);</td>
-<td>获取同一类class的元素</td>
-</tr>
-<tr>
-<td>标签选择器</td>
-<td>$(&quot;div&quot;);</td>
-<td>获取同一类标签的所有元素</td>
-</tr>
-<tr>
-<td>并集选择器</td>
-<td>$(&quot;div,p,li&quot;);</td>
-<td>使用逗号分隔,只要符合条件之一就可</td>
-</tr>
-<tr>
-<td>交集选择器</td>
-<td>$(&quot;div.redClass&quot;);</td>
-<td>获取class为redClass的div元素</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>总结:使用跟css的选择器用法一模一样</p>
-</blockquote>
-<h2 id="层级选择器">层级选择器</h2>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>用法</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>子代选择器</td>
-<td>$(&quot;ul&gt;li&quot;);</td>
-<td>使用&gt;,获取儿子层级的元素,注意,并不会获取孙子层级的元素</td>
-</tr>
-<tr>
-<td>后代选择器</td>
-<td>$(&quot;ul li &quot;);</td>
-<td>使用空格,代表后代选择器,获取ul下的所有元素,包括孙子等</td>
-</tr>
-</tbody>
-</table>
-<h2 id="过滤选择器">过滤选择器</h2>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>用法</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>:eq(index)</td>
-<td>$(&quot;li:eq(2)&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
-<td>获取到li的元素中,选择索引号为2的元素,索引号index从0开始</td>
-</tr>
-<tr>
-<td>:odd</td>
-<td>$(&quot;li:odd&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
-<td>获取到li元素中,选择索号为奇数的元素</td>
-</tr>
-<tr>
-<td>:even</td>
-<td>$(&quot;li:even&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
-<td>获取到li元素中,选择索引为偶数的元素</td>
-</tr>
-</tbody>
-</table>
-<h2 id="筛选选择器方法">筛选选择器(方法)</h2>
-<blockquote>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>用法</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>children(selector)</td>
-<td>$(“ul”).children(“li”)</td>
-<td>相当于$(“ul&gt;li”)，子类选择器</td>
-</tr>
-<tr>
-<td>find(selector)</td>
-<td>$(“ul”).find(“li”);</td>
-<td>相当于$(“ul li”),后代选择器</td>
-</tr>
-<tr>
-<td>siblings(selector)</td>
-<td>$(“#first”).siblings(“li”);</td>
-<td>查找兄弟节点，不包括自己本身。</td>
-</tr>
-<tr>
-<td>parent()</td>
-<td>$(“#first”).parent();</td>
-<td>查找父亲</td>
-</tr>
-<tr>
-<td>eq(index)</td>
-<td>$(“li”).eq(2);</td>
-<td>相当于$(“li:eq(2)”),index从0开始</td>
-</tr>
-<tr>
-<td>next()</td>
-<td>$(“li”).next()</td>
-<td>找下一个兄弟</td>
-</tr>
-<tr>
-<td>prev()</td>
-<td>$(“li”).prev()</td>
-<td>找上一次兄弟</td>
-</tr>
-</tbody>
-</table>
-<p>筛选选择器的功能与过滤选择器有点类似,但是用法不一样,</p>
-</blockquote>
-<h1 id="dom操作">DOM操作</h1>
-<pre><code> DOM操作
-	1. 内容操作
-		1. html(): 获取/设置元素的标签体内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt;  --&gt; &lt;font&gt;内容&lt;/font&gt;
-		2. text(): 获取/设置元素的标签体纯文本内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt; --&gt; 内容
-		3. val()： 获取/设置元素的value属性值
-	2. 属性操作
-		1. 通用属性操作
-			1. attr(): 获取/设置元素的属性
-			2. removeAttr():删除属性
-			3. prop():获取/设置元素的属性
-			4. removeProp():删除属性
-
-			* attr和prop区别？
-				1. 如果操作的是元素的固有属性，则建议使用prop
-				2. 如果操作的是元素自定义的属性，则建议使用attr
-		2. 对class属性操作
-			1. addClass():添加class属性值
-			2. removeClass():删除class属性值
-			3. toggleClass():切换class属性
-				* toggleClass(&quot;one&quot;): 
-					* 判断如果元素对象上存在class=&quot;one&quot;，则将属性值one删除掉。  如果元素对象上不存在class=&quot;one&quot;，则添加
-			4. css():
-	3. CRUD操作:
-		1. append():父元素将子元素追加到末尾
-			* 对象1.append(对象2): 将对象2添加到对象1元素内部，并且在末尾
-		2. prepend():父元素将子元素追加到开头
-			* 对象1.prepend(对象2):将对象2添加到对象1元素内部，并且在开头
-		3. appendTo():
-			* 对象1.appendTo(对象2):将对象1添加到对象2内部，并且在末尾
-		4. prependTo()：
-			* 对象1.prependTo(对象2):将对象1添加到对象2内部，并且在开头
-</code></pre>
-<pre><code>	5. after():添加元素到元素后边
-			* 对象1.after(对象2)： 将对象2添加到对象1后边。对象1和对象2是兄弟关系
-		6. before():添加元素到元素前边
-			* 对象1.before(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
-		7. insertAfter()
-			* 对象1.insertAfter(对象2)：将对象2添加到对象1后边。对象1和对象2是兄弟关系
-		8. insertBefore()
-			* 对象1.insertBefore(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
-
-		9. remove():移除元素
-			* 对象.remove():将对象删除掉
-		10. empty():清空元素的所有后代元素。
-			* 对象.empty():将对象的后代元素全部清空，但是保留当前对象以及其属性节点
-</code></pre>
-<h1 id="动画">动画</h1>
-<pre><code>1. 动画
-	1. 三种方式显示和隐藏元素
-		1. 默认显示和隐藏方式
-			1. show([speed,[easing],[fn]])
-				1. 参数：
-					1. speed：动画的速度。三个预定义的值(&quot;slow&quot;,&quot;normal&quot;, &quot;fast&quot;)或表示动画时长的毫秒数值(如：1000)
-					2. easing：用来指定切换效果，默认是&quot;swing&quot;，可用参数&quot;linear&quot;
-						* swing：动画执行时效果是 先慢，中间快，最后又慢
-						* linear：动画执行时速度是匀速的
-					3. fn：在动画完成时执行的函数，每个元素执行一次。
-
-			2. hide([speed,[easing],[fn]])
-			3. toggle([speed],[easing],[fn])
-		
-		2. 滑动显示和隐藏方式
-			1. slideDown([speed],[easing],[fn])
-			2. slideUp([speed,[easing],[fn]])
-			3. slideToggle([speed],[easing],[fn])
-
-		3. 淡入淡出显示和隐藏方式
-			1. fadeIn([speed],[easing],[fn])
-			2. fadeOut([speed],[easing],[fn])
-			3. fadeToggle([speed,[easing],[fn]])
-</code></pre>
-<pre><code>2. 遍历
-	1. js的遍历方式
-		* for(初始化值;循环结束条件;步长)
-	2. jq的遍历方式
-		1. jq对象.each(callback)
-			1. 语法：
-				jquery对象.each(function(index,element){});
-					* index:就是元素在集合中的索引
-					* element：就是集合中的每一个元素对象
-
-					* this：集合中的每一个元素对象
-			2. 回调函数返回值：
-				* true:如果当前function返回为false，则结束循环(break)。
-				* false:如果当前function返回为true，则结束本次循环，继续下次循环(continue)
-		2. $.each(object, [callback])
-		3. for..of: jquery 3.0 版本之后提供的方式
-			for(元素对象 of 容器对象)
-	
-3. 事件绑定
-	1. jquery标准的绑定方式
-		* jq对象.事件方法(回调函数)；
-		* 注：如果调用事件方法，不传递回调函数，则会触发浏览器默认行为。
-			* 表单对象.submit();//让表单提交
-	2. on绑定事件/off解除绑定
-		* jq对象.on(&quot;事件名称&quot;,回调函数)
-		* jq对象.off(&quot;事件名称&quot;)
-			* 如果off方法不传递任何参数，则将组件上的所有事件全部解绑
-	3. 事件切换：toggle
-		* jq对象.toggle(fn1,fn2...)
-			* 当单击jq对象对应的组件后，会执行fn1.第二次点击会执行fn2.....
-			
-		* 注意：1.9版本 .toggle() 方法删除,jQuery Migrate（迁移）插件可以恢复此功能。
-			 &lt;script src=&quot;../js/jquery-migrate-1.0.0.js&quot; type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[前端篇之-JS]]></title>
-        <id>https://yihuaikun.github.io/post/qian-duan-pian-zhi-js</id>
-        <link href="https://yihuaikun.github.io/post/qian-duan-pian-zhi-js">
-        </link>
-        <updated>2019-12-12T11:57:52.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="前端学习总结">前端学习总结</h1>
-<h2 id="js基础学习">js基础学习</h2>
-<pre><code>* 概念:   一门客户端脚本语言
-  	* 运行在客户端的浏览器中,每一个浏览器都有javaScript的解析引擎
-  	* 脚本语言:不需要编译,直接就可以被浏览器解析
-* 功能:
-  * 可以用来增强用户和Html页面的交互过程,可以控制html元素,让页面有一些动态效果,增强用户的体验.
-
-* javaScript发展历史:
-  1. 1992年，Nombase公司，开发出第一门客户端脚本语言，专门用于表单的校验。命名为 ： C--	，后来更名为：ScriptEase
-  2. 1995年，Netscape(网景)公司，开发了一门客户端脚本语言：LiveScript。后来，请来SUN公司的专家，修改LiveScript，命名为JavaScript
-  3. 1996年，微软抄袭JavaScript开发出JScript语言
-  4. 1997年，ECMA(欧洲计算机制造商协会)，制定出客户端脚本语言的标准：ECMAScript，就是统一了所有客户端脚本语言的编码方式。
-
-</code></pre>
-<h2 id="ecmascript客户端脚本语言标准">ECMAScript:客户端脚本语言标准</h2>
-<h3 id="和html结合方式">和Html结合方式</h3>
-<pre><code>1.与html结合方式
-	1.内部JS:
-		*定义&lt;script&gt;,标签体内容就是JS代码
-	2.外部JS
-		*定义&lt;script&gt;,通过src属性引入外部JS文件
-		
-	注意:
-		1.&lt;script&gt;可以定义在html页面的任何地方,但是定义的位置会影响执行顺序.
-		2.&lt;script&gt;可以定义多个
-</code></pre>
-<h3 id="javascript注释">javaScript注释</h3>
-<pre><code>1.在js中的注释一共两种类型
-	*单行注释: //注释内容
-	*多行注释:/*注释内容*/
-</code></pre>
-<h3 id="数据类型">数据类型</h3>
-<pre><code>1.原始数据类型(基本数据类型)
-	1.number :数字.整数/小数/NaN(not a number一个不是数字的数据类型)
-	2.string:字符串.字符串 &quot;abc&quot; &quot;a&quot; 'abc'
-	3.boolean:true或者false
-	4.null:一个对象为空的占位符
-	5.undefined:未定义.如果一个变量没有初始化值,则会被默认赋值为underfined
-2.引用数据类型对象
-</code></pre>
-<h3 id="变量">变量</h3>
-<pre><code>1.变量:一小块的存储数据的内存空间
-	*java语言是强类型语言,而JavaScript是弱类型语言
-		* 强类型:在开辟变量存储空间时,定义了空间将来存储数据的数据类型,只能存储固定类型的数据
-		* 弱类型:在开辟变量存储空间时,不定义空间将来存储的数据类型,可以存放任意的数据类型
-		
-	* 语法:
-		* var 变量名称  = 初始化值;
-	*typeof运算符:获取变量的类型
-		*注意:null运算后得到的是object
-</code></pre>
-<h3 id="运算符">运算符</h3>
-<pre><code>1.一元运算符:只有一个运算数的运算符
-	++,--,+(正号)
-		* ++ -- :自增(自减)
-			* ++(--) 在前,先自增(自减),再运算
-			* ++(--)在后,先运算,在自增(自减)
-注意:在JS中,如果运算数不是运算符所要求的类型,那么JS引擎会自动将运算数进行类型转换
-	*其他类型的转number
-		* string转number:按照字面值转换,如果字面值不是数字,则转换为NaN(不是数字的数字)
-		* boolean转number:true转换为1,false转换为0
-2.算数运算符
-	+ - * / %....
-3.赋值运算符
-	= += -+ *= /=....
-4.比较运算符
-	&gt; &lt; &gt;= &lt;= == ===(全等于)
-	*比较方式
-		1.类型相同:直接比较
-			* 字符串:按照字典顺序比较.按位逐一比较,直到得出大小为止
-		2.类型不同 :先进行类型转换,在比较
-			* ===: 全等于.在比较之前,先判断类型,如果类型不一样,则直接返回false
-5.逻辑运算符
-	&amp;&amp; || !
-		* 其他类型转换Boolean
-			1.number :0或NaN为假,其他为真
-			2.string:除了空字符串(&quot;&quot;),其他都是true
-			3.null&amp;undefined:都是false
-			4.对象:对象都是true
-6.三元运算符
-	? : 表达式
-	var a = 3;
-    var b = 4;
-    var c  = a &gt; b ? 1:0;
-    *语法:
-    	* 表达式 ? 值1:值2;
-    	* 判断表达式的值,如果true则取值1,如果false则取值为2
-		
-</code></pre>
-<h3 id="流程控制语句">流程控制语句</h3>
-<pre><code>1.if....else....
-2.switch:
-	*在java中,switch语句可以接受的数据类型:byte int short char,枚举(1.5),String(1.7)
-		*switch(变量)
-			case 值:
-	*在JS中,switch语句可以接受任意数据类型
- 3.while
- 4.do...while
- 5.for
-	
-</code></pre>
-<p>使用for循环代码演示</p>
-<pre><code class="language-Html">	&lt;!DOCTYPE html&gt;
-		&lt;html lang=&quot;en&quot;&gt;
-		&lt;head&gt;
-		    &lt;meta charset=&quot;UTF-8&quot;&gt;
-		    &lt;title&gt;99乘法表&lt;/title&gt;
-		    &lt;style&gt;
-		        td{
-		            border: 1px solid;
-		        }
-		
-		    &lt;/style&gt;
-		
-		    &lt;script&gt;
-		
-		        document.write(&quot;&lt;table  align='center'&gt;&quot;);
-					        //1.完成基本的for循环嵌套，展示乘法表
-		        for (var i = 1; i &lt;= 9 ; i++) {
-		            document.write(&quot;&lt;tr&gt;&quot;);
-		            for (var j = 1; j &lt;=i ; j++) {
-		                document.write(&quot;&lt;td&gt;&quot;);
-		
-		                //输出  1 * 1 = 1
-		                document.write(i + &quot; * &quot; + j + &quot; = &quot; + ( i*j) +&quot;&amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;);
-		
-		                document.write(&quot;&lt;/td&gt;&quot;);
-		            }
-		            /*//输出换行
-		            document.write(&quot;&lt;br&gt;&quot;);*/
-		
-		            document.write(&quot;&lt;/tr&gt;&quot;);
-		        }
-		
-		        //2.完成表格嵌套
-		        document.write(&quot;&lt;/table&gt;&quot;);
-		
-		    &lt;/script&gt;
-		&lt;/head&gt;
-		&lt;body&gt;
-	&lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<h2 id="基本对象">基本对象</h2>
-<h3 id="js创建对象的几种方式">js创建对象的几种方式</h3>
-<pre><code class="language-javascript">1.Object构造函数创建
-	var Person  = new Object();
-	Person.name = 'yhk';
-	Person.age = 21
-</code></pre>
-<pre><code class="language-javascript">2:使用对象字面量表示法来创建对象
-	var Person ={};//等同于var Person = new Object();
-	var Person = {
-        name:'yhk',
-        age:21
-	}
-</code></pre>
-<blockquote>
-<p>对象字面量是对象定义的一种简写形式,第一种和第二种创建形式的缺点是就是:<strong>他们用同一个接口创建很多对象,会产生大量重复的代码,如果你有500个对象,那么你就要输入500多次很多相同的代码</strong></p>
-</blockquote>
-<pre><code class="language-javascript">3.使用工厂模式创建
-	function createPerson(name,age,job) {
-        var o = new Object();
-        o.name = name;
-        o.age = age;
-        o.job = job;
-        this.sayName = function() {
-            alert(this.name);
-        };
-		return o;
-    }
-	var person1 = new Person('TOM',29,'Teacher');
-	var person1 = new Person('LUCK',18,'Student');
-</code></pre>
-<blockquote>
-<p>在使用工厂模式创建对象的时候，我们都可以注意到，在createPerson函数中，返回的是一个对象。那么我们就无法判断返回的对象究竟是一个什么样的类型。于是就出现了第四种创建对象的模式</p>
-</blockquote>
-<pre><code class="language-javascript">4.使用构造函数创建
-	function Person(name,age,job) {
-		this.name = name;
-		this.age = age;
-		this.job = job;
-		this.sayName = function() {
-            alert(this.name);
-		};
-	}
-</code></pre>
-<pre><code>1.Function:函数(方法)对象
-	1.创建:
-		1.var fun = new Function(形式参数列表,方法体);
-		2.
-			functon 方法名称(形式参数列表) {
-                方法体
-			}
-		3. 
-			var 方法名 = function(形式参数列表) {
-                方法体
-			}
-	2. 方法
-	3.属性
-		length:代表形参的个数
-	4.特点
-		1.方法定义是,形参的类型不用写,返回值类型不同写
-		2.方法是一个对象,如果定义名称相同的方法,会覆盖
-		3.在JS中,方法的调用只与方法的名称有关,和参数列表无关
-		4.在方法声明中有一个隐藏的内置对象(数组),arguments,封装所有的实际参数
-	5.调用
-		方法名称(实际参数列表);
-</code></pre>
-<h3 id="array数组的对象">Array:数组的对象</h3>
-<pre><code>1.创建:
-	1. var arr = new Array(元素列表);
-	2. var arr = new Array(默认长度);
-	3. var arr = [元素列表];
-2.方法
-	join(参数):将数组中的元素按照指定的分割符拼接为字符串
-	push() :向数组的末尾添加一个或者更多的元素,并返回数组的长度
-3.属性
-	length:数组的长度
-4.特点
-	
-</code></pre>
-<h3 id="date日期对象">Date:日期对象</h3>
-<pre><code>1.创建
-	var date = new Date();
-2.方法
-	toLocaleString():返回当前date对应的时间本地字符串格式
-	 getTime():获取毫秒值。返回当前如期对象描述的时间到1970年1月1日零点的毫秒值差
-</code></pre>
-<h3 id="math数学对象">Math:数学对象</h3>
-<pre><code> 1. 创建：
- 		* 特点：Math对象不用创建，直接使用。  Math.方法名();
-
-2. 方法：
-	random():返回 0 ~ 1 之间的随机数。 含0不含1
-	ceil(x)：对数进行上舍入。
-	floor(x)：对数进行下舍入。
-	round(x)：把数四舍五入为最接近的整数。
-3. 属性：
-	PI
-</code></pre>
-<h3 id="regexp正则表达式对象">RegExp:正则表达式对象</h3>
-<pre><code>1. 正则表达式：定义字符串的组成规则。
-	1. 单个字符:[]
-			如： [a] [ab] [a-zA-Z0-9_]
-        * 特殊符号代表特殊含义的单个字符:
-        \d:单个数字字符 [0-9]
-        \w:单个单词字符[a-zA-Z0-9_]
-    2. 量词符号：
-        ?：表示出现0次或1次
-        *：表示出现0次或多次
-        +：出现1次或多次
-        {m,n}:表示 m&lt;= 数量 &lt;= n
-        * m如果缺省： {,n}:最多n次
-        * n如果缺省：{m,} 最少m次
-    3. 开始结束符号
-        * ^:开始
-        * $:结束
-2. 正则对象：
-1. 创建
-	1. var reg = new RegExp(&quot;正则表达式&quot;);
-	2. var reg = /正则表达式/;
-2. 方法	
-	1. test(参数):验证指定的字符串是否符合正则定义的规范	
-</code></pre>
-<h3 id="global全局对象">Global全局对象</h3>
-<pre><code>1. 特点：全局对象，这个Global中封装的方法不需要对象就可以直接调用。  方法名();
-2. 方法：
-        encodeURI():url编码
-        decodeURI():url解码
-
-        encodeURIComponent():url编码,编码的字符更多
-        decodeURIComponent():url解码
-
-        parseInt():将字符串转为数字
-        * 逐一判断每一个字符是否是数字，直到不是数字为止，将前边数字部分转为number
-        isNaN():判断一个值是否是NaN
-        * NaN六亲不认，连自己都不认。NaN参与的==比较全部问false
-
-        eval():讲 JavaScript 字符串，并把它作为脚本代码来执行。
- 3. URL编码	
-    蓝鸥 =  %E4%BC%A0%E6%99%BA%E6%92%AD%E5%AE%A2
-</code></pre>
-<h1 id="bom">BOM</h1>
-<pre><code>1.概念:Browser object Model 浏览器对象模型
-	*将浏览器的各个组成部分封装成对象
-2.组成
-	* window:窗口对象
-	* Navigator:浏览器对象
-	* Screen:显示器屏幕对象
-	* History：历史记录对象
-	* Location：地址栏对象
-</code></pre>
-<h3 id="window窗口对象">window:窗口对象</h3>
-<pre><code>  1. 创建
-    2. 方法
-         1. 与弹出框有关的方法：
-            alert()	显示带有一段消息和一个确认按钮的警告框。
-            confirm()	显示带有一段消息以及确认按钮和取消按钮的对话框。
-                * 如果用户点击确定按钮，则方法返回true
-                * 如果用户点击取消按钮，则方法返回false
-            prompt()	显示可提示用户输入的对话框。
-                * 返回值：获取用户输入的值
-         2. 与打开关闭有关的方法：
-            close()	关闭浏览器窗口。
-                * 谁调用我 ，我关谁
-            open()	打开一个新的浏览器窗口
-                * 返回新的Window对象
-         3. 与定时器有关的方式
-            setTimeout()	在指定的毫秒数后调用函数或计算表达式。
-                * 参数：
-                    1. js代码或者方法对象
-                    2. 毫秒值
-                * 返回值：唯一标识，用于取消定时器
-            clearTimeout()	取消由 setTimeout() 方法设置的 timeout。
-
-            setInterval()	按照指定的周期（以毫秒计）来调用函数或计算表达式。
-            clearInterval()	取消由 setInterval() 设置的 timeout。
-
-    3. 属性：
-        1. 获取其他BOM对象：
-            history
-            location
-            Navigator
-            Screen:
-        2. 获取DOM对象
-            document
-    4. 特点
-        * Window对象不需要创建可以直接使用 window使用。 window.方法名();
-        * window引用可以省略。  方法名();
-</code></pre>
-<h3 id="localtion地址栏对象">Localtion:地址栏对象</h3>
-<pre><code>1.创建(获取)
-	1.window.location
-	2.location
-2.方法
-	* reload()重新加载当前文档.刷新
-3.属性
-	* href 设置或返回完整的URL
-</code></pre>
-<h3 id="history历史记录对象">History:历史记录对象</h3>
-<pre><code> 1. 创建(获取)：
-        1. window.history
-        2. history
-
-    2. 方法：
-        * back()	加载 history 列表中的前一个 URL。
-        * forward()	加载 history 列表中的下一个 URL。
-        * go(参数)	加载 history 列表中的某个具体页面。
-            * 参数：
-                * 正数：前进几个历史记录
-                * 负数：后退几个历史记录
-    3. 属性：
-        * length	返回当前窗口历史列表中的 URL 数量。
-</code></pre>
-<h1 id="dom">DOM</h1>
-<pre><code>* 概念： Document Object Model 文档对象模型
-	* 将标记语言文档的各个组成部分，封装为对象。可以使用这些对象，对标记语言文档进行CRUD的动态操作
-
-* W3C DOM 标准被分为 3 个不同的部分：
-
-	* 核心 DOM - 针对任何结构化文档的标准模型
-		* Document：文档对象
-		* Element：元素对象
-		* Attribute：属性对象
-		* Text：文本对象
-		* Comment:注释对象
-
-		* Node：节点对象，其他5个的父对象
-	* XML DOM - 针对 XML 文档的标准模型
-	* HTML DOM - 针对 HTML 文档的标准模型
-</code></pre>
-<h3 id="核心bom模型">核心BOM模型</h3>
-<pre><code>*核心BOM模型
-	* Document：文档对象
-		1. 创建(获取)：在html dom模型中可以使用window对象来获取
-			1. window.document
-			2. document
-		2. 方法：
-			1. 获取Element对象：
-				1. getElementById()	： 根据id属性值获取元素对象。id属性值一般唯一
-				2. getElementsByTagName()：根据元素名称获取元素对象们。返回值是一个数组
-				3. getElementsByClassName():根据Class属性值获取元素对象们。返回值是一个数组
-				4. getElementsByName(): 根据name属性值获取元素对象们。返回值是一个数组
-			2. 创建其他DOM对象：
-				createAttribute(name)
-            	createComment()
-            	createElement()
-            	createTextNode()
-		3. 属性
-	* Element：元素对象
-		1. 获取/创建：通过document来获取和创建
-		2. 方法：
-			1. removeAttribute()：删除属性
-			2. setAttribute()：设置属性
-	* Node：节点对象，其他5个的父对象
-		* 特点：所有dom对象都可以被认为是一个节点
-		* 方法：
-			* CRUD dom树：
-				* appendChild()：向节点的子节点列表的结尾添加新的子节点。
-				* removeChild()	：删除（并返回）当前节点的指定子节点。
-				* replaceChild()：用新节点替换一个子节点。
-		* 属性：
-			* parentNode 返回节点的父节点。
-</code></pre>
-<h1 id="html-dom">HTML DOM</h1>
-<pre><code>HTML DOM
-	1.标签体的设置和获取:innerHTML
-	2.使用html元素对象的属性
-	3.控制元素的样式
-		1.使用元素的style属性来设置
-			如:
-				//修改样式方式1
-				div1.style.border = &quot;1px solid red&quot;;
-				div1.style.width = &quot;200px&quot;;
-				//font-size ---&gt; size
-				div1.style.fontSize = &quot;20px&quot;;
-			2.提琴定义好选择器的样式,通过元素的className属性来设置
-</code></pre>
-<h1 id="事件监听机制">事件监听机制</h1>
-<pre><code>概念:某些组件被执行了某些操作后,触发某些代码的执行
-	* 事件:某些操作. 如:单击,双击,键盘按下了,鼠标移动了
-	* 事件源:事件发生的源头.比如按钮,文本输入框.....
-	* 监听器:代码
-	* 注册监听:将事件,事件源,监听器结合在一起.当事件源上发生了某个事件,则触发执行某个监听器的代码
-			
-</code></pre>
-<pre><code>常见的事件:
-	1.点击事件:
-		1.onclick:单击事件
-		2.ondbclick:双击事件
-	2.焦点事件:
-		1. onblur:失去焦点
-		2. onfocus:元素获得焦点
-	3.加载事件
-		1.onload:一张页面或者一幅图像完成加载
-	4.鼠标事件
-		1.onmousedown 鼠标按下事件
-		2.onmouseup 鼠标按键被松开
-		3.onmousemove 鼠标被移动
-		4.onmouseover 鼠标移到某个元素之上
-		5.onmouseout 鼠标从某元素移开
-	5.键盘事件
-    	1.onkeydown 某个键盘按键被松开
-    	2.onkeyup 某个键盘按键被松开
-    	3.onkeypress 某个键盘按键被按下并松开
-    6.选择和改变事件
-    	1.onchange 域的内容被改变
-    	2.onselect 文本被选中
-    7.表单事件
-    	1.onsubmit 确认按钮被点击
-    	2.onreset 重置按钮被点击
-    	
-		
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[SpringCloud-入门篇2]]></title>
-        <id>https://yihuaikun.github.io/post/springcloud-ru-men-pian-2</id>
-        <link href="https://yihuaikun.github.io/post/springcloud-ru-men-pian-2">
-        </link>
-        <updated>2019-05-18T12:53:46.000Z</updated>
-        <content type="html"><![CDATA[<p>1.Hystrix</p>
-<p>1.1.简介</p>
-<p>Hystrix,英文意思是豪猪，全身是刺，看起来就不好惹，是一种保护机制。</p>
-<p>Hystrix也是Netflix公司的一款组件。</p>
-<p>主页：https://github.com/Netflix/Hystrix/</p>
-<p>那么Hystix的作用是什么呢？具体要保护什么呢？</p>
-<p>Hystix是Netflix开源的一个延迟和容错库，用于隔离访问远程服务、第三方库，防止出现级联失败。</p>
-<p>1.2.雪崩问题</p>
-<p>微服务中，服务间调用关系错综复杂，一个请求，可能需要调用多个微服务接口才能实现，会形成非常复杂的调用链路：</p>
-<p>如图，一次业务请求，需要调用A、P、H、I四个服务，这四个服务又可能调用其它服务。</p>
-<p>如果此时，某个服务出现异常：</p>
-<p>例如微服务I发生异常，请求阻塞，用户不会得到响应，则tomcat的这个线程不会释放，于是越来越多的用户请求到来，越来越多的线程会阻塞：</p>
-<p>服务器支持的线程和并发数有限，请求一直阻塞，会导致服务器资源耗尽，从而导致所有其它服务都不可用，形成雪崩效应。</p>
-<p>这就好比，一个汽车生产线，生产不同的汽车，需要使用不同的零件，如果某个零件因为种种原因无法使用，那么就会造成整台车无法装配，陷入等待零件的状态，直到零件到位，才能继续组装。  此时如果有很多个车型都需要这个零件，那么整个工厂都将陷入等待的状态，导致所有生产都陷入瘫痪。一个零件的波及范围不断扩大。</p>
-<p>Hystix解决雪崩问题的手段有两个：</p>
-<ul>
-<li>线程隔离</li>
-<li>服务熔断</li>
-</ul>
-<p>1.3.线程隔离，服务降级</p>
-<p>1.3.1.原理</p>
-<p>线程隔离示意图：</p>
-<p>解读：</p>
-<p>Hystrix为每个依赖服务调用分配一个小的线程池，如果线程池已满调用将被立即拒绝，默认不采用排队.加速失败判定时间。</p>
-<p>用户的请求将不再直接访问服务，而是通过线程池中的空闲线程来访问服务，如果线程池已满，或者请求超时，则会进行降级处理，什么是服务降级？</p>
-<p>服务降级：优先保证核心服务，而非核心服务不可用或弱可用。</p>
-<p>用户的请求故障时，不会被阻塞，更不会无休止的等待或者看到系统崩溃，至少可以看到一个执行结果（例如返回友好的提示信息） 。</p>
-<p>服务降级虽然会导致请求失败，但是不会导致阻塞，而且最多会影响这个依赖服务对应的线程池中的资源，对其它服务没有响应。</p>
-<p>触发Hystix服务降级的情况：</p>
-<ul>
-<li>线程池已满</li>
-<li>请求超时</li>
-</ul>
-<p>1.3.2.动手实践</p>
-<p>1.3.2.1.引入依赖</p>
-<p>首先在itcast-service-consumer的pom.xml中引入Hystrix依赖：</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-netflix-hystrix&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>1.3.2.2.开启熔断</p>
-<p>可以看到，我们类上的注解越来越多，在微服务中，经常会引入上面的三个注解，于是Spring就提供了一个组合注解：@SpringCloudApplication</p>
-<p>因此，我们可以使用这个组合注解来代替之前的3个注解。</p>
-<pre><code>@SpringCloudApplication
-public class ItcastServiceConsumerApplication {
-
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(ItcastServiceConsumerApplication.class, args);
-    }
-}
-</code></pre>
-<p>1.3.2.3.编写降级逻辑</p>
-<p>我们改造itcast-service-consumer，当目标服务的调用出现故障，我们希望快速失败，给用户一个友好提示。因此需要提前编写好失败时的降级处理逻辑，要使用HystixCommond来完成：</p>
-<pre><code>@Controller
-@RequestMapping(&quot;consumer/user&quot;)
-public class UserController {
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @GetMapping
-    @ResponseBody
-    @HystrixCommand(fallbackMethod = &quot;queryUserByIdFallBack&quot;)
-    public String queryUserById(@RequestParam(&quot;id&quot;) Long id) {
-        String user = this.restTemplate.getForObject(&quot;http://service-provider/user/&quot; + id, String.class);
-        return user;
-    }
-
-    public String queryUserByIdFallBack(Long id){
-        return &quot;请求繁忙，请稍后再试！&quot;;
-    }
-}
-</code></pre>
-<p>要注意，因为熔断的降级逻辑方法必须跟正常逻辑方法保证：相同的参数列表和返回值声明。失败逻辑中返回User对象没有太大意义，一般会返回友好提示。所以我们把queryById的方法改造为返回String，反正也是Json数据。这样失败逻辑中返回一个错误说明，会比较方便。</p>
-<p>说明：</p>
-<ul>
-<li>@HystrixCommand(fallbackMethod = &quot;queryByIdFallBack&quot;)：用来声明一个降级逻辑的方法</li>
-</ul>
-<p>测试：</p>
-<p>当itcast-service-provder正常提供服务时，访问与以前一致。但是当我们将itcast-service-provider停机时，会发现页面返回了降级处理信息：</p>
-<p>1.3.2.4.默认FallBack</p>
-<p>我们刚才把fallback写在了某个业务方法上，如果这样的方法很多，那岂不是要写很多。所以我们可以把Fallback配置加在类上，实现默认fallback：</p>
-<pre><code>@Controller
-@RequestMapping(&quot;consumer/user&quot;)
-@DefaultProperties(defaultFallback = &quot;fallBackMethod&quot;) // 指定一个类的全局熔断方法
-public class UserController {
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @GetMapping
-    @ResponseBody
-    @HystrixCommand // 标记该方法需要熔断
-    public String queryUserById(@RequestParam(&quot;id&quot;) Long id) {
-        String user = this.restTemplate.getForObject(&quot;http://service-provider/user/&quot; + id, String.class);
-        return user;
-    }
-
-    /**
-     * 熔断方法
-     * 返回值要和被熔断的方法的返回值一致
-     * 熔断方法不需要参数
-     * @return
-     */
-    public String fallBackMethod(){
-        return &quot;请求繁忙，请稍后再试！&quot;;
-    }
-}
-</code></pre>
-<ul>
-<li>@DefaultProperties(defaultFallback = &quot;defaultFallBack&quot;)：在类上指明统一的失败降级方法</li>
-<li>@HystrixCommand：在方法上直接使用该注解，使用默认的剪辑方法。</li>
-<li>defaultFallback：默认降级方法，不用任何参数，以匹配更多方法，但是返回值一定一致</li>
-</ul>
-<p>1.3.2.5.设置超时</p>
-<p>在之前的案例中，请求在超过1秒后都会返回错误信息，这是因为Hystix的默认超时时长为1，我们可以通过配置修改这个值：</p>
-<p>我们可以通过hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds来设置Hystrix超时时间。该配置没有提示。</p>
-<pre><code>hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 6000 # 设置hystrix的超时时间为6000ms
-</code></pre>
-<p>改造服务提供者</p>
-<p>改造服务提供者的UserController接口，随机休眠一段时间，以触发熔断：</p>
-<pre><code>@GetMapping(&quot;{id}&quot;)
-public User queryUserById(@PathVariable(&quot;id&quot;) Long id) {
-    try {
-        Thread.sleep(6000);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
-    return this.userService.queryUserById(id);
-}
-</code></pre>
-<p>1.4.服务熔断</p>
-<p>1.4.1.熔断原理</p>
-<p>熔断器，也叫断路器，其英文单词为：Circuit Breaker</p>
-<p>熔断状态机3个状态：</p>
-<ul>
-<li>Closed：关闭状态，所有请求都正常访问。</li>
-<li>Open：打开状态，所有请求都会被降级。Hystix会对请求情况计数，当一定时间内失败请求百分比达到阈值，则触发熔断，断路器会完全打开。默认失败比例的阈值是50%，请求次数最少不低于20次。</li>
-<li>Half Open：半开状态，open状态不是永久的，打开后会进入休眠时间（默认是5S）。随后断路器会自动进入半开状态。此时会释放部分请求通过，若这些请求都是健康的，则会完全关闭断路器，否则继续保持打开，再次进行休眠计时</li>
-</ul>
-<p>1.4.2.动手实践</p>
-<p>为了能够精确控制请求的成功或失败，我们在consumer的调用业务中加入一段逻辑：</p>
-<pre><code>@GetMapping(&quot;{id}&quot;)
-@HystrixCommand
-public String queryUserById(@PathVariable(&quot;id&quot;) Long id){
-    if(id == 1){
-        throw new RuntimeException(&quot;太忙了&quot;);
-    }
-    String user = this.restTemplate.getForObject(&quot;http://service-provider/user/&quot; + id, String.class);
-    return user;
-}
-</code></pre>
-<p>这样如果参数是id为1，一定失败，其它情况都成功。（不要忘了清空service-provider中的休眠逻辑）</p>
-<p>我们准备两个请求窗口：</p>
-<ul>
-<li>一个请求：http://localhost/consumer/user/1，注定失败</li>
-<li>一个请求：http://localhost/consumer/user/2，肯定成功</li>
-</ul>
-<p>当我们疯狂访问id为1的请求时（超过20次），就会触发熔断。断路器会断开，一切请求都会被降级处理。</p>
-<p>此时你访问id为2的请求，会发现返回的也是失败，而且失败时间很短，只有几毫秒左右：</p>
-<p>不过，默认的熔断触发要求较高，休眠时间窗较短，为了测试方便，我们可以通过配置修改熔断策略：</p>
-<pre><code>circuitBreaker.requestVolumeThreshold=10
-circuitBreaker.sleepWindowInMilliseconds=10000
-circuitBreaker.errorThresholdPercentage=50
-</code></pre>
-<p>解读：</p>
-<ul>
-<li>requestVolumeThreshold：触发熔断的最小请求次数，默认20</li>
-<li>errorThresholdPercentage：触发熔断的失败请求最小占比，默认50%</li>
-<li>sleepWindowInMilliseconds：休眠时长，默认是5000毫秒</li>
-</ul>
-<p>2.Feign</p>
-<p>在前面的学习中，我们使用了Ribbon的负载均衡功能，大大简化了远程调用时的代码：</p>
-<pre><code>String user = this.restTemplate.getForObject(&quot;http://service-provider/user/&quot; + id, String.class);
-</code></pre>
-<p>如果就学到这里，你可能以后需要编写类似的大量重复代码，格式基本相同，无非参数不一样。有没有更优雅的方式，来对这些代码再次优化呢？</p>
-<p>这就是我们接下来要学的Feign的功能了。</p>
-<p>2.1.简介</p>
-<p>有道词典的英文解释：</p>
-<p>为什么叫伪装？</p>
-<p>Feign可以把Rest的请求进行隐藏，伪装成类似SpringMVC的Controller一样。你不用再自己拼接url，拼接参数等等操作，一切都交给Feign去做。</p>
-<p>项目主页：https://github.com/OpenFeign/feign</p>
-<p>2.2.快速入门</p>
-<p>改造itcast-service-consumer工程</p>
-<p>2.2.1.导入依赖</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>2.2.2.开启Feign功能</p>
-<p>我们在启动类上，添加注解，开启Feign功能</p>
-<pre><code>@SpringCloudApplication
-@EnableFeignClients // 开启feign客户端
-public class ItcastServiceConsumerApplication {
-    
-    public static void main(String[] args) {
-        SpringApplication.run(ItcastServiceConsumerApplication.class, args);
-    }
-}
-</code></pre>
-<p>删除RestTemplate：feign已经自动集成了Ribbon负载均衡的RestTemplate。所以，此处不需要再注册RestTemplate。</p>
-<p>2.2.3.Feign的客户端</p>
-<p>在itcast-service-consumer工程中，添加UserClient接口：</p>
-<p>内容：</p>
-<pre><code>@FeignClient(value = &quot;service-provider&quot;) // 标注该类是一个feign接口
-public interface UserClient {
-
-    @GetMapping(&quot;user/{id}&quot;)
-    User queryById(@PathVariable(&quot;id&quot;) Long id);
-}
-</code></pre>
-<ul>
-<li>首先这是一个接口，Feign会通过动态代理，帮我们生成实现类。这点跟mybatis的mapper很像</li>
-<li>@FeignClient，声明这是一个Feign客户端，类似@Mapper注解。同时通过value属性指定服务名称</li>
-<li>接口中的定义方法，完全采用SpringMVC的注解，Feign会根据注解帮我们生成URL，并访问获取结果</li>
-</ul>
-<p>改造原来的调用逻辑，调用UserClient接口：</p>
-<pre><code>@Controller
-@RequestMapping(&quot;consumer/user&quot;)
-public class UserController {
-
-    @Autowired
-    private UserClient userClient;
-
-    @GetMapping
-    @ResponseBody
-    public User queryUserById(@RequestParam(&quot;id&quot;) Long id){
-        User user = this.userClient.queryUserById(id);
-        return user;
-    }
-
-}
-</code></pre>
-<p>2.2.4.启动测试</p>
-<p>访问接口：</p>
-<p>正常获取到了结果。</p>
-<p>2.3.负载均衡</p>
-<p>Feign中本身已经集成了Ribbon依赖和自动配置：</p>
-<p>因此我们不需要额外引入依赖，也不需要再注册RestTemplate对象。</p>
-<p>2.4.Hystrix支持</p>
-<p>Feign默认也有对Hystrix的集成：</p>
-<p>只不过，默认情况下是关闭的。我们需要通过下面的参数来开启：(在itcast-service-consumer工程添加配置内容)</p>
-<pre><code>feign:
-  hystrix:
-    enabled: true # 开启Feign的熔断功能
-</code></pre>
-<p>但是，Feign中的Fallback配置不像hystrix中那样简单了。</p>
-<p>1）首先，我们要定义一个类UserClientFallback，实现刚才编写的UserClient，作为fallback的处理类</p>
-<pre><code>@Component
-public class UserClientFallback implements UserClient {
-
-    @Override
-    public User queryById(Long id) {
-        User user = new User();
-        user.setUserName(&quot;服务器繁忙，请稍后再试！&quot;);
-        return user;
-    }
-}
-</code></pre>
-<p>2）然后在UserFeignClient中，指定刚才编写的实现类</p>
-<pre><code>@FeignClient(value = &quot;service-provider&quot;, fallback = UserClientFallback.class) // 标注该类是一个feign接口
-public interface UserClient {
-
-    @GetMapping(&quot;user/{id}&quot;)
-    User queryUserById(@PathVariable(&quot;id&quot;) Long id);
-}
-</code></pre>
-<p>3）重启测试：</p>
-<p>2.5.请求压缩(了解)</p>
-<p>Spring Cloud Feign 支持对请求和响应进行GZIP压缩，以减少通信过程中的性能损耗。通过下面的参数即可开启请求与响应的压缩功能：</p>
-<pre><code>feign:
-  compression:
-    request:
-      enabled: true # 开启请求压缩
-    response:
-      enabled: true # 开启响应压缩
-</code></pre>
-<p>同时，我们也可以对请求的数据类型，以及触发压缩的大小下限进行设置：</p>
-<pre><code>feign:
-  compression:
-    request:
-      enabled: true # 开启请求压缩
-      mime-types: text/html,application/xml,application/json # 设置压缩的数据类型
-      min-request-size: 2048 # 设置触发压缩的大小下限
-</code></pre>
-<p>注：上面的数据类型、压缩大小下限均为默认值。</p>
-<p>2.6.日志级别(了解)</p>
-<p>前面讲过，通过logging.level.xx=debug来设置日志级别。然而这个对Fegin客户端而言不会产生效果。因为@FeignClient注解修改的客户端在被代理时，都会创建一个新的Fegin.Logger实例。我们需要额外指定这个日志的级别才可以。</p>
-<p>1）设置com.leyou包下的日志级别都为debug</p>
-<pre><code>logging:
-  level:
-    cn.itcast: debug
-</code></pre>
-<p>2）编写配置类，定义日志级别</p>
-<p>内容：</p>
-<pre><code>@Configuration
-public class FeignLogConfiguration {
-
-    @Bean
-    Logger.Level feignLoggerLevel(){
-        return Logger.Level.FULL;
-    }
-}
-</code></pre>
-<p>这里指定的Level级别是FULL，Feign支持4种级别：</p>
-<ul>
-<li>NONE：不记录任何日志信息，这是默认值。</li>
-<li>BASIC：仅记录请求的方法，URL以及响应状态码和执行时间</li>
-<li>HEADERS：在BASIC的基础上，额外记录了请求和响应的头信息</li>
-<li>FULL：记录所有请求和响应的明细，包括头信息、请求体、元数据。</li>
-</ul>
-<p>3）在FeignClient中指定配置类：</p>
-<pre><code>@FeignClient(value = &quot;service-privider&quot;, fallback = UserFeignClientFallback.class, configuration = FeignConfig.class)
-public interface UserFeignClient {
-    @GetMapping(&quot;/user/{id}&quot;)
-    User queryUserById(@PathVariable(&quot;id&quot;) Long id);
-}
-</code></pre>
-<p>4）重启项目，即可看到每次访问的日志：</p>
-<p>3.Zuul网关</p>
-<p>通过前面的学习，使用Spring Cloud实现微服务的架构基本成型，大致是这样的：</p>
-<pre><code>我们使用Spring Cloud Netflix中的Eureka实现了服务注册中心以及服务注册与发现；而服务间通过Ribbon或Feign实现服务的消费以及均衡负载。为了使得服务集群更为健壮，使用Hystrix的融断机制来避免在微服务架构中个别服务出现异常时引起的故障蔓延。
-
-在该架构中，我们的服务集群包含：内部服务Service A和Service B，他们都会注册与订阅服务至Eureka Server，而Open Service是一个对外的服务，通过均衡负载公开至服务调用方。我们把焦点聚集在对外服务这块，直接暴露我们的服务地址，这样的实现是否合理，或者是否有更好的实现方式呢？
-</code></pre>
-<p>先来说说这样架构需要做的一些事儿以及存在的不足：</p>
-<ul>
-<li>破坏了服务无状态特点。<br>
-为了保证对外服务的安全性，我们需要实现对服务访问的权限控制，而开放服务的权限控制机制将会贯穿并污染整个开放服务的业务逻辑，这会带来的最直接问题是，破坏了服务集群中REST API无状态的特点。<br>
-从具体开发和测试的角度来说，在工作中除了要考虑实际的业务逻辑之外，还需要额外考虑对接口访问的控制处理。</li>
-<li>无法直接复用既有接口。<br>
-当我们需要对一个即有的集群内访问接口，实现外部服务访问时，我们不得不通过在原有接口上增加校验逻辑，或增加一个代理调用来实现权限控制，无法直接复用原有的接口。</li>
-</ul>
-<p>面对类似上面的问题，我们要如何解决呢？答案是：服务网关！</p>
-<p>为了解决上面这些问题，我们需要将权限控制这样的东西从我们的服务单元中抽离出去，而最适合这些逻辑的地方就是处于对外访问最前端的地方，我们需要一个更强大一些的均衡负载器的 服务网关。</p>
-<p>服务网关是微服务架构中一个不可或缺的部分。通过服务网关统一向外系统提供REST API的过程中，除了具备服务路由、均衡负载功能之外，它还具备了权限控制等功能。Spring Cloud Netflix中的Zuul就担任了这样的一个角色，为微服务架构提供了前门保护的作用，同时将权限控制这些较重的非业务逻辑内容迁移到服务路由层面，使得服务集群主体能够具备更高的可复用性和可测试性。</p>
-<p>3.1.简介</p>
-<p>官网：https://github.com/Netflix/zuul</p>
-<p>Zuul：维基百科</p>
-<p>电影《捉鬼敢死队》中的怪兽，Zuul，在纽约引发了巨大骚乱。</p>
-<p>事实上，在微服务架构中，Zuul就是守门的大Boss！一夫当关，万夫莫开！</p>
-<p>3.2.Zuul加入后的架构</p>
-<p>不管是来自于客户端（PC或移动端）的请求，还是服务内部调用。一切对服务的请求都会经过Zuul这个网关，然后再由网关来实现 鉴权、动态路由等等操作。Zuul就是我们服务的统一入口。</p>
-<p>3.3.快速入门</p>
-<p>3.3.1.新建工程</p>
-<p>填写基本信息：</p>
-<p>添加Zuul依赖：</p>
-<p>3.3.2.编写配置</p>
-<pre><code>server:
-  port: 10010 #服务端口
-spring:
-  application:
-    name: api-gateway #指定服务名
-</code></pre>
-<p>3.3.3.编写引导类</p>
-<p>通过@EnableZuulProxy注解开启Zuul的功能：</p>
-<pre><code>@SpringBootApplication
-@EnableZuulProxy // 开启网关功能
-public class ItcastZuulApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(ItcastZuulApplication.class, args);
-    }
-}
-</code></pre>
-<p>3.3.4.编写路由规则</p>
-<p>我们需要用Zuul来代理service-provider服务，先看一下控制面板中的服务状态：</p>
-<ul>
-<li>ip为：127.0.0.1</li>
-<li>端口为：8081</li>
-</ul>
-<p>映射规则：</p>
-<pre><code>server:
-  port: 10010 #服务端口
-spring:
-  application:
-    name: api-gateway #指定服务名
-zuul:
-  routes:
-    service-provider: # 这里是路由id，随意写
-      path: /service-provider/** # 这里是映射路径
-      url: http://127.0.0.1:8081 # 映射路径对应的实际url地址
-</code></pre>
-<p>我们将符合path 规则的一切请求，都代理到 url参数指定的地址</p>
-<p>本例中，我们将 /service-provider/**开头的请求，代理到http://127.0.0.1:8081</p>
-<p>3.3.5.启动测试</p>
-<p>访问的路径中需要加上配置规则的映射路径，我们访问：http://127.0.0.1:10010/service-provider/user/1</p>
-<p>3.4.面向服务的路由</p>
-<p>在刚才的路由规则中，我们把路径对应的服务地址写死了！如果同一服务有多个实例的话，这样做显然就不合理了。我们应该根据服务的名称，去Eureka注册中心查找 服务对应的所有实例列表，然后进行动态路由才对！</p>
-<p>对itcast-zuul工程修改优化：</p>
-<p>3.4.1.添加Eureka客户端依赖</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>3.4.2.添加Eureka配置，获取服务信息</p>
-<pre><code>eureka:
-  client:
-    registry-fetch-interval-seconds: 5 # 获取服务列表的周期：5s
-    service-url:
-      defaultZone: http://127.0.0.1:10086/eureka
-</code></pre>
-<p>3.4.3.开启Eureka客户端发现功能</p>
-<pre><code>@SpringBootApplication
-@EnableZuulProxy // 开启Zuul的网关功能
-@EnableDiscoveryClient
-public class ZuulDemoApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(ZuulDemoApplication.class, args);
-	}
-}
-</code></pre>
-<p>3.4.4.修改映射配置，通过服务名称获取</p>
-<p>因为已经有了Eureka客户端，我们可以从Eureka获取服务的地址信息，因此映射时无需指定IP地址，而是通过服务名称来访问，而且Zuul已经集成了Ribbon的负载均衡功能。</p>
-<pre><code>zuul:
-  routes:
-    service-provider: # 这里是路由id，随意写
-      path: /service-provider/** # 这里是映射路径
-      serviceId: service-provider # 指定服务名称
-</code></pre>
-<p>3.4.5.启动测试</p>
-<p>再次启动，这次Zuul进行代理时，会利用Ribbon进行负载均衡访问：</p>
-<p>3.5.简化的路由配置</p>
-<p>在刚才的配置中，我们的规则是这样的：</p>
-<ul>
-<li>zuul.routes.<route>.path=/xxx/**： 来指定映射路径。<route>是自定义的路由名</li>
-<li>zuul.routes.<route>.serviceId=service-provider：来指定服务名。</li>
-</ul>
-<p>而大多数情况下，我们的<route>路由名称往往和服务名会写成一样的。因此Zuul就提供了一种简化的配置语法：zuul.routes.<serviceId>=<path></p>
-<p>比方说上面我们关于service-provider的配置可以简化为一条：</p>
-<pre><code>zuul:
-  routes:
-    service-provider: /service-provider/** # 这里是映射路径
-</code></pre>
-<p>省去了对服务名称的配置。</p>
-<p>3.6.默认的路由规则</p>
-<p>在使用Zuul的过程中，上面讲述的规则已经大大的简化了配置项。但是当服务较多时，配置也是比较繁琐的。因此Zuul就指定了默认的路由规则：</p>
-<ul>
-<li>默认情况下，一切服务的映射路径就是服务名本身。例如服务名为：service-provider，则默认的映射路径就	是：/service-provider/**</li>
-</ul>
-<p>也就是说，刚才的映射规则我们完全不配置也是OK的，不信就试试看。</p>
-<p>3.7.路由前缀</p>
-<p>配置示例：</p>
-<pre><code>zuul:
-  routes:
-    service-provider: /service-provider/**
-    service-consumer: /service-consumer/**
-  prefix: /api # 添加路由前缀
-</code></pre>
-<p>我们通过zuul.prefix=/api来指定了路由的前缀，这样在发起请求时，路径就要以/api开头。</p>
-<p>3.8.过滤器</p>
-<p>Zuul作为网关的其中一个重要功能，就是实现请求的鉴权。而这个动作我们往往是通过Zuul提供的过滤器来实现的。</p>
-<p>3.8.1.ZuulFilter</p>
-<p>ZuulFilter是过滤器的顶级父类。在这里我们看一下其中定义的4个最重要的方法：</p>
-<pre><code>public abstract ZuulFilter implements IZuulFilter{
-
-    abstract public String filterType();
-
-    abstract public int filterOrder();
-    
-    boolean shouldFilter();// 来自IZuulFilter
-
-    Object run() throws ZuulException;// IZuulFilter
-}
-</code></pre>
-<ul>
-<li>shouldFilter：返回一个Boolean值，判断该过滤器是否需要执行。返回true执行，返回false不执行。</li>
-<li>run：过滤器的具体业务逻辑。</li>
-<li>filterType：返回字符串，代表过滤器的类型。包含以下4种：
-<ul>
-<li>pre：请求在被路由之前执行</li>
-<li>route：在路由请求时调用</li>
-<li>post：在route和errror过滤器之后调用</li>
-<li>error：处理请求时发生错误调用</li>
-</ul>
-</li>
-<li>filterOrder：通过返回的int值来定义过滤器的执行顺序，数字越小优先级越高。</li>
-</ul>
-<p>3.8.2.过滤器执行生命周期</p>
-<p>这张是Zuul官网提供的请求生命周期图，清晰的表现了一个请求在各个过滤器的执行顺序。</p>
-<p>正常流程：</p>
-<ul>
-<li>请求到达首先会经过pre类型过滤器，而后到达route类型，进行路由，请求就到达真正的服务提供者，执行请求，返回结果后，会到达post过滤器。而后返回响应。</li>
-</ul>
-<p>异常流程：</p>
-<ul>
-<li>整个过程中，pre或者route过滤器出现异常，都会直接进入error过滤器，在error处理完毕后，会将请求交给POST过滤器，最后返回给用户。</li>
-<li>如果是error过滤器自己出现异常，最终也会进入POST过滤器，将最终结果返回给请求客户端。</li>
-<li>如果是POST过滤器出现异常，会跳转到error过滤器，但是与pre和route不同的是，请求不会再到达POST过滤器了。</li>
-</ul>
-<p>所有内置过滤器列表：</p>
-<p>3.8.3.使用场景</p>
-<p>场景非常多：</p>
-<ul>
-<li>请求鉴权：一般放在pre类型，如果发现没有访问权限，直接就拦截了</li>
-<li>异常处理：一般会在error类型和post类型过滤器中结合来处理。</li>
-<li>服务调用时长统计：pre和post结合使用。</li>
-</ul>
-<p>3.9.自定义过滤器</p>
-<p>接下来我们来自定义一个过滤器，模拟一个登录的校验。基本逻辑：如果请求中有access-token参数，则认为请求有效，放行。</p>
-<p>3.9.1.定义过滤器类</p>
-<p>内容：</p>
-<pre><code>@Component
-public class LoginFilter extends ZuulFilter {
-    /**
-     * 过滤器类型，前置过滤器
-     * @return
-     */
-    @Override
-    public String filterType() {
-        return &quot;pre&quot;;
-    }
-
-    /**
-     * 过滤器的执行顺序
-     * @return
-     */
-    @Override
-    public int filterOrder() {
-        return 1;
-    }
-
-    /**
-     * 该过滤器是否生效
-     * @return
-     */
-    @Override
-    public boolean shouldFilter() {
-        return true;
-    }
-
-    /**
-     * 登陆校验逻辑
-     * @return
-     * @throws ZuulException
-     */
-    @Override
-    public Object run() throws ZuulException {
-        // 获取zuul提供的上下文对象
-        RequestContext context = RequestContext.getCurrentContext();
-        // 从上下文对象中获取请求对象
-        HttpServletRequest request = context.getRequest();
-        // 获取token信息
-        String token = request.getParameter(&quot;access-token&quot;);
-        // 判断
-        if (StringUtils.isBlank(token)) {
-            // 过滤该请求，不对其进行路由
-            context.setSendZuulResponse(false);
-            // 设置响应状态码，401
-            context.setResponseStatusCode(HttpStatus.SC_UNAUTHORIZED);
-            // 设置响应信息
-            context.setResponseBody(&quot;{\&quot;status\&quot;:\&quot;401\&quot;, \&quot;text\&quot;:\&quot;request error!\&quot;}&quot;);
-        }
-        // 校验通过，把登陆信息放入上下文信息，继续向后执行
-        context.set(&quot;token&quot;, token);
-        return null;
-    }
-}
-</code></pre>
-<p>3.9.2.测试</p>
-<p>没有token参数时，访问失败：</p>
-<p>添加token参数后：</p>
-<p>3.10.负载均衡和熔断</p>
-<p>Zuul中默认就已经集成了Ribbon负载均衡和Hystix熔断机制。但是所有的超时策略都是走的默认值，比如熔断超时时间只有1S，很容易就触发了。因此建议我们手动进行配置：</p>
-<pre><code>hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 2000 # 设置hystrix的超时时间为6000ms
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[SpringCloud-入门篇1]]></title>
-        <id>https://yihuaikun.github.io/post/springcloud-ru-men-pian-1</id>
-        <link href="https://yihuaikun.github.io/post/springcloud-ru-men-pian-1">
-        </link>
-        <updated>2019-05-07T11:47:18.000Z</updated>
-        <content type="html"><![CDATA[<p>1.系统架构演变</p>
-<p>随着互联网的发展的规模不断扩大。需求的激增，带来的是技术上的压力。系统架构也因此不断的演进、升级、迭代。从单一应用，直拆分，到分布式服务，到SOA，以及现在火热的微服务架构，还有在Google带领下来势汹涌的Service Mesh。我们到底是该乘坐微服务的船只驶向远方，还是偏安一隅得过且过？</p>
-<p>其实生活不止眼前的苟且，还有诗和远方。所以我们今天就回顾历史，看一看系统架构演变的历程；把握现在，学习现在最火的技术架构；展望未来，争取成为一名优秀的Java工程师。</p>
-<p>1.1.集中式架构</p>
-<p>当网站流量很小时，只需一个应用，将所有功能都部署在一起，以减少部署节点和成本。此时，用于简化增删改查工作量的数据访问框架(ORM)是影响项目开发的关键。</p>
-<p>存在的问题：</p>
-<ul>
-<li>代码耦合，开发维护困难</li>
-<li>无法针对不同模块进行针对性优化</li>
-<li>无法水平扩展</li>
-<li>单点容错率低，并发能力差</li>
-</ul>
-<p>1.2.垂直拆分</p>
-<p>当访问量逐渐增大，单一应用无法满足需求，此时为了应对更高的并发和业务需求，我们根据业务功能对系统进行拆分：</p>
-<p>优点：</p>
-<ul>
-<li>系统拆分实现了流量分担，解决了并发问题</li>
-<li>可以针对不同模块进行优化</li>
-<li>方便水平扩展，负载均衡，容错率提高</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>系统间相互独立，会有很多重复开发工作，影响开发效率</li>
-</ul>
-<p>1.3.分布式服务</p>
-<p>当垂直应用越来越多，应用之间交互不可避免，将核心业务抽取出来，作为独立的服务，逐渐形成稳定的服务中心，使前端应用能更快速的响应多变的市场需求。此时，用于提高业务复用及整合的分布式调用是关键。</p>
-<p>优点：</p>
-<ul>
-<li>将基础服务进行了抽取，系统间相互调用，提高了代码复用和开发效率</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>系统间耦合度变高，调用关系错综复杂，难以维护</li>
-</ul>
-<p>1.4.流动计算架构（SOA）</p>
-<p>SOA ：面向服务的架构</p>
-<p>当服务越来越多，容量的评估，小服务资源的浪费等问题逐渐显现，此时需增加一个调度中心基于访问压力实时管理集群容量，提高集群利用率。此时，用于提高机器利用率的资源调度和治理中心(SOA)是关键</p>
-<p>以前出现了什么问题？</p>
-<ul>
-<li>服务越来越多，需要管理每个服务的地址</li>
-<li>调用关系错综复杂，难以理清依赖关系</li>
-<li>服务过多，服务状态难以管理，无法根据服务情况动态管理</li>
-</ul>
-<p>服务治理要做什么？</p>
-<ul>
-<li>服务注册中心，实现服务自动注册和发现，无需人为记录服务地址</li>
-<li>服务自动订阅，服务列表自动推送，服务调用透明化，无需关心依赖关系</li>
-<li>动态监控服务状态监控报告，人为控制服务状态</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>服务间会有依赖关系，一旦某个环节出错会影响较大</li>
-<li>服务关系复杂，运维、测试部署困难，不符合DevOps思想</li>
-</ul>
-<p>1.5.微服务</p>
-<p>前面说的SOA，英文翻译过来是面向服务。微服务，似乎也是服务，都是对系统进行拆分。因此两者非常容易混淆，但其实却有一些差别：</p>
-<p>微服务的特点：</p>
-<ul>
-<li>单一职责：微服务中每一个服务都对应唯一的业务能力，做到单一职责</li>
-<li>微：微服务的服务拆分粒度很小，例如一个用户管理就可以作为一个服务。每个服务虽小，但“五脏俱全”。</li>
-<li>面向服务：面向服务是说每个服务都要对外暴露Rest风格服务接口API。并不关心服务的技术实现，做到与平台和语言无关，也不限定用什么技术实现，只要提供Rest的接口即可。</li>
-<li>自治：自治是说服务间互相独立，互不干扰
-<ul>
-<li>团队独立：每个服务都是一个独立的开发团队，人数不能过多。</li>
-<li>技术独立：因为是面向服务，提供Rest接口，使用什么技术没有别人干涉</li>
-<li>前后端分离：采用前后端分离开发，提供统一Rest接口，后端不用再为PC、移动段开发不同接口</li>
-<li>数据库分离：每个服务都使用自己的数据源</li>
-<li>部署独立，服务间虽然有调用，但要做到服务重启不影响其它服务。有利于持续集成和持续交付。每个服务都是独立的组件，可复用，可替换，降低耦合，易维护</li>
-</ul>
-</li>
-</ul>
-<p>微服务结构图：</p>
-<p>2.服务调用方式</p>
-<p>2.1.RPC和HTTP</p>
-<p>无论是微服务还是SOA，都面临着服务间的远程调用。那么服务间的远程调用方式有哪些呢？</p>
-<p>常见的远程调用方式有以下2种：</p>
-<ul>
-<li>RPC：Remote Produce Call远程过程调用，类似的还有RMI。自定义数据格式，基于原生TCP通信，速度快，效率高。早期的webservice，现在热门的dubbo，都是RPC的典型代表</li>
-<li>Http：http其实是一种网络传输协议，基于TCP，规定了数据传输的格式。现在客户端浏览器与服务端通信基本都是采用Http协议，也可以用来进行远程服务调用。缺点是消息封装臃肿，优势是对服务的提供和调用方没有任何技术限定，自由灵活，更符合微服务理念。<br>
-现在热门的Rest风格，就可以通过http协议来实现。</li>
-</ul>
-<p>如果你们公司全部采用Java技术栈，那么使用Dubbo作为微服务架构是一个不错的选择。</p>
-<p>相反，如果公司的技术栈多样化，而且你更青睐Spring家族，那么SpringCloud搭建微服务是不二之选。在我们的项目中，我们会选择SpringCloud套件，因此我们会使用Http方式来实现服务间调用。</p>
-<p>2.2.Http客户端工具</p>
-<p>既然微服务选择了Http，那么我们就需要考虑自己来实现对请求和响应的处理。不过开源世界已经有很多的http客户端工具，能够帮助我们做这些事情，例如：</p>
-<ul>
-<li>HttpClient</li>
-<li>OKHttp</li>
-<li>URLConnection</li>
-</ul>
-<p>接下来，不过这些不同的客户端，API各不相同</p>
-<p>2.3.Spring的RestTemplate</p>
-<p>Spring提供了一个RestTemplate模板工具类，对基于Http的客户端进行了封装，并且实现了对象与json的序列化和反序列化，非常方便。RestTemplate并没有限定Http的客户端类型，而是进行了抽象，目前常用的3种都有支持：</p>
-<ul>
-<li>HttpClient</li>
-<li>OkHttp</li>
-<li>JDK原生的URLConnection（默认的）</li>
-</ul>
-<p>我们导入课前资料提供的demo工程：</p>
-<p>首先在项目中注册一个RestTemplate对象，可以在启动类位置注册：</p>
-<pre><code>@SpringBootApplication
-public class HttpDemoApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(HttpDemoApplication.class, args);
-	}
-
-	@Bean
-	public RestTemplate restTemplate() {
-   
-		return new RestTemplate();
-	}
-}
-</code></pre>
-<p>在测试类中直接@Autowired注入：</p>
-<pre><code>@RunWith(SpringRunner.class)
-@SpringBootTest(classes = HttpDemoApplication.class)
-public class HttpDemoApplicationTests {
-
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Test
-	public void httpGet() {
-        // 调用springboot案例中的rest接口
-		User user = this.restTemplate.getForObject(&quot;http://localhost/user/1&quot;, User.class);
-		System.out.println(user);
-	}
-}
-</code></pre>
-<ul>
-<li>通过RestTemplate的getForObject()方法，传递url地址及实体类的字节码，RestTemplate会自动发起请求，接收响应，并且帮我们对响应结果进行反序列化。</li>
-</ul>
-<p>学习完了Http客户端工具，接下来就可以正式学习微服务了。</p>
-<p>3.初识SpringCloud</p>
-<p>微服务是一种架构方式，最终肯定需要技术架构去实施。</p>
-<p>微服务的实现方式很多，但是最火的莫过于Spring Cloud了。为什么？</p>
-<ul>
-<li>后台硬：作为Spring家族的一员，有整个Spring全家桶靠山，背景十分强大。</li>
-<li>技术强：Spring作为Java领域的前辈，可以说是功力深厚。有强力的技术团队支撑，一般人还真比不了</li>
-<li>群众基础好：可以说大多数程序员的成长都伴随着Spring框架，试问：现在有几家公司开发不用Spring？SpringCloud与Spring的各个框架无缝整合，对大家来说一切都是熟悉的配方，熟悉的味道。</li>
-<li>使用方便：相信大家都体会到了SpringBoot给我们开发带来的便利，而SpringCloud完全支持SpringBoot的开发，用很少的配置就能完成微服务框架的搭建</li>
-</ul>
-<p>3.1.简介</p>
-<p>SpringCloud是Spring旗下的项目之一，官网地址：http://projects.spring.io/spring-cloud/</p>
-<p>Spring最擅长的就是集成，把世界上最好的框架拿过来，集成到自己的项目中。</p>
-<p>SpringCloud也是一样，它将现在非常流行的一些技术整合到一起，实现了诸如：配置管理，服务发现，智能路由，负载均衡，熔断器，控制总线，集群状态等等功能。其主要涉及的组件包括：</p>
-<ul>
-<li>Eureka：服务治理组件，包含服务注册中心，服务注册与发现机制的实现。（服务治理，服务注册/发现）</li>
-<li>Zuul：网关组件，提供智能路由，访问过滤功能</li>
-<li>Ribbon：客户端负载均衡的服务调用组件（客户端负载）</li>
-<li>Feign：服务调用，给予Ribbon和Hystrix的声明式服务调用组件 （声明式服务调用）</li>
-<li>Hystrix：容错管理组件，实现断路器模式，帮助服务依赖中出现的延迟和为故障提供强大的容错能力。(熔断、断路器，容错)</li>
-</ul>
-<p>架构图：</p>
-<p>以上只是其中一部分。</p>
-<p>3.2.版本</p>
-<p>因为Spring Cloud不同其他独立项目，它拥有很多子项目的大项目。所以它的版本是版本名+版本号 （如Angel.SR6）。</p>
-<p>版本名：是伦敦的地铁名</p>
-<p>版本号：SR（Service Releases）是固定的 ,大概意思是稳定版本。后面会有一个递增的数字。</p>
-<p>所以 Edgware.SR3就是Edgware的第3个Release版本。</p>
-<p>我们在项目中，会是以Finchley的版本。</p>
-<p>其中包含的组件，也都有各自的版本，如下表：</p>
-<p>Component                	Edgware.SR3   	Finchley.RC1    	Finchley.BUILD-SNAPSHOT<br>
-spring-cloud-aws         	1.2.2.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-bus         	1.3.2.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-cli         	1.4.1.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-commons     	1.3.3.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-contract    	1.2.4.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-config      	1.4.3.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-netflix     	1.4.4.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-security    	1.2.2.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-cloudfoundry	1.1.1.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-consul      	1.3.3.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-sleuth      	1.3.3.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-stream      	Ditmars.SR3   	Elmhurst.RELEASE	Elmhurst.BUILD-SNAPSHOT<br>
-spring-cloud-zookeeper   	1.2.1.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-boot              	1.5.10.RELEASE	2.0.1.RELEASE   	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-task        	1.2.2.RELEASE 	2.0.0.RC1       	2.0.0.RELEASE<br>
-spring-cloud-vault       	1.1.0.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-gateway     	1.0.1.RELEASE 	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT<br>
-spring-cloud-openfeign   	              	2.0.0.RC1       	2.0.0.BUILD-SNAPSHOT</p>
-<p>接下来，我们就一一学习SpringCloud中的重要组件。</p>
-<p>4.微服务场景模拟</p>
-<p>首先，我们需要模拟一个服务调用的场景，搭建两个工程：itcast-service-provider（服务提供方）和itcast-service-consumer（服务调用方）。方便后面学习微服务架构</p>
-<p>服务提供方：使用mybatis操作数据库，实现对数据的增删改查；并对外提供rest接口服务。</p>
-<p>服务消费方：使用restTemplate远程调用服务提供方的rest接口服务，获取数据。</p>
-<p>4.1.服务提供者</p>
-<p>我们新建一个项目：itcast-service-provider，对外提供根据id查询用户的服务。</p>
-<p>4.1.1.Spring脚手架创建工程</p>
-<p>借助于Spring提供的快速搭建工具：</p>
-<p>next--&gt;填写项目信息：</p>
-<p>next --&gt;  添加web依赖：</p>
-<p>添加mybatis依赖：</p>
-<p>Next --&gt;  填写项目位置：</p>
-<p>生成的项目结构，已经包含了引导类（itcastServiceProviderApplication）：</p>
-<p>依赖也已经全部自动引入：</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-    &lt;groupId&gt;cn.itcast.service&lt;/groupId&gt;
-    &lt;artifactId&gt;itcast-service-provider&lt;/artifactId&gt;
-    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-    &lt;packaging&gt;jar&lt;/packaging&gt;
-
-    &lt;name&gt;itcast-service-provider&lt;/name&gt;
-    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
-
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;2.0.6.RELEASE&lt;/version&gt;
-        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
-    &lt;/parent&gt;
-
-    &lt;properties&gt;
-        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
-        &lt;java.version&gt;1.8&lt;/java.version&gt;
-    &lt;/properties&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
-            &lt;version&gt;1.3.2&lt;/version&gt;
-        &lt;/dependency&gt;
-
-        &lt;dependency&gt;
-            &lt;groupId&gt;mysql&lt;/groupId&gt;
-            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-            &lt;scope&gt;runtime&lt;/scope&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-            &lt;scope&gt;test&lt;/scope&gt;
-        &lt;/dependency&gt;
-        &lt;!-- 需要手动引入通用mapper的启动器，spring没有收录该依赖 --&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
-            &lt;artifactId&gt;mapper-spring-boot-starter&lt;/artifactId&gt;
-            &lt;version&gt;2.0.4&lt;/version&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-
-    &lt;build&gt;
-        &lt;plugins&gt;
-            &lt;plugin&gt;
-                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-            &lt;/plugin&gt;
-        &lt;/plugins&gt;
-    &lt;/build&gt;
-
-&lt;/project&gt;
-</code></pre>
-<p>当然，因为要使用通用mapper，所以我们需要手动加一条依赖：</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mapper-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.4&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>非常快捷啊！</p>
-<p>4.1.2.编写代码</p>
-<p>4.1.2.1.配置</p>
-<p>属性文件,这里我们采用了yaml语法，而不是properties：</p>
-<pre><code>server:
-  port: 8081
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/mybatis #你学习mybatis时，使用的数据库地址
-    username: root
-    password: root
-mybatis:
-  type-aliases-package: cn.itcast.service.pojo
-</code></pre>
-<p>4.1.2.2.实体类</p>
-<pre><code>@Table(name = &quot;tb_user&quot;)
-public class User implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    // 用户名
-    private String userName;
-
-    // 密码
-    private String password;
-
-    // 姓名
-    private String name;
-
-    // 年龄
-    private Integer age;
-
-    // 性别，1男性，2女性
-    private Integer sex;
-
-    // 出生日期
-    private Date birthday;
-
-    // 创建时间
-    private Date created;
-
-    // 更新时间
-    private Date updated;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-}
-</code></pre>
-<p>4.1.2.3.UserMapper</p>
-<pre><code>@Mapper
-public interface UserMapper extends tk.mybatis.mapper.common.Mapper&lt;User&gt;{
-}
-</code></pre>
-<p>4.1.2.4.UserService</p>
-<pre><code>@Service
-public class UserService {
-
-    @Autowired
-    private UserMapper userMapper;
-
-    public User queryById(Long id) {
-        return this.userMapper.selectByPrimaryKey(id);
-    }
-}
-</code></pre>
-<p>4.1.2.5.UserController</p>
-<p>添加一个对外查询的接口：</p>
-<pre><code>@RestController
-@RequestMapping(&quot;user&quot;)
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @GetMapping(&quot;{id}&quot;)
-    public User queryById(@PathVariable(&quot;id&quot;) Long id) {
-        return this.userService.queryById(id);
-    }
-}
-</code></pre>
-<p>4.1.3.启动并测试</p>
-<p>启动项目，访问接口：http://localhost:8081/user/1</p>
-<p>4.2.服务调用者</p>
-<p>搭建itcast-service-consumer服务消费方工程。</p>
-<p>4.2.1.创建工程</p>
-<p>与上面类似，这里不再赘述，需要注意的是，我们调用itcast-service-provider的解耦获取数据，因此不需要mybatis相关依赖了。</p>
-<p>pom：</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-    &lt;groupId&gt;cn.itcast.service&lt;/groupId&gt;
-    &lt;artifactId&gt;itcast-service-consumer&lt;/artifactId&gt;
-    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-    &lt;packaging&gt;jar&lt;/packaging&gt;
-
-    &lt;name&gt;itcast-service-consumer&lt;/name&gt;
-    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
-
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;2.0.4.RELEASE&lt;/version&gt;
-        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
-    &lt;/parent&gt;
-
-    &lt;properties&gt;
-        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
-        &lt;java.version&gt;1.8&lt;/java.version&gt;
-    &lt;/properties&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-            &lt;scope&gt;test&lt;/scope&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-
-    &lt;build&gt;
-        &lt;plugins&gt;
-            &lt;plugin&gt;
-                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-            &lt;/plugin&gt;
-        &lt;/plugins&gt;
-    &lt;/build&gt;
-
-
-&lt;/project&gt;
-</code></pre>
-<p>4.2.2.编写代码</p>
-<p>首先在引导类中注册RestTemplate：</p>
-<pre><code>@SpringBootApplication
-public class ItcastServiceConsumerApplication {
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(ItcastServiceConsumerApplication.class, args);
-    }
-}
-</code></pre>
-<p>编写配置（application.yml）：</p>
-<pre><code>server:
-  port: 80
-</code></pre>
-<p>编写UserController：</p>
-<pre><code>@Controller
-@RequestMapping(&quot;consumer/user&quot;)
-public class UserController {
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @GetMapping
-    @ResponseBody
-    public User queryUserById(@RequestParam(&quot;id&quot;) Long id){
-        User user = this.restTemplate.getForObject(&quot;http://localhost:8081/user/&quot; + id, User.class);
-        return user;
-    }
-
-}
-</code></pre>
-<p>pojo对象（User）：</p>
-<pre><code>public class User implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private Long id;
-
-    // 用户名
-    private String userName;
-
-    // 密码
-    private String password;
-
-    // 姓名
-    private String name;
-
-    // 年龄
-    private Integer age;
-
-    // 性别，1男性，2女性
-    private Integer sex;
-
-    // 出生日期
-    private Date birthday;
-
-    // 创建时间
-    private Date created;
-
-    // 更新时间
-    private Date updated;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-}
-</code></pre>
-<p>4.2.3.启动测试</p>
-<p>因为我们没有配置端口，那么默认就是8080，我们访问：http://localhost/consumer/user?id=1</p>
-<p>一个简单的远程服务调用案例就实现了。</p>
-<p>4.3.有没有问题？</p>
-<p>简单回顾一下，刚才我们写了什么：</p>
-<ul>
-<li>itcast-service-provider：一个提供根据id查询用户的微服务。</li>
-<li>itcast-service-consumer：一个服务调用者，通过RestTemplate远程调用itcast-service-provider。</li>
-</ul>
-<p>存在什么问题？</p>
-<ul>
-<li>在consumer中，我们把url地址硬编码到了代码中，不方便后期维护</li>
-<li>consumer需要记忆provider的地址，如果出现变更，可能得不到通知，地址将失效</li>
-<li>consumer不清楚provider的状态，服务宕机也不知道</li>
-<li>provider只有1台服务，不具备高可用性</li>
-<li>即便provider形成集群，consumer还需自己实现负载均衡</li>
-</ul>
-<p>其实上面说的问题，概括一下就是分布式服务必然要面临的问题：</p>
-<ul>
-<li>服务管理
-<ul>
-<li>如何自动注册和发现</li>
-<li>如何实现状态监管</li>
-<li>如何实现动态路由</li>
-</ul>
-</li>
-<li>服务如何实现负载均衡</li>
-<li>服务如何解决容灾问题</li>
-<li>服务如何实现统一配置</li>
-</ul>
-<p>以上的问题，我们都将在SpringCloud中得到答案。</p>
-<p>5.Eureka注册中心</p>
-<p>5.1.认识Eureka</p>
-<p>首先我们来解决第一问题，服务的管理。</p>
-<p>问题分析</p>
-<p>在刚才的案例中，itcast-service-provider对外提供服务，需要对外暴露自己的地址。而consumer（调用者）需要记录服务提供者的地址。将来地址出现变更，还需要及时更新。这在服务较少的时候并不觉得有什么，但是在现在日益复杂的互联网环境，一个项目肯定会拆分出十几，甚至数十个微服务。此时如果还人为管理地址，不仅开发困难，将来测试、发布上线都会非常麻烦，这与DevOps的思想是背道而驰的。</p>
-<p>网约车</p>
-<p>这就好比是 网约车出现以前，人们出门叫车只能叫出租车。一些私家车想做出租却没有资格，被称为黑车。而很多人想要约车，但是无奈出租车太少，不方便。私家车很多却不敢拦，而且满大街的车，谁知道哪个才是愿意载人的。一个想要，一个愿意给，就是缺少引子，缺乏管理啊。</p>
-<p>此时滴滴这样的网约车平台出现了，所有想载客的私家车全部到滴滴注册，记录你的车型（服务类型），身份信息（联系方式）。这样提供服务的私家车，在滴滴那里都能找到，一目了然。</p>
-<p>此时要叫车的人，只需要打开APP，输入你的目的地，选择车型（服务类型），滴滴自动安排一个符合需求的车到你面前，为你服务，完美！</p>
-<p>Eureka做什么？</p>
-<p>Eureka就好比是滴滴，负责管理、记录服务提供者的信息。服务调用者无需自己寻找服务，而是把自己的需求告诉Eureka，然后Eureka会把符合你需求的服务告诉你。</p>
-<p>同时，服务提供方与Eureka之间通过“心跳”机制进行监控，当某个服务提供方出现问题，Eureka自然会把它从服务列表中剔除。</p>
-<p>这就实现了服务的自动注册、发现、状态监控。</p>
-<p>5.2.原理图</p>
-<p>基本架构：</p>
-<ul>
-<li>Eureka：就是服务注册中心（可以是一个集群），对外暴露自己的地址</li>
-<li>提供者：启动后向Eureka注册自己信息（地址，提供什么服务）</li>
-<li>消费者：向Eureka订阅服务，Eureka会将对应服务的所有提供者地址列表发送给消费者，并且定期更新</li>
-<li>心跳(续约)：提供者定期通过http方式向Eureka刷新自己的状态</li>
-</ul>
-<p>5.3.入门案例</p>
-<p>5.3.1.搭建EurekaServer</p>
-<p>接下来我们创建一个项目，启动一个EurekaServer：</p>
-<p>依然使用spring提供的快速搭建工具：</p>
-<p>选择依赖：EurekaServer-服务注册中心依赖，Eureka Discovery-服务提供方和服务消费方。因为，对于eureka来说：服务提供方和服务消费方都属于客户端</p>
-<p>完整的Pom文件：</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-    &lt;groupId&gt;cn.itcast.eureka&lt;/groupId&gt;
-    &lt;artifactId&gt;itcast-eureka&lt;/artifactId&gt;
-    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-    &lt;packaging&gt;jar&lt;/packaging&gt;
-
-    &lt;name&gt;itcast-eureka&lt;/name&gt;
-    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
-
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;2.0.6.RELEASE&lt;/version&gt;
-        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
-    &lt;/parent&gt;
-
-    &lt;properties&gt;
-        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
-        &lt;java.version&gt;1.8&lt;/java.version&gt;
-        &lt;spring-cloud.version&gt;Finchley.RC2&lt;/spring-cloud.version&gt;
-    &lt;/properties&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-server&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-
-    &lt;/dependencies&gt;
-
-    &lt;build&gt;
-        &lt;plugins&gt;
-            &lt;plugin&gt;
-                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-            &lt;/plugin&gt;
-        &lt;/plugins&gt;
-    &lt;/build&gt;
-
-&lt;/project&gt;
-</code></pre>
-<p>编写application.yml配置：</p>
-<pre><code>server:
-  port: 10086 # 端口
-spring:
-  application:
-    name: eureka-server # 应用名称，会在Eureka中显示
-eureka:
-  client:
-    service-url: # EurekaServer的地址，现在是自己的地址，如果是集群，需要加上其它Server的地址。
-      defaultZone: http://127.0.0.1:${server.port}/eureka
-</code></pre>
-<p>修改引导类，在类上添加@EnableEurekaServer注解：</p>
-<pre><code>@SpringBootApplication
-@EnableEurekaServer // 声明当前springboot应用是一个eureka服务中心
-public class ItcastEurekaApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(ItcastEurekaApplication.class, args);
-    }
-}
-</code></pre>
-<p>启动服务，并访问：http://127.0.0.1:10086</p>
-<p>5.3.2.注册到Eureka</p>
-<p>注册服务，就是在服务上添加Eureka的客户端依赖，客户端代码会自动把服务注册到EurekaServer中。</p>
-<p>修改itcast-service-provider工程</p>
-<ol>
-<li>在pom.xml中，添加springcloud的相关依赖。</li>
-<li>在application.yml中，添加springcloud的相关依赖。</li>
-<li>在引导类上添加注解，把服务注入到eureka注册中心。</li>
-</ol>
-<p>具体操作</p>
-<p>5.3.2.1.pom.xml</p>
-<p>参照itcast-eureka，先添加SpringCloud依赖：</p>
-<pre><code>&lt;!-- SpringCloud的依赖 --&gt;
-&lt;dependencyManagement&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-            &lt;version&gt;Finchley.SR2&lt;/version&gt;
-            &lt;type&gt;pom&lt;/type&gt;
-            &lt;scope&gt;import&lt;/scope&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-&lt;/dependencyManagement&gt;
-</code></pre>
-<p>然后是Eureka客户端：</p>
-<pre><code>&lt;!-- Eureka客户端 --&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>完整pom.xml:</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-    &lt;groupId&gt;cn.itcast.service&lt;/groupId&gt;
-    &lt;artifactId&gt;itcast-service-provider&lt;/artifactId&gt;
-    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-    &lt;packaging&gt;jar&lt;/packaging&gt;
-
-    &lt;name&gt;itcast-service-provider&lt;/name&gt;
-    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
-
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;2.0.6.RELEASE&lt;/version&gt;
-        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
-    &lt;/parent&gt;
-
-    &lt;properties&gt;
-        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-        &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
-        &lt;java.version&gt;1.8&lt;/java.version&gt;
-    &lt;/properties&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
-            &lt;version&gt;1.3.2&lt;/version&gt;
-        &lt;/dependency&gt;
-
-        &lt;dependency&gt;
-            &lt;groupId&gt;mysql&lt;/groupId&gt;
-            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-            &lt;scope&gt;runtime&lt;/scope&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-            &lt;scope&gt;test&lt;/scope&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
-            &lt;artifactId&gt;mapper-spring-boot-starter&lt;/artifactId&gt;
-            &lt;version&gt;2.0.4&lt;/version&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-
-    &lt;build&gt;
-        &lt;plugins&gt;
-            &lt;plugin&gt;
-                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-            &lt;/plugin&gt;
-        &lt;/plugins&gt;
-    &lt;/build&gt;
-
-    &lt;dependencyManagement&gt;
-        &lt;dependencies&gt;
-            &lt;dependency&gt;
-                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-                &lt;version&gt;Finchley.SR1&lt;/version&gt;
-                &lt;type&gt;pom&lt;/type&gt;
-                &lt;scope&gt;import&lt;/scope&gt;
-            &lt;/dependency&gt;
-        &lt;/dependencies&gt;
-    &lt;/dependencyManagement&gt;
-
-&lt;/project&gt;
-</code></pre>
-<p>5.3.2.2.application.yml</p>
-<pre><code>server:
-  port: 8081
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/heima
-    username: root
-    password: root
-    driverClassName: com.mysql.jdbc.Driver
-  application:
-    name: service-provider # 应用名称，注册到eureka后的服务名称
-mybatis:
-  type-aliases-package: cn.itcast.service.pojo
-eureka:
-  client:
-    service-url: # EurekaServer地址
-      defaultZone: http://127.0.0.1:10086/eureka
-</code></pre>
-<p>注意：</p>
-<ul>
-<li>这里我们添加了spring.application.name属性来指定应用名称，将来会作为应用的id使用。</li>
-</ul>
-<p>5.3.2.3.引导类</p>
-<p>在引导类上开启Eureka客户端功能</p>
-<p>通过添加@EnableDiscoveryClient来开启Eureka客户端功能</p>
-<pre><code>@SpringBootApplication
-@EnableDiscoveryClient
-public class ItcastServiceProviderApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(ItcastServiceApplication.class, args);
-    }
-}
-</code></pre>
-<p>重启项目，访问Eureka监控页面查看</p>
-<p>我们发现service-provider服务已经注册成功了</p>
-<p>5.3.3.从Eureka获取服务</p>
-<p>接下来我们修改itcast-service-consumer，尝试从EurekaServer获取服务。</p>
-<p>方法与消费者类似，只需要在项目中添加EurekaClient依赖，就可以通过服务名称来获取信息了！</p>
-<ol>
-<li>
-<p>pom.xml</p>
- <?xml version="1.0" encoding="UTF-8"?>
-<p><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"><br>
-<modelVersion>4.0.0</modelVersion></p>
-<pre><code> &lt;groupId&gt;cn.itcast.service&lt;/groupId&gt;
- &lt;artifactId&gt;itcast-service-consumer&lt;/artifactId&gt;
- &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
- &lt;packaging&gt;jar&lt;/packaging&gt;
-
- &lt;name&gt;itcast-service-consumer&lt;/name&gt;
- &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
-
- &lt;parent&gt;
-     &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-     &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-     &lt;version&gt;2.0.6.RELEASE&lt;/version&gt;
-     &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
- &lt;/parent&gt;
-
- &lt;properties&gt;
-     &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-     &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
-     &lt;java.version&gt;1.8&lt;/java.version&gt;
- &lt;/properties&gt;
-
- &lt;dependencies&gt;
-     &lt;dependency&gt;
-         &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-         &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-     &lt;/dependency&gt;
-
-     &lt;dependency&gt;
-         &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-         &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-         &lt;scope&gt;test&lt;/scope&gt;
-     &lt;/dependency&gt;
-     &lt;!-- Eureka客户端 --&gt;
-     &lt;dependency&gt;
-         &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-         &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
-     &lt;/dependency&gt;
- &lt;/dependencies&gt;
-
- &lt;build&gt;
-     &lt;plugins&gt;
-         &lt;plugin&gt;
-             &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-             &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-         &lt;/plugin&gt;
-     &lt;/plugins&gt;
- &lt;/build&gt;
-
- &lt;!-- SpringCloud的依赖 --&gt;
- &lt;dependencyManagement&gt;
-     &lt;dependencies&gt;
-         &lt;dependency&gt;
-             &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-             &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
-             &lt;version&gt;Finchley.SR2&lt;/version&gt;
-             &lt;type&gt;pom&lt;/type&gt;
-             &lt;scope&gt;import&lt;/scope&gt;
-         &lt;/dependency&gt;
-     &lt;/dependencies&gt;
- &lt;/dependencyManagement&gt;
-</code></pre>
- </project>
-</li>
-<li>
-<p>修改配置</p>
-<p>server:<br>
-port: 80<br>
-spring:<br>
-application:<br>
-name: service-consumer<br>
-eureka:<br>
-client:<br>
-service-url:<br>
-defaultZone: http://localhost:10086/eureka</p>
-</li>
-<li>
-<p>在启动类开启Eureka客户端</p>
-<p>@SpringBootApplication<br>
-@EnableDiscoveryClient // 开启Eureka客户端<br>
-public class ItcastServiceConsumerApplication {</p>
-<pre><code> @Bean
- public RestTemplate restTemplate(){
-     return new RestTemplate();
- }
-
- public static void main(String[] args) {
-     SpringApplication.run(ItcastServiceConsumerApplication.class, args);
- }
-</code></pre>
-<p>}</p>
-</li>
-<li>
-<p>修改UserController代码，用DiscoveryClient类的方法，根据服务名称，获取服务实例：</p>
-<p>@Controller<br>
-@RequestMapping(&quot;consumer/user&quot;)<br>
-public class UserController {</p>
-<pre><code> @Autowired
- private RestTemplate restTemplate;
-
- @Autowired
- private DiscoveryClient discoveryClient; // eureka客户端，可以获取到eureka中服务的信息
-
- @GetMapping
- @ResponseBody
- public User queryUserById(@RequestParam(&quot;id&quot;) Long id){
-     // 根据服务名称，获取服务实例。有可能是集群，所以是service实例集合
-     List&lt;ServiceInstance&gt; instances = discoveryClient.getInstances(&quot;service-provider&quot;);
-     // 因为只有一个Service-provider。所以获取第一个实例
-     ServiceInstance instance = instances.get(0);
-     // 获取ip和端口信息，拼接成服务地址
-     String baseUrl = &quot;http://&quot; + instance.getHost() + &quot;:&quot; + instance.getPort() + &quot;/user/&quot; + id;
-     User user = this.restTemplate.getForObject(baseUrl, User.class);
-     return user;
- }
-</code></pre>
-<p>}</p>
-</li>
-</ol>
-<p>5）Debug跟踪运行：</p>
-<p>生成的URL：</p>
-<p>访问结果：</p>
-<p>5.4.Eureka详解</p>
-<p>接下来我们详细讲解Eureka的原理及配置。</p>
-<p>5.4.1.基础架构</p>
-<p>Eureka架构中的三个核心角色：</p>
-<ul>
-<li>服务注册中心<br>
-Eureka的服务端应用，提供服务注册和发现功能，就是刚刚我们建立的itcast-eureka。</li>
-<li>服务提供者<br>
-提供服务的应用，可以是SpringBoot应用，也可以是其它任意技术实现，只要对外提供的是Rest风格服务即可。本例中就是我们实现的itcast-service-provider。</li>
-<li>服务消费者<br>
-消费应用从注册中心获取服务列表，从而得知每个服务方的信息，知道去哪里调用服务方。本例中就是我们实现的itcast-service-consumer。</li>
-</ul>
-<p>5.4.2.高可用的Eureka Server</p>
-<p>Eureka Server即服务的注册中心，在刚才的案例中，我们只有一个EurekaServer，事实上EurekaServer也可以是一个集群，形成高可用的Eureka中心。</p>
-<p>服务同步</p>
-<p>多个Eureka Server之间也会互相注册为服务，当服务提供者注册到Eureka Server集群中的某个节点时，该节点会把服务的信息同步给集群中的每个节点，从而实现数据同步。因此，无论客户端访问到Eureka Server集群中的任意一个节点，都可以获取到完整的服务列表信息。</p>
-<p>动手搭建高可用的EurekaServer</p>
-<p>我们假设要运行两个EurekaServer的集群，端口分别为：10086和10087。只需要把itcast-eureka启动两次即可。</p>
-<p>1）启动第一个eurekaServer，我们修改原来的EurekaServer配置：</p>
-<pre><code>server:
-  port: 10086 # 端口
-spring:
-  application:
-    name: eureka-server # 应用名称，会在Eureka中显示
-eureka:
-  client:
-    service-url: # 配置其他Eureka服务的地址，而不是自己，比如10087
-      defaultZone: http://127.0.0.1:10087/eureka
-</code></pre>
-<p>所谓的高可用注册中心，其实就是把EurekaServer自己也作为一个服务进行注册，这样多个EurekaServer之间就能互相发现对方，从而形成集群。因此我们做了以下修改：</p>
-<ul>
-<li>把service-url的值改成了另外一台EurekaServer的地址，而不是自己</li>
-</ul>
-<p>启动报错，很正常。因为10087服务没有启动：</p>
-<p>2）启动第二个eurekaServer，再次修改itcast-eureka的配置：</p>
-<pre><code>server:
-  port: 10087 # 端口
-spring:
-  application:
-    name: eureka-server # 应用名称，会在Eureka中显示
-eureka:
-  client:
-    service-url: # 配置其他Eureka服务的地址，而不是自己，比如10087
-      defaultZone: http://127.0.0.1:10086/eureka
-</code></pre>
-<p>注意：idea中一个应用不能启动两次，我们需要重新配置一个启动器：</p>
-<p>然后启动即可。</p>
-<p>3）访问集群，测试：</p>
-<p>4）客户端注册服务到集群</p>
-<p>因为EurekaServer不止一个，因此注册服务的时候，service-url参数需要变化：</p>
-<pre><code>eureka:
-  client:
-    service-url: # EurekaServer地址,多个地址以','隔开
-      defaultZone: http://127.0.0.1:10086/eureka,http://127.0.0.1:10087/eureka
-</code></pre>
-<p>10086：</p>
-<p>10087：</p>
-<p>5.4.3.服务提供者</p>
-<p>服务提供者要向EurekaServer注册服务，并且完成服务续约等工作。</p>
-<p>服务注册</p>
-<p>服务提供者在启动时，会检测配置属性中的：eureka.client.register-with-eureka=true参数是否正确，事实上默认就是true。如果值确实为true，则会向EurekaServer发起一个Rest请求，并携带自己的元数据信息，Eureka Server会把这些信息保存到一个双层Map结构中。</p>
-<ul>
-<li>第一层Map的Key就是服务id，一般是配置中的spring.application.name属性</li>
-<li>第二层Map的key是服务的实例id。一般host+ serviceId + port，例如：locahost:service-provider:8081</li>
-<li>值则是服务的实例对象，也就是说一个服务，可以同时启动多个不同实例，形成集群。</li>
-</ul>
-<p>服务续约</p>
-<p>在注册服务完成以后，服务提供者会维持一个心跳（定时向EurekaServer发起Rest请求），告诉EurekaServer：“我还活着”。这个我们称为服务的续约（renew）；</p>
-<p>有两个重要参数可以修改服务续约的行为：</p>
-<pre><code>eureka:
-  instance:
-    lease-expiration-duration-in-seconds: 90
-    lease-renewal-interval-in-seconds: 30
-</code></pre>
-<ul>
-<li>lease-renewal-interval-in-seconds：服务续约(renew)的间隔，默认为30秒</li>
-<li>lease-expiration-duration-in-seconds：服务失效时间，默认值90秒</li>
-</ul>
-<p>也就是说，默认情况下每个30秒服务会向注册中心发送一次心跳，证明自己还活着。如果超过90秒没有发送心跳，EurekaServer就会认为该服务宕机，会从服务列表中移除，这两个值在生产环境不要修改，默认即可。</p>
-<p>但是在开发时，这个值有点太长了，经常我们关掉一个服务，会发现Eureka依然认为服务在活着。所以我们在开发阶段可以适当调小。</p>
-<pre><code>eureka:
-  instance:
-    lease-expiration-duration-in-seconds: 10 # 10秒即过期
-    lease-renewal-interval-in-seconds: 5 # 5秒一次心跳
-</code></pre>
-<p>5.4.4.服务消费者</p>
-<p>获取服务列表</p>
-<p>当服务消费者启动时，会检测eureka.client.fetch-registry=true参数的值，如果为true，则会拉取Eureka Server服务的列表只读备份，然后缓存在本地。并且每隔30秒会重新获取并更新数据。我们可以通过下面的参数来修改：</p>
-<pre><code>eureka:
-  client:
-    registry-fetch-interval-seconds: 5
-</code></pre>
-<p>生产环境中，我们不需要修改这个值。</p>
-<p>但是为了开发环境下，能够快速得到服务的最新状态，我们可以将其设置小一点。</p>
-<p>5.4.5.失效剔除和自我保护</p>
-<p>服务下线</p>
-<p>当服务进行正常关闭操作时，它会触发一个服务下线的REST请求给Eureka Server，告诉服务注册中心：“我要下线了”。服务中心接受到请求之后，将该服务置为下线状态。</p>
-<p>失效剔除</p>
-<p>有些时候，我们的服务提供方并不一定会正常下线，可能因为内存溢出、网络故障等原因导致服务无法正常工作。Eureka Server需要将这样的服务剔除出服务列表。因此它会开启一个定时任务，每隔60秒对所有失效的服务（超过90秒未响应）进行剔除。</p>
-<p>可以通过eureka.server.eviction-interval-timer-in-ms参数对其进行修改，单位是毫秒，生产环境不要修改。</p>
-<p>这个会对我们开发带来极大的不变，你对服务重启，隔了60秒Eureka才反应过来。开发阶段可以适当调整，比如：10秒</p>
-<p>自我保护</p>
-<p>我们关停一个服务，就会在Eureka面板看到一条警告：</p>
-<p>这是触发了Eureka的自我保护机制。当一个服务未按时进行心跳续约时，Eureka会统计最近15分钟心跳失败的服务实例的比例是否超过了85%。在生产环境下，因为网络延迟等原因，心跳失败实例的比例很有可能超标，但是此时就把服务剔除列表并不妥当，因为服务可能没有宕机。Eureka就会把当前实例的注册信息保护起来，不予剔除。生产环境下这很有效，保证了大多数服务依然可用。</p>
-<p>但是这给我们的开发带来了麻烦， 因此开发阶段我们都会关闭自我保护模式：（itcast-eureka）</p>
-<pre><code>eureka:
-  server:
-    enable-self-preservation: false # 关闭自我保护模式（缺省为打开）
-    eviction-interval-timer-in-ms: 1000 # 扫描失效服务的间隔时间（缺省为60*1000ms）
-</code></pre>
-<p>6.负载均衡Ribbon</p>
-<p>在刚才的案例中，我们启动了一个itcast-service-provider，然后通过DiscoveryClient来获取服务实例信息，然后获取ip和端口来访问。</p>
-<p>但是实际环境中，我们往往会开启很多个itcast-service-provider的集群。此时我们获取的服务列表中就会有多个，到底该访问哪一个呢？</p>
-<p>一般这种情况下我们就需要编写负载均衡算法，在多个实例列表中进行选择。</p>
-<p>不过Eureka中已经帮我们集成了负载均衡组件：Ribbon，简单修改代码即可使用。</p>
-<p>什么是Ribbon：</p>
-<p>接下来，我们就来使用Ribbon实现负载均衡。</p>
-<p>6.1.启动两个服务实例</p>
-<p>首先参照itcast-eureka启动两个ItcastServiceProviderApplication实例，一个8081，一个8082。</p>
-<p>Eureka监控面板：</p>
-<p>6.2.开启负载均衡</p>
-<p>因为Eureka中已经集成了Ribbon，所以我们无需引入新的依赖，直接修改代码。</p>
-<p>修改itcast-service-consumer的引导类，在RestTemplate的配置方法上添加@LoadBalanced注解：</p>
-<pre><code>@Bean
-@LoadBalanced
-public RestTemplate restTemplate() {
-    return new RestTemplate();
-}
-</code></pre>
-<p>修改调用方式，不再手动获取ip和端口，而是直接通过服务名称调用：</p>
-<pre><code>@Controller
-@RequestMapping(&quot;consumer/user&quot;)
-public class UserController {
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    //@Autowired
-    //private DiscoveryClient discoveryClient; // 注入discoveryClient，通过该客户端获取服务列表
-
-    @GetMapping
-    @ResponseBody
-    public User queryUserById(@RequestParam(&quot;id&quot;) Long id){
-        // 通过client获取服务提供方的服务列表，这里我们只有一个
-        // ServiceInstance instance = discoveryClient.getInstances(&quot;service-provider&quot;).get(0);
-        String baseUrl = &quot;http://service-provider/user/&quot; + id;
-        User user = this.restTemplate.getForObject(baseUrl, User.class);
-        return user;
-    }
-
-}
-</code></pre>
-<p>访问页面，查看结果：</p>
-<p>完美！</p>
-<p>6.3.源码跟踪</p>
-<p>为什么我们只输入了service名称就可以访问了呢？之前还要获取ip和端口。</p>
-<p>显然有人帮我们根据service名称，获取到了服务实例的ip和端口。它就是LoadBalancerInterceptor</p>
-<p>在如下代码打断点：</p>
-<p>一路源码跟踪：RestTemplate.getForObject --&gt; RestTemplate.execute --&gt; RestTemplate.doExecute：</p>
-<p>点击进入AbstractClientHttpRequest.execute --&gt; AbstractBufferingClientHttpRequest.executeInternal --&gt; InterceptingClientHttpRequest.executeInternal --&gt; InterceptingClientHttpRequest.execute:</p>
-<p>继续跟入：LoadBalancerInterceptor.intercept方法</p>
-<p>继续跟入execute方法：发现获取了8082端口的服务</p>
-<p>再跟下一次，发现获取的是8081：</p>
-<p>6.4.负载均衡策略</p>
-<p>Ribbon默认的负载均衡策略是简单的轮询，我们可以测试一下：</p>
-<p>编写测试类，在刚才的源码中我们看到拦截中是使用RibbonLoadBalanceClient来进行负载均衡的，其中有一个choose方法，找到choose方法的接口方法，是这样介绍的：</p>
-<p>现在这个就是负载均衡获取实例的方法。</p>
-<p>我们注入这个类的对象，然后对其测试：</p>
-<p>测试内容：</p>
-<pre><code>@RunWith(SpringRunner.class)
-@SpringBootTest(classes = ItcastServiceConsumerApplication.class)
-public class LoadBalanceTest {
-
-    @Autowired
-    private RibbonLoadBalancerClient client;
-
-    @Test
-    public void testLoadBalance(){
-        for (int i = 0; i &lt; 100; i++) {
-            ServiceInstance instance = this.client.choose(&quot;service-provider&quot;);
-            System.out.println(instance.getHost() + &quot;:&quot; +instance.getPort());
-        }
-    }
-}
-</code></pre>
-<p>结果：</p>
-<p>符合了我们的预期推测，确实是轮询方式。</p>
-<p>我们是否可以修改负载均衡的策略呢？</p>
-<p>继续跟踪源码，发现这么一段代码：</p>
-<p>我们看看这个rule是谁：</p>
-<p>这里的rule默认值是一个RoundRobinRule，看类的介绍：</p>
-<p>这不就是轮询的意思嘛。</p>
-<p>我们注意到，这个类其实是实现了接口IRule的，查看一下：</p>
-<p>定义负载均衡的规则接口。</p>
-<p>它有以下实现：</p>
-<p>SpringBoot也帮我们提供了修改负载均衡规则的配置入口，在itcast-service-consumer的application.yml中添加如下配置：</p>
-<pre><code>server:
-  port: 80
-spring:
-  application:
-    name: service-consumer
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:10086/eureka
-service-provider:
-  ribbon:
-    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
-</code></pre>
-<p>格式是：{服务名称}.ribbon.NFLoadBalancerRuleClassName，值就是IRule的实现类。</p>
-<p>再次测试，发现结果变成了随机：</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[springBoot入门篇]]></title>
-        <id>https://yihuaikun.github.io/post/springboot-ru-men-pian</id>
-        <link href="https://yihuaikun.github.io/post/springboot-ru-men-pian">
-        </link>
-        <updated>2019-04-17T15:47:53.000Z</updated>
-        <content type="html"><![CDATA[<ol>
-<li>了解SpringBoot</li>
-</ol>
-<p>在这一部分，我们主要了解以下3个问题：</p>
-<ul>
-<li>什么是SpringBoot</li>
-<li>为什么要学习SpringBoot</li>
-<li>SpringBoot的特点</li>
-</ul>
-<p>1.1.什么是SpringBoot</p>
-<p>SpringBoot是Spring项目中的一个子工程，与我们所熟知的Spring-framework 同属于spring的产品:</p>
-<p>我们可以看到下面的一段介绍：</p>
-<p>Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can &quot;just run&quot;.</p>
-<p>We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need very little Spring configuration.</p>
-<p>翻译一下：</p>
-<p>Spring Boot你只需要“run”就可以非常轻易的构建独立的、生产级别的spring应用。</p>
-<p>我们为spring平台和第三方依赖库提供了一种固定化的使用方式，使你能非常轻松的开始开发你的应用程序。大部分Spring Boot应用只需要很少的配置。</p>
-<p>其实人们把Spring Boot称为搭建程序的脚手架。其最主要作用就是帮我们快速的构建庞大的spring项目，并且尽可能的减少一切xml配置，做到开箱即用，迅速上手，让我们关注于业务而非配置。</p>
-<p>我们可以使用SpringBoot创建java应用，并使用java –jar 启动它，就能得到一个生产级别的web工程。</p>
-<p>1.2.为什么要学习SpringBoot</p>
-<p>java一直被人诟病的一点就是臃肿、麻烦。当我们还在辛苦的搭建项目时，可能Python程序员已经把功能写好了，究其原因主要是两点：</p>
-<ul>
-<li>复杂的配置<br>
-项目各种配置其实是开发时的损耗， 因为在思考 Spring 特性配置和解决业务问题之间需要进行思维切换，所以写配置挤占了写应用程序逻辑的时间。</li>
-<li>混乱的依赖管理<br>
-项目的依赖管理也是件吃力不讨好的事情。决定项目里要用哪些库就已经够让人头痛的了，你还要知道这些库的哪个版本和其他库不会有冲突，这也是件棘手的问题。并且，依赖管理也是一种损耗，添加依赖不是写应用程序代码。一旦选错了依赖的版本，随之而来的不兼容问题毫无疑问会是生产力杀手。</li>
-</ul>
-<p>而SpringBoot让这一切成为过去！</p>
-<p>1.3.SpringBoot的特点</p>
-<p>Spring Boot 主要特征是：</p>
-<ul>
-<li>创建独立的spring应用程序</li>
-<li>直接内嵌tomcat、jetty和undertow（不需要打包成war包部署）</li>
-<li>提供了固定化的“starter”配置，以简化构建配置</li>
-<li>尽可能的自动配置spring和第三方库</li>
-<li>提供产品级的功能，如：安全指标、运行状况监测和外部化配置等</li>
-<li>绝对不会生成代码，并且不需要XML配置</li>
-</ul>
-<p>总之，Spring Boot为所有 Spring 的开发者提供一个开箱即用的、非常快速的、广泛接受的入门体验</p>
-<p>更多细节，大家可以到官网查看。</p>
-<p>2.快速入门</p>
-<p>接下来，我们就来利用SpringBoot搭建一个web工程，体会一下SpringBoot的魅力所在！</p>
-<p>环境要求：</p>
-<p>2.1.创建工程</p>
-<p>我们先新建一个空的demo工程，如下：</p>
-<p>创建以moduel：</p>
-<p>填写坐标信息：</p>
-<p>目录结构：</p>
-<p>创建完成后的目录结构：</p>
-<p>2.2.引入依赖</p>
-<p>看到这里很多同学会有疑惑，前面说传统开发的问题之一就是依赖管理混乱，怎么这里我们还需要管理依赖呢？难道SpringBoot不帮我们管理吗？</p>
-<p>别着急，现在我们的项目与SpringBoot还没有什么关联。SpringBoot提供了一个名为spring-boot-starter-parent的工程，里面已经对各种常用依赖（并非全部）的版本进行了管理，我们的项目需要以这个项目为父工程，这样我们就不用操心依赖的版本问题了，需要什么依赖，直接引入坐标即可！</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-    &lt;groupId&gt;cn.itcast.springboot&lt;/groupId&gt;
-    &lt;artifactId&gt;itcast-springboot&lt;/artifactId&gt;
-    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-
-    &lt;!-- 所有的springboot的工程都以spring父工程为父工程 --&gt;
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;2.0.6.RELEASE&lt;/version&gt;
-    &lt;/parent&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-&lt;/project&gt;
-</code></pre>
-<p>2.3.编写HelloController</p>
-<p>代码：</p>
-<pre><code>@RestController
-@EnableAutoConfiguration
-public class HelloController {
-
-    @GetMapping(&quot;show&quot;)
-    public String test(){
-        return &quot;hello Spring Boot!&quot;;
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(HelloController.class, args);
-    }
-}
-</code></pre>
-<p>2.4.启动测试</p>
-<p>bingo！访问成功！</p>
-<p>2.5.详解</p>
-<p>入门工程中：pom.xml里引入了启动器的概念以@EnableAutoConfiguration注解。</p>
-<p>2.5.1.启动器</p>
-<p>为了让SpringBoot帮我们完成各种自动配置，我们必须引入SpringBoot提供的自动配置依赖，我们称为启动器。spring-boot-starter-parent工程将依赖关系声明为一个或者多个启动器，我们可以根据项目需求引入相应的启动器，因为我们是web项目，这里我们引入web启动器：</p>
-<pre><code>&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;
-</code></pre>
-<p>需要注意的是，我们并没有在这里指定版本信息。因为SpringBoot的父工程已经对版本进行了管理了。</p>
-<p>这个时候，我们会发现项目中多出了大量的依赖：</p>
-<p>这些都是SpringBoot根据spring-boot-starter-web这个依赖自动引入的，而且所有的版本都已经管理好，不会出现冲突。</p>
-<p>2.5.2.@EnableAutoConfiguration</p>
-<p>关于这个注解，官网上有一段说明：</p>
-<p>Enable auto-configuration of the Spring Application Context, attempting to guess and configure beans that you are likely to need. Auto-configuration classes are usually applied based on your classpath and what beans you have defined.</p>
-<p>简单翻译以下：</p>
-<p>开启spring应用程序的自动配置，SpringBoot基于你所添加的依赖和你自己定义的bean，试图去猜测并配置你想要的配置。比如我们引入了spring-boot-starter-web，而这个启动器中帮我们添加了tomcat、SpringMVC的依赖。此时自动配置就知道你是要开发一个web应用，所以就帮你完成了web及SpringMVC的默认配置了！</p>
-<p>总结，SpringBoot内部对大量的第三方库或Spring内部库进行了默认配置，这些配置是否生效，取决于我们是否引入了对应库所需的依赖，如果有那么默认配置就会生效。</p>
-<p>所以，我们使用SpringBoot构建一个项目，只需要引入所需依赖，配置就可以交给SpringBoot处理了。</p>
-<p>2.6.优化入门程序</p>
-<p>现在工程中只有一个Controller，可以这么玩；那么如果有多个Controller，怎么办呢？</p>
-<p>添加Hello2Controller：</p>
-<p>代码：</p>
-<pre><code>@RestController
-public class Hello2Controller {
-
-    @GetMapping(&quot;show2&quot;)
-    public String test(){
-        return &quot;hello Spring Boot2!&quot;;
-    }
-
-}
-</code></pre>
-<p>启动重新启动，访问show2测试，失败：</p>
-<p>难道要在每一个Controller中都添加一个main方法和@EnableAutoConfiguration注解，这样启动一个springboot程序也太麻烦了。也无法同时启动多个Controller，因为每个main方法都监听8080端口。所以，一个springboot程序应该只有一个springboot的main方法。</p>
-<p>所以，springboot程序引入了一个全局的引导类。</p>
-<p>2.5.1.添加引导类</p>
-<p>通常请求下，我们在一个springboot工程中都会在基包下创建一个引导类，一些springboot的全局注解（@EnableAutoConfiguration注解）以及springboot程序的入口main方法都放在该类中。</p>
-<p>在springboot的程序的基包下（引导类和Controller包在同级目录下），创建TestApplication.class：</p>
-<p>内容如下：</p>
-<pre><code>@EnableAutoConfiguration
-public class TestApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(TestApplication.class, args);
-    }
-}
-</code></pre>
-<p>并修改HelloController，去掉main方法及@EnableAutoConfiguration：</p>
-<pre><code>@RestController
-public class HelloController {
-
-    @GetMapping(&quot;show&quot;)
-    public String test(){
-        return &quot;hello Spring Boot!&quot;;
-    }
-}
-</code></pre>
-<p>启动引导类，访问show测试：</p>
-<p>发现所有的Controller都不能访问，为什么？</p>
-<p>回想以前程序，我们在配置文件中添加了注解扫描，它能扫描指定包下的所有Controller，而现在并没有。怎么解决——@ComponentScan注解</p>
-<p>2.5.2.@ComponentScan</p>
-<p>spring框架除了提供配置方式的注解扫描&lt;context:component-scan /&gt;，还提供了注解方式的注解扫描@ComponentScan。</p>
-<p>在TestApplication.class中，使用@ComponentScan注解：</p>
-<pre><code>@EnableAutoConfiguration
-@ComponentScan
-public class TestApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(TestApplication.class, args);
-    }
-
-}
-</code></pre>
-<p>重新启动，访问show或者show2：</p>
-<p>我们跟进该注解的源码，并没有看到什么特殊的地方。我们查看注释：</p>
-<p>大概的意思：</p>
-<p>配置组件扫描的指令。提供了类似与<a href="context:component-scan">context:component-scan</a>标签的作用</p>
-<p>通过basePackageClasses或者basePackages属性来指定要扫描的包。如果没有指定这些属性，那么将从声明这个注解的类所在的包开始，扫描包及子包</p>
-<p>而我们的@ComponentScan注解声明的类就是main函数所在的启动类，因此扫描的包是该类所在包及其子包。一般启动类会放在一个比较浅的包目录中。</p>
-<p>2.5.3.@SpringBootApplication</p>
-<p>我们现在的引导类中使用了@EnableAutoConfiguration和@ComponentScan注解，有点麻烦。springboot提供了一种简便的玩法：@SpringBootApplication注解</p>
-<p>使用@SpringBootApplication改造TestApplication：</p>
-<pre><code>@SpringBootApplication
-public class TestApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(TestApplication.class, args);
-    }
-
-}
-</code></pre>
-<p>点击进入，查看源码：</p>
-<p>发现@SpringBootApplication其实是一个组合注解，这里重点的注解有3个：</p>
-<ul>
-<li>@SpringBootConfiguration</li>
-<li>@EnableAutoConfiguration：开启自动配置</li>
-<li>@ComponentScan：开启注解扫描</li>
-</ul>
-<p>2.5.4.@SpringBootConfiguration</p>
-<p>@SpringBootConfiguration注解的源码：</p>
-<p>我们继续点击查看源码：</p>
-<p>通过这段我们可以看出，在这个注解上面，又有一个@Configuration注解。通过上面的注释阅读我们知道：这个注解的作用就是声明当前类是一个配置类，然后Spring会自动扫描到添加了@Configuration的类，并且读取其中的配置信息。而@SpringBootConfiguration是来声明当前类是SpringBoot应用的配置类，项目中只能有一个。所以一般我们无需自己添加。</p>
-<p>3.默认配置原理</p>
-<p>springboot的默认配置方式和我们之前玩的配置方式不太一样，没有任何的xml。那么如果自己要新增配置该怎么办？比如我们要配置一个数据库连接池，以前会这么玩：</p>
-<pre><code>&lt;!-- 配置连接池 --&gt;
-&lt;bean id=&quot;dataSource&quot; class=&quot;com.alibaba.druid.pool.DruidDataSource&quot;
-      init-method=&quot;init&quot; destroy-method=&quot;close&quot;&gt;
-    &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot; /&gt;
-    &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot; /&gt;
-    &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot; /&gt;
-&lt;/bean&gt;
-</code></pre>
-<p>现在该怎么做呢?</p>
-<p>3.1.回顾历史</p>
-<p>事实上，在Spring3.0开始，Spring官方就已经开始推荐使用java配置来代替传统的xml配置了，我们不妨来回顾一下Spring的历史：</p>
-<ul>
-<li>Spring1.0时代<br>
-在此时因为jdk1.5刚刚出来，注解开发并未盛行，因此一切Spring配置都是xml格式，想象一下所有的bean都用xml配置，细思极恐啊，心疼那个时候的程序员2秒</li>
-<li>Spring2.0时代<br>
-Spring引入了注解开发，但是因为并不完善，因此并未完全替代xml，此时的程序员往往是把xml与注解进行结合，貌似我们之前都是这种方式。</li>
-<li>Spring3.0及以后<br>
-3.0以后Spring的注解已经非常完善了，因此Spring推荐大家使用完全的java配置来代替以前的xml，不过似乎在国内并未推广盛行。然后当SpringBoot来临，人们才慢慢认识到java配置的优雅。</li>
-</ul>
-<p>有句古话说的好：拥抱变化，拥抱未来。所以我们也应该顺应时代潮流，做时尚的弄潮儿，一起来学习下java配置的玩法。</p>
-<p>3.2.尝试java配置</p>
-<p>java配置主要靠java类和一些注解来达到和xml配置一样的效果，比较常用的注解有：</p>
-<ul>
-<li>@Configuration：声明一个类作为配置类，代替xml文件</li>
-<li>@Bean：声明在方法上，将方法的返回值加入Bean容器，代替<bean>标签</li>
-<li>@Value：属性注入</li>
-<li>@PropertySource：指定外部属性文件。</li>
-</ul>
-<p>我们接下来用java配置来尝试实现连接池配置</p>
-<p>3.2.1.引入依赖</p>
-<p>首先在pom.xml中，引入Druid连接池依赖：</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;com.github.drtrang&lt;/groupId&gt;
-    &lt;artifactId&gt;druid-spring-boot2-starter&lt;/artifactId&gt;
-    &lt;version&gt;1.1.10&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>3.2.2.添加jdbc.properties</p>
-<pre><code>jdbc.driverClassName=com.mysql.jdbc.Driver
-jdbc.url=jdbc:mysql://127.0.0.1:3306/leyou
-jdbc.username=root
-jdbc.password=123
-</code></pre>
-<p>3.2.3.配置数据源</p>
-<p>创建JdbcConfiguration类：</p>
-<pre><code>@Configuration
-@PropertySource(&quot;classpath:jdbc.properties&quot;)
-public class JdbcConfiguration {
-
-    @Value(&quot;${jdbc.url}&quot;)
-    String url;
-    @Value(&quot;${jdbc.driverClassName}&quot;)
-    String driverClassName;
-    @Value(&quot;${jdbc.username}&quot;)
-    String username;
-    @Value(&quot;${jdbc.password}&quot;)
-    String password;
-
-    @Bean
-    public DataSource dataSource() {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl(url);
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        return dataSource;
-    }
-}
-</code></pre>
-<p>解读：</p>
-<ul>
-<li>@Configuration：声明JdbcConfiguration是一个配置类。</li>
-<li>@PropertySource：指定属性文件的路径是:classpath:jdbc.properties</li>
-<li>通过@Value为属性注入值。</li>
-<li>通过@Bean将 dataSource()方法声明为一个注册Bean的方法，Spring会自动调用该方法，将方法的返回值加入Spring容器中。相当于以前的bean标签</li>
-</ul>
-<p>然后就可以在任意位置通过@Autowired注入DataSource了！</p>
-<p>3.2.4.测试</p>
-<p>我们在HelloController中测试：</p>
-<pre><code>@RestController
-public class HelloController {
-
-    @Autowired
-    private DataSource dataSource;
-
-    @GetMapping(&quot;show&quot;)
-    public String test(){
-        return &quot;hello Spring Boot!&quot;;
-    }
-
-}
-</code></pre>
-<p>在test方法中打一个断点，然后Debug运行并查看：</p>
-<p>属性注入成功了！</p>
-<p>3.3.SpringBoot的属性注入</p>
-<p>在上面的案例中，我们实验了java配置方式。不过属性注入使用的是@Value注解。这种方式虽然可行，但是不够强大，因为它只能注入基本类型值。</p>
-<p>在SpringBoot中，提供了一种新的属性注入方式，支持各种java基本数据类型及复杂类型的注入。</p>
-<p>1）新建JdbcProperties，用来进行属性注入：</p>
-<p>代码：</p>
-<pre><code>@ConfigurationProperties(prefix = &quot;jdbc&quot;)
-public class JdbcProperties {
-    private String url;
-    private String driverClassName;
-    private String username;
-    private String password;
-    // ... 略
-    // getters 和 setters
-}
-</code></pre>
-<ul>
-<li>在类上通过@ConfigurationProperties注解声明当前类为属性读取类</li>
-<li>prefix=&quot;jdbc&quot;读取属性文件中，前缀为jdbc的值。</li>
-<li>在类上定义各个属性，名称必须与属性文件中jdbc.后面部分一致，并且必须具有getter和setter方法</li>
-<li>需要注意的是，这里我们并没有指定属性文件的地址，SpringBoot默认会读取文件名为application.properties的资源文件，所以我们把jdbc.properties名称改为application.properties</li>
-</ul>
-<p>2）在JdbcConfiguration中使用这个属性：</p>
-<ul>
-<li>通过@EnableConfigurationProperties(JdbcProperties.class)来声明要使用JdbcProperties这个类的对象</li>
-<li>然后你可以通过以下方式在JdbcConfiguration类中注入JdbcProperties：
-<ol>
-<li>
-<p>@Autowired注入<br>
-@Configuration<br>
-@EnableConfigurationProperties(JdbcProperties.class)<br>
-public class JdbcConfiguration {</p>
-<pre><code> @Autowired
- private JdbcProperties jdbcProperties;
-
- @Bean
- public DataSource dataSource() {
-     DruidDataSource dataSource = new DruidDataSource();
-     dataSource.setUrl(jdbcProperties.getUrl());
-     dataSource.setDriverClassName(jdbcProperties.getDriverClassName());
-     dataSource.setUsername(jdbcProperties.getUsername());
-     dataSource.setPassword(jdbcProperties.getPassword());
-     return dataSource;
- }
-</code></pre>
-<p>}</p>
-</li>
-<li>
-<p>构造函数注入<br>
-@Configuration<br>
-@EnableConfigurationProperties(JdbcProperties.class)<br>
-public class JdbcConfiguration {</p>
-<pre><code> private JdbcProperties jdbcProperties;
-
- public JdbcConfiguration(JdbcProperties jdbcProperties){
-     this.jdbcProperties = jdbcProperties;
- }
-
- @Bean
- public DataSource dataSource() {
-     // 略
- }
-</code></pre>
-<p>}</p>
-</li>
-<li>
-<p>@Bean方法的参数注入<br>
-@Configuration<br>
-@EnableConfigurationProperties(JdbcProperties.class)<br>
-public class JdbcConfiguration {</p>
-<pre><code> @Bean
- public DataSource dataSource(JdbcProperties jdbcProperties) {
-     // ...
- }
-</code></pre>
-<p>}</p>
-</li>
-</ol>
-</li>
-</ul>
-<p>本例中，我们采用第三种方式。</p>
-<p>3）测试结果：</p>
-<p>大家会觉得这种方式似乎更麻烦了，事实上这种方式有更强大的功能，也是SpringBoot推荐的注入方式。两者对比关系：</p>
-<p>优势：</p>
-<ul>
-<li>Relaxed binding：松散绑定
-<ul>
-<li>不严格要求属性文件中的属性名与成员变量名一致。支持驼峰，中划线，下划线等等转换，甚至支持对象引导。比如：user.friend.name：代表的是user对象中的friend属性中的name属性，显然friend也是对象。@value注解就难以完成这样的注入方式。</li>
-<li>meta-data support：元数据支持，帮助IDE生成属性提示（写开源框架会用到）。</li>
-</ul>
-</li>
-</ul>
-<p>3.4.更优雅的注入</p>
-<p>事实上，如果一段属性只有一个Bean需要使用，我们无需将其注入到一个类（JdbcProperties）中。而是直接在需要的地方声明即可：</p>
-<pre><code>@Configuration
-public class JdbcConfiguration {
-    
-    @Bean
-    // 声明要注入的属性前缀，SpringBoot会自动把相关属性通过set方法注入到DataSource中
-    @ConfigurationProperties(prefix = &quot;jdbc&quot;)
-    public DataSource dataSource() {
-        DruidDataSource dataSource = new DruidDataSource();
-        return dataSource;
-    }
-}
-</code></pre>
-<p>我们直接把@ConfigurationProperties(prefix = &quot;jdbc&quot;)声明在需要使用的@Bean的方法上，然后SpringBoot就会自动调用这个Bean（此处是DataSource）的set方法，然后完成注入。使用的前提是：该类必须有对应属性的set方法！</p>
-<p>我们将jdbc的url改成：/heima，再次测试：</p>
-<p>3.5.SpringBoot中的默认配置</p>
-<p>通过刚才的学习，我们知道@EnableAutoConfiguration会开启SpringBoot的自动配置，并且根据你引入的依赖来生效对应的默认配置。那么问题来了：</p>
-<ul>
-<li>这些默认配置是怎么配置的，在哪里配置的呢？</li>
-<li>为何依赖引入就会触发配置呢？</li>
-<li>这些默认配置的属性来自哪里呢？</li>
-</ul>
-<p>其实在我们的项目中，已经引入了一个依赖：spring-boot-autoconfigure，其中定义了大量自动配置类：</p>
-<p>还有：</p>
-<p>非常多，几乎涵盖了现在主流的开源框架，例如：</p>
-<ul>
-<li>redis</li>
-<li>jms</li>
-<li>amqp</li>
-<li>jdbc</li>
-<li>jackson</li>
-<li>mongodb</li>
-<li>jpa</li>
-<li>solr</li>
-<li>elasticsearch</li>
-</ul>
-<p>... 等等</p>
-<p>我们来看一个我们熟悉的，例如SpringMVC，查看mvc 的自动配置类：</p>
-<p>打开WebMvcAutoConfiguration：</p>
-<p>我们看到这个类上的4个注解：</p>
-<ul>
-<li>@Configuration：声明这个类是一个配置类</li>
-<li>@ConditionalOnWebApplication(type = Type.SERVLET)<br>
-ConditionalOn，翻译就是在某个条件下，此处就是满足项目的类是是Type.SERVLET类型，也就是一个普通web工程，显然我们就是</li>
-<li>@ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class })<br>
-这里的条件是OnClass，也就是满足以下类存在：Servlet、DispatcherServlet、WebMvcConfigurer，其中Servlet只要引入了tomcat依赖自然会有，后两个需要引入SpringMVC才会有。这里就是判断你是否引入了相关依赖，引入依赖后该条件成立，当前类的配置才会生效！</li>
-<li>@ConditionalOnMissingBean(WebMvcConfigurationSupport.class)<br>
-这个条件与上面不同，OnMissingBean，是说环境中没有指定的Bean这个才生效。其实这就是自定义配置的入口，也就是说，如果我们自己配置了一个WebMVCConfigurationSupport的类，那么这个默认配置就会失效！</li>
-</ul>
-<p>接着，我们查看该类中定义了什么：</p>
-<p>视图解析器：</p>
-<p>处理器适配器（HandlerAdapter）：</p>
-<p>还有很多，这里就不一一截图了。</p>
-<p>另外，这些默认配置的属性来自哪里呢？</p>
-<p>我们看到，这里通过@EnableAutoConfiguration注解引入了两个属性：WebMvcProperties和ResourceProperties。</p>
-<p>我们查看这两个属性类：</p>
-<p>找到了内部资源视图解析器的prefix和suffix属性。</p>
-<p>ResourceProperties中主要定义了静态资源（.js,.html,.css等)的路径：</p>
-<p>如果我们要覆盖这些默认属性，只需要在application.properties中定义与其前缀prefix和字段名一致的属性即可。</p>
-<p>3.6.总结</p>
-<p>SpringBoot为我们提供了默认配置，而默认配置生效的条件一般有两个：</p>
-<ul>
-<li>你引入了相关依赖</li>
-<li>你自己没有配置</li>
-</ul>
-<p>1）启动器</p>
-<p>之所以，我们如果不想配置，只需要引入依赖即可，而依赖版本我们也不用操心，因为只要引入了SpringBoot提供的stater（启动器），就会自动管理依赖及版本了。</p>
-<p>因此，玩SpringBoot的第一件事情，就是找启动器，SpringBoot提供了大量的默认启动器，参考课前资料中提供的《SpringBoot启动器.txt》</p>
-<p>2）全局配置</p>
-<p>另外，SpringBoot的默认配置，都会读取默认属性，而这些属性可以通过自定义application.properties文件来进行覆盖。这样虽然使用的还是默认配置，但是配置中的值改成了我们自定义的。</p>
-<p>因此，玩SpringBoot的第二件事情，就是通过application.properties来覆盖默认属性值，形成自定义配置。我们需要知道SpringBoot的默认属性key，非常多，参考课前资料提供的：《SpringBoot全局属性.md》</p>
-<p>4.SpringBoot实战</p>
-<p>接下来，我们来看看如何用SpringBoot来玩转以前的SSM,我们沿用之前讲解SSM用到的数据库tb_user和实体类User</p>
-<p>4.1.创建工程</p>
-<p>4.2.编写基本代码</p>
-<p>pom.xml:</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-    &lt;groupId&gt;cn.itcast.user&lt;/groupId&gt;
-    &lt;artifactId&gt;itcast-user&lt;/artifactId&gt;
-    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;2.0.6.RELEASE&lt;/version&gt;
-    &lt;/parent&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-
-&lt;/project&gt;
-</code></pre>
-<p>参照上边的项目，编写引导类：</p>
-<pre><code>@SpringBootApplication
-public class UserApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(UserApplication.class);
-    }
-}
-</code></pre>
-<p>编写UserController：</p>
-<pre><code>@RestController
-@RequestMapping(&quot;user&quot;)
-public class UserController {
-
-    @GetMapping(&quot;hello&quot;)
-    public String test(){
-        return &quot;hello ssm&quot;;
-    }
-}
-</code></pre>
-<p>4.3.整合SpringMVC</p>
-<p>虽然默认配置已经可以使用SpringMVC了，不过我们有时候需要进行自定义配置。</p>
-<p>4.3.1.修改端口</p>
-<p>添加全局配置文件：application.properties</p>
-<p>端口通过以下方式配置</p>
-<pre><code># 映射端口
-server.port=80
-</code></pre>
-<p>重启服务后测试：</p>
-<p>4.3.2.访问静态资源</p>
-<p>现在，我们的项目是一个jar工程，那么就没有webapp，我们的静态资源该放哪里呢？</p>
-<p>回顾我们上面看的源码，有一个叫做ResourceProperties的类，里面就定义了静态资源的默认查找路径：</p>
-<p>默认的静态资源路径为：</p>
-<ul>
-<li>classpath:/META-INF/resources/</li>
-<li>classpath:/resources/</li>
-<li>classpath:/static/</li>
-<li>classpath:/public/</li>
-</ul>
-<p>只要静态资源放在这些目录中任何一个，SpringMVC都会帮我们处理。</p>
-<p>我们习惯会把静态资源放在classpath:/static/目录下。我们创建目录，并且添加一些静态资源：</p>
-<p>重启项目后测试：</p>
-<p>4.3.3.添加拦截器</p>
-<p>拦截器也是我们经常需要使用的，在SpringBoot中该如何配置呢？</p>
-<p>拦截器不是一个普通属性，而是一个类，所以就要用到java配置方式了。在SpringBoot官方文档中有这么一段说明：</p>
-<p>If you want to keep Spring Boot MVC features and you want to add additional MVC configuration (interceptors, formatters, view controllers, and other features), you can add your own @Configuration class of type WebMvcConfigurer but without @EnableWebMvc. If you wish to provide custom instances of RequestMappingHandlerMapping, RequestMappingHandlerAdapter, or ExceptionHandlerExceptionResolver, you can declare a WebMvcRegistrationsAdapter instance to provide such components.</p>
-<p>If you want to take complete control of Spring MVC, you can add your own @Configuration annotated with @EnableWebMvc.</p>
-<p>翻译：</p>
-<p>如果你想要保持Spring Boot 的一些默认MVC特征，同时又想自定义一些MVC配置（包括：拦截器，格式化器, 视图控制器、消息转换器 等等），你应该让一个类实现WebMvcConfigurer，并且添加@Configuration注解，但是千万不要加@EnableWebMvc注解。如果你想要自定义HandlerMapping、HandlerAdapter、ExceptionResolver等组件，你可以创建一个WebMvcRegistrationsAdapter实例 来提供以上组件。</p>
-<p>如果你想要完全自定义SpringMVC，不保留SpringBoot提供的一切特征，你可以自己定义类并且添加@Configuration注解和@EnableWebMvc注解</p>
-<p>总结：通过实现WebMvcConfigurer并添加@Configuration注解来实现自定义部分SpringMvc配置。</p>
-<p>实现如下：</p>
-<p>首先我们定义一个拦截器：</p>
-<pre><code>@Component
-public class MyInterceptor implements HandlerInterceptor {
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println(&quot;preHandle method is running!&quot;);
-        return true;
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        System.out.println(&quot;postHandle method is running!&quot;);
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        System.out.println(&quot;afterCompletion method is running!&quot;);
-    }
-}
-</code></pre>
-<p>然后定义配置类，注册拦截器：</p>
-<pre><code>@Configuration
-public class MvcConfiguration implements WebMvcConfigurer {
-
-    @Autowired
-    private HandlerInterceptor myInterceptor;
-
-    /**
-     * 重写接口中的addInterceptors方法，添加自定义拦截器
-     * @param registry
-     */
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(myInterceptor).addPathPatterns(&quot;/**&quot;);
-    }
-}
-</code></pre>
-<p>接下来运行并查看日志：</p>
-<pre><code>preHandle method is running!
-postHandle method is running!
-afterCompletion method is running!
-</code></pre>
-<p>你会发现日志中只有这些打印信息，springMVC的日志信息都没有，因为springMVC记录的log级别是debug，springboot默认是显示info以上，我们需要进行配置。</p>
-<p>SpringBoot通过logging.level.*=debug来配置日志级别，*填写包名</p>
-<pre><code># 设置org.springframework包的日志级别为debug
-logging.level.org.springframework=debug
-</code></pre>
-<p>再次运行查看：</p>
-<p>4.4.整合连接池</p>
-<p>jdbc连接池是spring配置中的重要一环，在SpringBoot中该如何处理呢？</p>
-<p>答案是不需要处理，我们只要找到SpringBoot提供的启动器即可：</p>
-<p>在pom.xml中引入jdbc的启动器：</p>
-<pre><code>&lt;!--jdbc的启动器，默认使用HikariCP连接池--&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;
-&lt;/dependency&gt;
-&lt;!--不要忘记数据库驱动，因为springboot不知道我们使用的什么数据库，这里选择mysql--&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;mysql&lt;/groupId&gt;
-    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>SpringBoot已经自动帮我们引入了一个连接池：</p>
-<p>HikariCP应该是目前速度最快的连接池了，我们看看它与c3p0的对比：</p>
-<p>因此，我们只需要指定连接池参数即可：</p>
-<pre><code># 连接四大参数
-spring.datasource.url=jdbc:mysql://localhost:3306/heima
-spring.datasource.username=root
-spring.datasource.password=root
-# 可省略，SpringBoot自动推断
-spring.datasource.driverClassName=com.mysql.jdbc.Driver
-
-spring.datasource.hikari.idle-timeout=60000
-spring.datasource.hikari.maximum-pool-size=30
-spring.datasource.hikari.minimum-idle=10
-</code></pre>
-<p>当然，如果你更喜欢Druid连接池，也可以使用Druid官方提供的启动器：</p>
-<pre><code>&lt;!-- Druid连接池 --&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
-    &lt;artifactId&gt;druid-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;1.1.6&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>而连接信息的配置与上面是类似的，只不过在连接池特有属性上，方式略有不同：</p>
-<pre><code>#初始化连接数
-spring.datasource.druid.initial-size=1
-#最小空闲连接
-spring.datasource.druid.min-idle=1
-#最大活动连接
-spring.datasource.druid.max-active=20
-#获取连接时测试是否可用
-spring.datasource.druid.test-on-borrow=true
-#监控页面启动
-spring.datasource.druid.stat-view-servlet.allow=true
-</code></pre>
-<p>4.5.整合mybatis</p>
-<p>4.5.1.mybatis</p>
-<p>SpringBoot官方并没有提供Mybatis的启动器，不过Mybatis官方自己实现了：</p>
-<pre><code>&lt;!--mybatis --&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;1.3.2&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>配置，基本没有需要配置的：</p>
-<pre><code># mybatis 别名扫描
-mybatis.type-aliases-package=cn.itcast.pojo
-# mapper.xml文件位置,如果没有映射文件，请注释掉
-mybatis.mapper-locations=classpath:mappers/*.xml
-</code></pre>
-<p>需要注意，这里没有配置mapper接口扫描包，因此我们需要给每一个Mapper接口添加@Mapper注解，才能被识别。</p>
-<pre><code>@Mapper
-public interface UserMapper {
-}
-</code></pre>
-<p>user对象参照课前资料，需要通用mapper的注解：</p>
-<p>接下来，就去集成通用mapper。</p>
-<p>4.5.2.通用mapper</p>
-<p>通用Mapper的作者也为自己的插件编写了启动器，我们直接引入即可：</p>
-<pre><code>&lt;!-- 通用mapper --&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
-    &lt;artifactId&gt;mapper-spring-boot-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.2&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>不需要做任何配置就可以使用了。</p>
-<pre><code>@Mapper
-public interface UserMapper extends tk.mybatis.mapper.common.Mapper&lt;User&gt;{
-}
-</code></pre>
-<p>4.6.整合事务</p>
-<p>其实，我们引入jdbc或者web的启动器，就已经引入事务相关的依赖及默认配置了</p>
-<p>至于事务，SpringBoot中通过注解来控制。就是我们熟知的@Transactional</p>
-<pre><code>@Service
-public class UserService {
-
-    @Autowired
-    private UserMapper userMapper;
-
-    public User queryById(Long id){
-        return this.userMapper.selectByPrimaryKey(id);
-    }
-
-    @Transactional
-    public void deleteById(Long id){
-        this.userMapper.deleteByPrimaryKey(id);
-    }
-}
-</code></pre>
-<p>4.7.启动测试</p>
-<p>在UserController中添加测试方法，内容：</p>
-<pre><code>@RestController
-@RequestMapping(&quot;user&quot;)
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @GetMapping(&quot;{id}&quot;)
-    public User queryUserById(@PathVariable(&quot;id&quot;)Long id){
-        return this.userService.queryById(id);
-    }
-
-    @GetMapping(&quot;hello&quot;)
-    public String test(){
-        return &quot;hello ssm&quot;;
-    }
-}
-</code></pre>
-<p>我们启动项目，查看：</p>
-<p>4.8.完整项目结构</p>
-<p>完整的pom.xml：</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-
-    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-    &lt;groupId&gt;cn.itcast.user&lt;/groupId&gt;
-    &lt;artifactId&gt;itcast-user&lt;/artifactId&gt;
-    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-
-    &lt;parent&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-        &lt;version&gt;2.0.6.RELEASE&lt;/version&gt;
-    &lt;/parent&gt;
-
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;!--jdbc的启动器，默认使用HikariCP连接池--&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;!--不要忘记数据库驱动，因为springboot不知道我们使用的什么数据库，这里选择mysql--&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;mysql&lt;/groupId&gt;
-            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-
-        &lt;!--mybatis --&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
-            &lt;version&gt;1.3.2&lt;/version&gt;
-        &lt;/dependency&gt;
-
-        &lt;!-- 通用mapper --&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
-            &lt;artifactId&gt;mapper-spring-boot-starter&lt;/artifactId&gt;
-            &lt;version&gt;2.0.2&lt;/version&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-
-&lt;/project&gt;
-</code></pre>
-<p>完整的application.properties：</p>
-<pre><code>server.port=80
-
-logging.level.org.springframework=debug
-
-spring.datasource.url=jdbc:mysql://localhost:3306/heima
-spring.datasource.username=root
-spring.datasource.password=root
-
-# mybatis 别名扫描
-mybatis.type-aliases-package=cn.itcast.pojo
-# mapper.xml文件位置,如果没有映射文件，请注释掉
-# mybatis.mapper-locations=classpath:mappers/*.xml
-</code></pre>
-<p>5.Thymeleaf快速入门</p>
-<p>SpringBoot并不推荐使用jsp，但是支持一些模板引擎技术：</p>
-<p>以前大家用的比较多的是Freemarker，但是我们今天的主角是Thymeleaf！</p>
-<p>5.1.为什么是Thymeleaf？</p>
-<p>简单说， Thymeleaf 是一个跟 Velocity、FreeMarker 类似的模板引擎，它可以完全替代 JSP 。相较于其他的模板引擎，它有如下四个极吸引人的特点：</p>
-<ul>
-<li>动静结合：Thymeleaf 在有网络和无网络的环境下皆可运行，即它可以让美工在浏览器查看页面的静态效果，也可以让程序员在服务器查看带数据的动态页面效果。这是由于它支持 html 原型，然后在 html 标签里增加额外的属性来达到模板+数据的展示方式。浏览器解释 html 时会忽略未定义的标签属性，所以 thymeleaf 的模板可以静态地运行；当有数据返回到页面时，Thymeleaf 标签会动态地替换掉静态内容，使页面动态显示。</li>
-<li>开箱即用：它提供标准和spring标准两种方言，可以直接套用模板实现JSTL、 OGNL表达式效果，避免每天套模板、改jstl、改标签的困扰。同时开发人员也可以扩展和创建自定义的方言。</li>
-<li>多方言支持：Thymeleaf 提供spring标准方言和一个与 SpringMVC 完美集成的可选模块，可以快速的实现表单绑定、属性编辑器、国际化等功能。</li>
-<li>与SpringBoot完美整合，SpringBoot提供了Thymeleaf的默认配置，并且为Thymeleaf设置了视图解析器，我们可以像以前操作jsp一样来操作Thymeleaf。代码几乎没有任何区别，就是在模板语法上有区别。</li>
-</ul>
-<p>接下来，我们就通过入门案例来体会Thymeleaf的魅力：</p>
-<p>5.2.提供数据</p>
-<p>编写一个controller方法，返回一些用户数据，放入模型中，将来在页面渲染</p>
-<pre><code>@GetMapping(&quot;/all&quot;)
-public String all(ModelMap model) {
-    // 查询用户
-    List&lt;User&gt; users = this.userService.queryAll();
-    // 放入模型
-    model.addAttribute(&quot;users&quot;, users);
-    // 返回模板名称（就是classpath:/templates/目录下的html文件名）
-    return &quot;users&quot;;
-}
-</code></pre>
-<p>5.3.引入启动器</p>
-<p>直接引入启动器：</p>
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
-&lt;/dependency&gt;
-</code></pre>
-<p>SpringBoot会自动为Thymeleaf注册一个视图解析器：</p>
-<p>与解析JSP的InternalViewResolver类似，Thymeleaf也会根据前缀和后缀来确定模板文件的位置：</p>
-<ul>
-<li>默认前缀：classpath:/templates/</li>
-<li>默认后缀：.html</li>
-</ul>
-<p>所以如果我们返回视图：users，会指向到 classpath:/templates/users.html</p>
-<p>一般我们无需进行修改，默认即可。</p>
-<p>5.4.静态页面</p>
-<p>根据上面的文档介绍，模板默认放在classpath下的templates文件夹，我们新建一个html文件放入其中：</p>
-<p>编写html模板，渲染模型中的数据：</p>
-<p>注意，把html 的名称空间，改成：xmlns:th=&quot;http://www.thymeleaf.org&quot; 会有语法提示</p>
-<pre><code>&lt;!DOCTYPE html&gt;
-&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
-&lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;title&gt;首页&lt;/title&gt;
-    &lt;style type=&quot;text/css&quot;&gt;
-        table {border-collapse: collapse; font-size: 14px; width: 80%; margin: auto}
-        table, th, td {border: 1px solid darkslategray;padding: 10px}
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div style=&quot;text-align: center&quot;&gt;
-    &lt;span style=&quot;color: darkslategray; font-size: 30px&quot;&gt;欢迎光临！&lt;/span&gt;
-    &lt;hr/&gt;
-    &lt;table class=&quot;list&quot;&gt;
-        &lt;tr&gt;
-            &lt;th&gt;id&lt;/th&gt;
-            &lt;th&gt;姓名&lt;/th&gt;
-            &lt;th&gt;用户名&lt;/th&gt;
-            &lt;th&gt;年龄&lt;/th&gt;
-            &lt;th&gt;性别&lt;/th&gt;
-            &lt;th&gt;生日&lt;/th&gt;
-        &lt;/tr&gt;
-        &lt;tr th:each=&quot;user : ${users}&quot;&gt;
-            &lt;td th:text=&quot;${user.id}&quot;&gt;1&lt;/td&gt;
-            &lt;td th:text=&quot;${user.name}&quot;&gt;张三&lt;/td&gt;
-            &lt;td th:text=&quot;${user.userName}&quot;&gt;zhangsan&lt;/td&gt;
-            &lt;td th:text=&quot;${user.age}&quot;&gt;20&lt;/td&gt;
-            &lt;td th:text=&quot;${user.sex}&quot;&gt;男&lt;/td&gt;
-            &lt;td th:text=&quot;${user.birthday}&quot;&gt;1980-02-30&lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/table&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<p>我们看到这里使用了以下语法：</p>
-<ul>
-<li>${} ：这个类似与el表达式，但其实是ognl的语法，比el表达式更加强大</li>
-<li>th-指令：th-是利用了Html5中的自定义属性来实现的。如果不支持H5，可以用data-th-来代替
-<ul>
-<li>th:each：类似于c:foreach  遍历集合，但是语法更加简洁</li>
-<li>th:text：声明标签中的文本
-<ul>
-<li>例如<td th-text='${user.id}'>1</td>，如果user.id有值，会覆盖默认的1</li>
-<li>如果没有值，则会显示td中默认的1。这正是thymeleaf能够动静结合的原因，模板解析失败不影响页面的显示效果，因为会显示默认值！</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>5.5.测试</p>
-<p>接下来，我们打开页面测试一下：</p>
-<p>5.6.模板缓存</p>
-<p>Thymeleaf会在第一次对模板解析之后进行缓存，极大的提高了并发处理能力。但是这给我们开发带来了不便，修改页面后并不会立刻看到效果，我们开发阶段可以关掉缓存使用：</p>
-<pre><code># 开发阶段关闭thymeleaf的模板缓存
-spring.thymeleaf.cache=false
-</code></pre>
-<p>注意：</p>
-<pre><code>在Idea中，我们需要在修改页面后按快捷键：`Ctrl + Shift + F9` 对项目进行rebuild才可以。
-
-eclipse中没有测试过。
-</code></pre>
-<p>我们可以修改页面，测试一下。</p>
 ]]></content>
     </entry>
 </feed>

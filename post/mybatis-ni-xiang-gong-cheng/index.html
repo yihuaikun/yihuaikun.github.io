@@ -1,0 +1,345 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mybatis逆向工程 | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576153653580">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576153653580" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Mybatis逆向工程
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="mybatis逆向工程">Mybatis逆向工程</h1>
+<p>mybatis需要程序员自己编写sql语句，mybatis官方提供逆向工程，可以针对单表自动生成mybatis执行所需要的代码（mapper.java、mapper.xml、pojo…），可以让程序员将更多的精力放在繁杂的业务逻辑上。</p>
+<pre><code>    企业实际开发中，常用的逆向工程方式：由数据库的表生成java代码。
+
+    之所以强调单表两个字，是因为Mybatis逆向工程生成的Mapper所进行的操作都是针对单表的，也许你可能会觉得那这就有点鸡肋了，但是在大型项目中，很少有复杂的多表关联查询，所以作用还是很大的。
+</code></pre>
+<p>在IDEA中的应用</p>
+<h2 id="1加依赖坐标">1.加依赖(坐标)</h2>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;8.0.17&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.3.7&lt;/version&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+<h2 id="yml中的配置">yml中的配置</h2>
+<pre><code class="language-yml">spring:
+  application:
+    name: security-unit03
+  datasource:
+    name: root
+    url: jdbc:mysql://localhost:3306/day05?characterEncoding=utf8&amp;serverTimezone=UTC
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath*:/mappers/*.xml
+
+</code></pre>
+<h2 id="把配置文件放在sources下">把配置文件放在sources下</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE generatorConfiguration
+        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
+
+&lt;generatorConfiguration&gt;
+
+    &lt;!-- 引入第三方依赖包 --&gt;
+
+    		&lt;classPathEntry location=&quot;D:\JAVAWEB\mybatis逆向工程\mybatis_genarator\lib\mysql-connector-java-8.0.12.jar&quot; /&gt;
+
+
+    &lt;!--
+     targetRuntime常用值:
+        MyBatis3Simple(只生成基本的CRUD和少量的动态SQL)
+        MyBatis3(生成完整的CRUD，包含CriteriaAPI方法Example后缀的方法)
+     --&gt;
+    &lt;context id=&quot;localhost_mysql&quot; targetRuntime=&quot;MyBatis3&quot;&gt;
+
+        &lt;!-- 不生成注释 --&gt;
+        &lt;commentGenerator&gt;&lt;!--注解编辑器--&gt;
+            &lt;property name=&quot;suppressAllComments&quot; value=&quot;true&quot; /&gt;
+        &lt;/commentGenerator&gt;
+
+        &lt;jdbcConnection driverClass=&quot;com.mysql.cj.jdbc.Driver&quot;
+                        connectionURL=&quot;jdbc:mysql://localhost:3306/day05?characterEncoding=utf8&amp;amp;serverTimezone=UTC&quot;
+                        userId=&quot;root&quot;
+                        password=&quot;123456&quot;&gt;
+            &lt;property name=&quot;nullCatalogMeansCurrent&quot; value=&quot;true&quot;/&gt;
+        &lt;/jdbcConnection&gt;
+
+        &lt;javaTypeResolver &gt;
+            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot; /&gt;
+        &lt;/javaTypeResolver&gt;
+
+        &lt;!-- 生成实体类 --&gt;
+        &lt;javaModelGenerator targetPackage=&quot;com.security.lession.pojo&quot; targetProject=&quot;../security-unit04/src/main/java&quot;&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot; /&gt;
+        &lt;/javaModelGenerator&gt;
+
+        &lt;!-- 生成XML Mapper --&gt;
+        &lt;sqlMapGenerator targetPackage=&quot;src/main/resources/mappers&quot; targetProject=&quot;.&quot;&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+        &lt;/sqlMapGenerator&gt;
+
+        &lt;!-- 生成Mapper接口 --&gt;
+        &lt;!-- 生成的Mapper类型：ANNOTATEDMAPPER（注解）、MIXEDMAPPER（混合）、XMLMAPPER（XML） --&gt;
+        &lt;javaClientGenerator type=&quot;XMLMAPPER&quot; targetPackage=&quot;com.security.lession.mapper&quot;  targetProject=&quot;src/main/java&quot;&gt;
+            &lt;!-- 是否将数据库中的schema作为包名的一部分，默认就是false --&gt;
+            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
+        &lt;/javaClientGenerator&gt;
+
+
+        &lt;!--&lt;table schema=&quot;lanou&quot; tableName=&quot;message&quot; domainObjectName=&quot;Message&quot;&gt;
+            &amp;lt;!&amp;ndash; 是否用数据库中的字段名作为POJO属性名(不自动转小驼峰)，默认值是false &amp;ndash;&amp;gt;
+
+            &amp;lt;!&amp;ndash;
+            &lt;property name=&quot;useActualColumnNames&quot; value=&quot;true&quot;/&gt;
+            &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+
+            &amp;lt;!&amp;ndash; 此标签用于在生成代码时忽略数据库中的某个字段 &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash;
+            &lt;ignoreColumn column=&quot;FRED&quot; /&gt;
+            &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash; 通过此标签重写mybatis从数据库读到的元信息，自定义列相关配置，包括(名称、类型) &amp;ndash;&amp;gt;
+            &amp;lt;!&amp;ndash;
+            &lt;columnOverride column=&quot;aa&quot; property=&quot;sname&quot; /&gt;
+            &amp;ndash;&amp;gt;
+
+            &lt;/table&gt;--&gt;
+
+        &lt;table schema=&quot;&quot; tableName=&quot;student&quot;&gt;
+            &lt;!-- 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 --&gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+&lt;!--        &lt;table schema=&quot;&quot; tableName=&quot;tb_content_category&quot;&gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_cat&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_desc&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_param&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_param_item&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_order&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_order_item&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_order_shipping&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;
+        &lt;table schema=&quot;&quot; tableName=&quot;tb_user&quot; &gt;
+            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
+            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
+        &lt;/table&gt;--&gt;
+    &lt;/context&gt;
+&lt;/generatorConfiguration&gt;
+</code></pre>
+<h2 id="出现的问题">出现的问题</h2>
+<p>1.用完之后建议注掉插件</p>
+<p>2.找不到数据库驱动,在上面的配置文件中加上</p>
+<pre><code class="language-xml">    		&lt;classPathEntry location=&quot;D:\JAVAWEB\mybatis逆向工程\mybatis_genarator\lib\mysql-connector-java-8.0.12.jar&quot; /&gt;
+
+
+</code></pre>
+<p>上面的数据库的jar包是硬盘上的位置即可,没有的话可以去下载个,一般本地仓库都有.</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#mybatis%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">Mybatis逆向工程</a>
+<ul>
+<li><a href="#1%E5%8A%A0%E4%BE%9D%E8%B5%96%E5%9D%90%E6%A0%87">1.加依赖(坐标)</a></li>
+<li><a href="#yml%E4%B8%AD%E7%9A%84%E9%85%8D%E7%BD%AE">yml中的配置</a></li>
+<li><a href="#%E6%8A%8A%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%94%BE%E5%9C%A8sources%E4%B8%8B">把配置文件放在sources下</a></li>
+<li><a href="#%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98">出现的问题</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/nginx-fan-xiang-dai-li">
+              <h3 class="post-title">
+                 nginx反向代理
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
