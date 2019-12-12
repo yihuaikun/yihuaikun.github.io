@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yihuaikun.github.io</id>
     <title>向java工程师迈进</title>
-    <updated>2019-12-12T13:03:34.990Z</updated>
+    <updated>2019-12-12T13:06:31.264Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yihuaikun.github.io"/>
     <link rel="self" href="https://yihuaikun.github.io/atom.xml"/>
@@ -11,20 +11,11 @@
     <icon>https://yihuaikun.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, 向java工程师迈进</rights>
     <entry>
-        <title type="html"><![CDATA[接入阿里大于短信服务]]></title>
-        <id>https://yihuaikun.github.io/post/jie-ru-a-li-da-yu-duan-xin-fu-wu</id>
-        <link href="https://yihuaikun.github.io/post/jie-ru-a-li-da-yu-duan-xin-fu-wu">
-        </link>
-        <updated>2019-12-12T12:35:11.000Z</updated>
-        <content type="html"><![CDATA[<p><a href="https://blog.csdn.net/cool_summer_moon/article/details/53648093">阿里云大于短信服务开发</a></p>
-]]></content>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Solr]]></title>
         <id>https://yihuaikun.github.io/post/solr</id>
         <link href="https://yihuaikun.github.io/post/solr">
         </link>
-        <updated>2019-12-12T12:30:07.000Z</updated>
+        <updated>2019-12-16T05:39:07.000Z</updated>
         <content type="html"><![CDATA[<h1 id="1-solr入门">1. Solr入门</h1>
 <h2 id="11-solr下载安装">1.1. Solr下载安装</h2>
 <p>官方下载地址：https://archive.apache.org/dist/lucene/solr/</p>
@@ -509,6 +500,15 @@ public class SolrService {
 ]]></content>
     </entry>
     <entry>
+        <title type="html"><![CDATA[接入阿里大于短信服务]]></title>
+        <id>https://yihuaikun.github.io/post/jie-ru-a-li-da-yu-duan-xin-fu-wu</id>
+        <link href="https://yihuaikun.github.io/post/jie-ru-a-li-da-yu-duan-xin-fu-wu">
+        </link>
+        <updated>2019-12-12T12:35:11.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://blog.csdn.net/cool_summer_moon/article/details/53648093">阿里云大于短信服务开发</a></p>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[MongoDB入门]]></title>
         <id>https://yihuaikun.github.io/post/mongodb-ru-men</id>
         <link href="https://yihuaikun.github.io/post/mongodb-ru-men">
@@ -641,522 +641,6 @@ db.createUser({user:&quot;readuser&quot;,pwd:&quot;123&quot;,roles:[{role:&quot;
 db.auth(&quot;readuser&quot;,&quot;123&quot;)
 </code></pre>
 <p>做完这两步之后再执行查询操作就没有任何问题了，但是此时如果执行插入操作会提示没有权限，那我们可以创建一个有读写功能的用户执行相应的操作，这里就不再赘述。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[问题!!]]></title>
-        <id>https://yihuaikun.github.io/post/wen-ti</id>
-        <link href="https://yihuaikun.github.io/post/wen-ti">
-        </link>
-        <updated>2019-12-12T12:27:57.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="spring-cloud之eureka和ribbon使用问题">spring-cloud之eureka和ribbon使用问题</h1>
-<h2 id="提供服务层端">提供服务层端</h2>
-<pre><code class="language-java">@Service
-@Slf4j
-public class ContentServiceImpl implements ContentService {
-    @Autowired
-    private TbContentMapper tbContentMapper;
-    @Autowired
-    private CacheManagerService cacheManagerService;
-    @Autowired
-    private RedisTemplate redisTemplate;
-    @Override
-    public TaotaoResult getContent(Long cId) {
-        List&lt;TbContent&gt; tbContents = cacheManagerService.getTbContentFromCache(cId);
-        /**
-         * 如果缓存中没有数据就从数据库中查
-         * 查完之后将数据放入缓存,以便下次查找
-         */
-        if(tbContents == null){
-            TbContentExample tbContentExample = new TbContentExample();
-            TbContentExample.Criteria criteria = tbContentExample.createCriteria();
-            criteria.andCategoryIdEqualTo(cId);
-            tbContents = tbContentMapper.selectByExampleWithBLOBs(tbContentExample);
-            /**
-             * 将数据放入缓存
-             */
-            cacheManagerService.pushTbContent2Cache(cId,tbContents);
-        }
-        for(TbContent tbContent : tbContents){
-            System.out.println(tbContent.toString());
-        }
-        return TaotaoResult.ok(tbContents);
-    }
-}
-
-</code></pre>
-<p>上面是提供服务的服务层</p>
-<p>下面是提供服务的web控制层</p>
-<pre><code class="language-java">@RestController
-public class ContentController {
-    @Autowired
-    private ContentService  contentService;
-    @GetMapping(&quot;/content/{cId}&quot;)
-    public TaotaoResult getContent(@PathVariable Long cId){
-        TaotaoResult taotaoResult = contentService.getContent(cId);
-        return taotaoResult;
-    }
-}
-</code></pre>
-<p>我们把返回的结果封装在一个对象中,然后TaotaoResult的data字段我们在服务层用list存进去</p>
-<h2 id="消费端">消费端</h2>
-<pre><code class="language-java">@Service
-@PropertySource(&quot;classpath:resources.properties&quot;)
-public class AdServiceImpl implements AdService {
-    /**
-     * '
-     * ribbon的方式
-     */
-    @Autowired
-    private RestTemplate restTemplate;
-    @Value(&quot;${INDEX_ADI_URL}&quot;)
-    private String INDEX_ADI_URL;
-    @Override
-    public String getAdItemList() {
-        //调用服务层的查询打广告的数据
-        //发起http的Get请求
-//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
-        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
-//        System.out.println(taotaoResult.toString());
-        String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
-        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);
-        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
-        for (TbContent tbContent : contentList) {
-            ADItem adItem = new ADItem();
-            adItem.setHeight(240);
-            adItem.setWidth(670);
-            adItem.setSrc(tbContent.getPic());
-            adItem.setHeightB(240);
-            adItem.setWidthB(550);
-            adItem.setSrcB(tbContent.getPic2());
-            adItem.setSrcB(tbContent.getPic2());
-            adItem.setAlt(tbContent.getTitleDesc());
-            adItem.setHref(tbContent.getUrl());
-            adItemList.add(adItem);
-        }
-        return JsonUtils.objectToJson(adItemList);
-    }
-}
-</code></pre>
-<p>返回来的TaotaoResult的data字段还是ArrayList类型,但是ArrayLIst里面的每个是以LinkedhashMap存储的,就像下面这样拆分</p>
-<pre><code class="language-java">		ArrayList arrayList = new ArrayList();
-        LinkedHashMap map = new LinkedHashMap();
-        map.put(&quot;id&quot;,101);
-        map.put(&quot;name&quot;,&quot;张三&quot;);
-        map.put(&quot;age&quot;,24);
-        LinkedHashMap map1 = new LinkedHashMap();
-        map1.put(&quot;id&quot;,102);
-        map1.put(&quot;name&quot;,&quot;张三&quot;);
-        map1.put(&quot;age&quot;,2);
-        arrayList.add(map);
-        arrayList.add(map1);
-        System.out.println(arrayList);
-</code></pre>
-<p>所以直接用会报类型转换异常:LinkedHashMap  不能转换成某一个bean对象</p>
-<p>正确的写法是</p>
-<pre><code class="language-java">@Service
-@PropertySource(&quot;classpath:resources.properties&quot;)
-public class AdServiceImpl implements AdService {
-    /**
-     * '
-     * ribbon的方式
-     */
-    @Autowired
-    private RestTemplate restTemplate;
-    @Value(&quot;${INDEX_ADI_URL}&quot;)
-    private String INDEX_ADI_URL;
-    @Override
-    public String getAdItemList() {
-        //调用服务层的查询打广告的数据
-        //发起http的Get请求
-//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
-//        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
-//        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, String.class);
-        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider&quot; + INDEX_ADI_URL, String.class);
-        System.out.println(result);
-        //        System.out.println(taotaoResult.toString());
-        TaotaoResult taotaoResult = TaotaoResult.formatToList(result, TbContent.class);
-//        System.out.println(taotaoResult.getData().getClass());
-        List&lt;TbContent&gt; contentList = (List&lt;TbContent&gt;) taotaoResult.getData();
-       /* String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
-        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);*/
-        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
-        for (TbContent tbContent : contentList) {
-            ADItem adItem = new ADItem();
-            adItem.setHeight(240);
-            adItem.setWidth(670);
-            adItem.setSrc(tbContent.getPic());
-            adItem.setHeightB(240);
-            adItem.setWidthB(550);
-            adItem.setSrcB(tbContent.getPic2());
-            adItem.setSrcB(tbContent.getPic2());
-            adItem.setAlt(tbContent.getTitleDesc());
-            adItem.setHref(tbContent.getUrl());
-            adItemList.add(adItem);
-        }
-        return JsonUtils.objectToJson(adItemList);
-    }
-}
-
-</code></pre>
-<p><strong>直接把上面的data数据转换成json串,然后再转bean对象,还有就是服务不要写端口号,注册中心有端口号,不然没办法做客户端的负载均衡.</strong></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Mybatis逆向工程]]></title>
-        <id>https://yihuaikun.github.io/post/mybatis-ni-xiang-gong-cheng</id>
-        <link href="https://yihuaikun.github.io/post/mybatis-ni-xiang-gong-cheng">
-        </link>
-        <updated>2019-12-12T12:27:22.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="mybatis逆向工程">Mybatis逆向工程</h1>
-<p>mybatis需要程序员自己编写sql语句，mybatis官方提供逆向工程，可以针对单表自动生成mybatis执行所需要的代码（mapper.java、mapper.xml、pojo…），可以让程序员将更多的精力放在繁杂的业务逻辑上。</p>
-<pre><code>    企业实际开发中，常用的逆向工程方式：由数据库的表生成java代码。
-
-    之所以强调单表两个字，是因为Mybatis逆向工程生成的Mapper所进行的操作都是针对单表的，也许你可能会觉得那这就有点鸡肋了，但是在大型项目中，很少有复杂的多表关联查询，所以作用还是很大的。
-</code></pre>
-<p>在IDEA中的应用</p>
-<h2 id="1加依赖坐标">1.加依赖(坐标)</h2>
-<pre><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-jdbc&lt;/artifactId&gt;
-&lt;/dependency&gt;
-
-&lt;dependency&gt;
-    &lt;groupId&gt;mysql&lt;/groupId&gt;
-    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
-    &lt;version&gt;8.0.17&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;build&gt;
-    &lt;plugins&gt;
-        &lt;plugin&gt;
-            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
-            &lt;artifactId&gt;mybatis-generator-maven-plugin&lt;/artifactId&gt;
-            &lt;version&gt;1.3.7&lt;/version&gt;
-        &lt;/plugin&gt;
-    &lt;/plugins&gt;
-&lt;/build&gt;
-</code></pre>
-<h2 id="yml中的配置">yml中的配置</h2>
-<pre><code class="language-yml">spring:
-  application:
-    name: security-unit03
-  datasource:
-    name: root
-    url: jdbc:mysql://localhost:3306/day05?characterEncoding=utf8&amp;serverTimezone=UTC
-    password: 123456
-    driver-class-name: com.mysql.jdbc.Driver
-
-mybatis:
-  mapper-locations: classpath*:/mappers/*.xml
-
-</code></pre>
-<h2 id="把配置文件放在sources下">把配置文件放在sources下</h2>
-<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE generatorConfiguration
-        PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;
-        &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;
-
-&lt;generatorConfiguration&gt;
-
-    &lt;!-- 引入第三方依赖包 --&gt;
-
-    		&lt;classPathEntry location=&quot;D:\JAVAWEB\mybatis逆向工程\mybatis_genarator\lib\mysql-connector-java-8.0.12.jar&quot; /&gt;
-
-
-    &lt;!--
-     targetRuntime常用值:
-        MyBatis3Simple(只生成基本的CRUD和少量的动态SQL)
-        MyBatis3(生成完整的CRUD，包含CriteriaAPI方法Example后缀的方法)
-     --&gt;
-    &lt;context id=&quot;localhost_mysql&quot; targetRuntime=&quot;MyBatis3&quot;&gt;
-
-        &lt;!-- 不生成注释 --&gt;
-        &lt;commentGenerator&gt;&lt;!--注解编辑器--&gt;
-            &lt;property name=&quot;suppressAllComments&quot; value=&quot;true&quot; /&gt;
-        &lt;/commentGenerator&gt;
-
-        &lt;jdbcConnection driverClass=&quot;com.mysql.cj.jdbc.Driver&quot;
-                        connectionURL=&quot;jdbc:mysql://localhost:3306/day05?characterEncoding=utf8&amp;amp;serverTimezone=UTC&quot;
-                        userId=&quot;root&quot;
-                        password=&quot;123456&quot;&gt;
-            &lt;property name=&quot;nullCatalogMeansCurrent&quot; value=&quot;true&quot;/&gt;
-        &lt;/jdbcConnection&gt;
-
-        &lt;javaTypeResolver &gt;
-            &lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot; /&gt;
-        &lt;/javaTypeResolver&gt;
-
-        &lt;!-- 生成实体类 --&gt;
-        &lt;javaModelGenerator targetPackage=&quot;com.security.lession.pojo&quot; targetProject=&quot;../security-unit04/src/main/java&quot;&gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
-            &lt;property name=&quot;trimStrings&quot; value=&quot;true&quot; /&gt;
-        &lt;/javaModelGenerator&gt;
-
-        &lt;!-- 生成XML Mapper --&gt;
-        &lt;sqlMapGenerator targetPackage=&quot;src/main/resources/mappers&quot; targetProject=&quot;.&quot;&gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
-        &lt;/sqlMapGenerator&gt;
-
-        &lt;!-- 生成Mapper接口 --&gt;
-        &lt;!-- 生成的Mapper类型：ANNOTATEDMAPPER（注解）、MIXEDMAPPER（混合）、XMLMAPPER（XML） --&gt;
-        &lt;javaClientGenerator type=&quot;XMLMAPPER&quot; targetPackage=&quot;com.security.lession.mapper&quot;  targetProject=&quot;src/main/java&quot;&gt;
-            &lt;!-- 是否将数据库中的schema作为包名的一部分，默认就是false --&gt;
-            &lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;
-        &lt;/javaClientGenerator&gt;
-
-
-        &lt;!--&lt;table schema=&quot;lanou&quot; tableName=&quot;message&quot; domainObjectName=&quot;Message&quot;&gt;
-            &amp;lt;!&amp;ndash; 是否用数据库中的字段名作为POJO属性名(不自动转小驼峰)，默认值是false &amp;ndash;&amp;gt;
-
-            &amp;lt;!&amp;ndash;
-            &lt;property name=&quot;useActualColumnNames&quot; value=&quot;true&quot;/&gt;
-            &amp;ndash;&amp;gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-
-            &amp;lt;!&amp;ndash; 此标签用于在生成代码时忽略数据库中的某个字段 &amp;ndash;&amp;gt;
-            &amp;lt;!&amp;ndash;
-            &lt;ignoreColumn column=&quot;FRED&quot; /&gt;
-            &amp;ndash;&amp;gt;
-            &amp;lt;!&amp;ndash; 通过此标签重写mybatis从数据库读到的元信息，自定义列相关配置，包括(名称、类型) &amp;ndash;&amp;gt;
-            &amp;lt;!&amp;ndash;
-            &lt;columnOverride column=&quot;aa&quot; property=&quot;sname&quot; /&gt;
-            &amp;ndash;&amp;gt;
-
-            &lt;/table&gt;--&gt;
-
-        &lt;table schema=&quot;&quot; tableName=&quot;student&quot;&gt;
-            &lt;!-- 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 --&gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-&lt;!--        &lt;table schema=&quot;&quot; tableName=&quot;tb_content_category&quot;&gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_item&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_cat&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_desc&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_param&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_item_param_item&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_order&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_order_item&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_order_shipping&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;
-        &lt;table schema=&quot;&quot; tableName=&quot;tb_user&quot; &gt;
-            &amp;lt;!&amp;ndash; 生成代码时支持获取插入数据后自增的ID， 需要通过sqlStatement配置数据库类型。 &amp;ndash;&amp;gt;
-            &lt;generatedKey column=&quot;id&quot; sqlStatement=&quot;mysql&quot; identity=&quot;true&quot; /&gt;
-        &lt;/table&gt;--&gt;
-    &lt;/context&gt;
-&lt;/generatorConfiguration&gt;
-</code></pre>
-<h2 id="出现的问题">出现的问题</h2>
-<p>1.用完之后建议注掉插件</p>
-<p>2.找不到数据库驱动,在上面的配置文件中加上</p>
-<pre><code class="language-xml">    		&lt;classPathEntry location=&quot;D:\JAVAWEB\mybatis逆向工程\mybatis_genarator\lib\mysql-connector-java-8.0.12.jar&quot; /&gt;
-
-
-</code></pre>
-<p>上面的数据库的jar包是硬盘上的位置即可,没有的话可以去下载个,一般本地仓库都有.</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[nginx]]></title>
-        <id>https://yihuaikun.github.io/post/nginx</id>
-        <link href="https://yihuaikun.github.io/post/nginx">
-        </link>
-        <updated>2019-12-12T12:25:49.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="nginx学习">nginx学习</h1>
-<h2 id="nginx安装">nginx安装</h2>
-<p>nginx是C语言开发，建议在linux上运行，本教程使用Centos6.5作为安装环境。</p>
-<p>n  gcc</p>
-<p>​         安装nginx需要先将官网下载的源码进行编译，编译依赖gcc环境，如果没有gcc环境，需要安装gcc：yum install gcc-c++</p>
-<p>n  PCRE</p>
-<p>​         PCRE(Perl Compatible Regular Expressions)是一个Perl库，包括 perl 兼容的正则表达式库。nginx的http模块使用pcre来解析正则表达式，所以需要在linux上安装pcre库。</p>
-<p><strong>yum install -y pcre pcre-devel</strong></p>
-<p>注：pcre-devel是使用pcre开发的一个二次开发库。nginx也需要此库。</p>
-<p>n  zlib</p>
-<p>​         zlib库提供了很多种压缩和解压缩的方式，nginx使用zlib对http包的内容进行gzip，所以需要在linux上安装zlib库。</p>
-<p><strong>yum install -y zlib zlib-devel</strong></p>
-<p>n  openssl</p>
-<p>​         OpenSSL 是一个强大的安全套接字层密码库，囊括主要的密码算法、常用的密钥和证书封装管理功能及SSL协议，并提供丰富的应用程序供测试或其它目的使用。</p>
-<p>​         nginx不仅支持http协议，还支持https（即在ssl协议上传输http），所以需要在linux安装openssl库。</p>
-<p><strong>yum install -y openssl openssl-devel</strong></p>
-<h3 id="1-编译安装">1 .编译安装</h3>
-<p>将nginx-1.8.0.tar.gz拷贝至linux服务器。</p>
-<p>解压：</p>
-<p>tar -zxvf nginx-1.8.0.tar.gz</p>
-<p>cd nginx-1.8.0</p>
-<p>1、  configure</p>
-<p>./configure --help查询详细参数（参考本教程附录部分：nginx编译参数）</p>
-<pre><code class="language-nginx">./configure \
---prefix=/usr/local/nginx \
---pid-path=/var/run/nginx/nginx.pid \
---lock-path=/var/lock/nginx.lock \
---error-log-path=/var/log/nginx/error.log \
---http-log-path=/var/log/nginx/access.log \
---with-http_gzip_static_module \
---http-client-body-temp-path=/var/temp/nginx/client \
---http-proxy-temp-path=/var/temp/nginx/proxy \
---http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
---http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
---http-scgi-temp-path=/var/temp/nginx/scgi
-
-</code></pre>
-<p><strong>注意：上边将临时文件目录指定为/var/temp/nginx</strong>**，需要在/var<strong>下创建temp及nginx目录</strong></p>
-<ol start="2">
-<li>编译安装</li>
-</ol>
-<pre><code class="language-linux">make
-
-make  install 
-</code></pre>
-<p>安装成功查看安装目录 ：</p>
-<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191126211843957.png" alt="在这里插入图片描述"></figure>
-<h1 id="3-启动nginx">3 启动nginx</h1>
-<p>cd /usr/local/nginx/sbin/</p>
-<p>./nginx</p>
-<p>查询nginx进程：<br>
-<img src="https://img-blog.csdnimg.cn/20191126212127870.jpg" alt="在这里插入图片描述"></p>
-<p>15098是nginx主进程的进程id，15099是nginx工作进程的进程id</p>
-<p><strong>注意：执行./nginx<strong><strong>启动nginx</strong></strong>，这里可以-c<strong><strong>指定加载的nginx</strong></strong>配置文件，如下：</strong></p>
-<p><strong>./nginx -c /usr/local/nginx/conf/nginx.conf</strong></p>
-<p><strong>如果不指定-c</strong>**，nginx<strong><strong>在启动时默认加载conf/nginx.conf</strong></strong>文件，此文件的地址也可以在编译安装nginx<strong><strong>时指定./configure</strong></strong>的参数（--conf-path=** <strong>指向配置文件（nginx.conf</strong>**））**</p>
-<h1 id="4-停止nginx">4 停止nginx</h1>
-<p>方式1，快速停止：</p>
-<p>cd /usr/local/nginx/sbin</p>
-<p>./nginx -s stop</p>
-<p>此方式相当于先查出nginx进程id再使用kill命令强制杀掉进程。</p>
-<p>方式2，完整停止(建议使用)：</p>
-<p>cd /usr/local/nginx/sbin</p>
-<p>./nginx -s quit</p>
-<p>此方式停止步骤是待nginx进程处理任务完毕进行停止。</p>
-<h1 id="5-重启nginx">5 重启nginx</h1>
-<p>方式1，先停止再启动（建议使用）：</p>
-<p>对nginx进行重启相当于先停止nginx再启动nginx，即先执行停止命令再执行启动命令。</p>
-<p>如下：</p>
-<p>./nginx -s quit</p>
-<p>./nginx</p>
-<p>方式2，重新加载配置文件：</p>
-<p>当nginx的配置文件nginx.conf修改后，要想让配置生效需要重启nginx，使用-s reload不用先停止nginx再启动nginx即可将配置信息在nginx中生效，如下：</p>
-<p>./nginx -s reload</p>
-<h1 id="6-测试">6 测试</h1>
-<p>nginx安装成功，启动nginx，即可访问虚拟机上的nginx：</p>
-<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191126212245196.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<p>到这说明nginx上安装成功。</p>
-<h1 id="7-开机自启动nginx">7 开机自启动nginx</h1>
-<h2 id="71-编写shell脚本">7.1 编写shell脚本</h2>
-<p>这里使用的是编写shell脚本的方式来处理</p>
-<p>vi /etc/init.d/nginx  (输入下面的代码)</p>
-<pre><code class="language-linux">#!/bin/bash
-# nginx Startup script for the Nginx HTTP Server
-# it is v.0.0.2 version.
-# chkconfig: - 85 15
-# description: Nginx is a high-performance web and proxy server.
-#              It has a lot of features, but it's not for everyone.
-# processname: nginx
-# pidfile: /var/run/nginx.pid
-# config: /usr/local/nginx/conf/nginx.conf
-nginxd=/usr/local/nginx/sbin/nginx
-nginx_config=/usr/local/nginx/conf/nginx.conf
-nginx_pid=/var/run/nginx.pid
-RETVAL=0
-prog=&quot;nginx&quot;
-# Source function library.
-. /etc/rc.d/init.d/functions
-# Source networking configuration.
-. /etc/sysconfig/network
-# Check that networking is up.
-[ ${NETWORKING} = &quot;no&quot; ] &amp;&amp; exit 0
-[ -x $nginxd ] || exit 0
-# Start nginx daemons functions.
-start() {
-if [ -e $nginx_pid ];then
-   echo &quot;nginx already running....&quot;
-   exit 1
-fi
-   echo -n $&quot;Starting $prog: &quot;
-   daemon $nginxd -c ${nginx_config}
-   RETVAL=$?
-   echo
-   [ $RETVAL = 0 ] &amp;&amp; touch /var/lock/subsys/nginx
-   return $RETVAL
-}
-# Stop nginx daemons functions.
-stop() {
-        echo -n $&quot;Stopping $prog: &quot;
-        killproc $nginxd
-        RETVAL=$?
-        echo
-        [ $RETVAL = 0 ] &amp;&amp; rm -f /var/lock/subsys/nginx /var/run/nginx.pid
-}
-# reload nginx service functions.
-reload() {
-    echo -n $&quot;Reloading $prog: &quot;
-    #kill -HUP `cat ${nginx_pid}`
-    killproc $nginxd -HUP
-    RETVAL=$?
-    echo
-}
-# See how we were called.
-case &quot;$1&quot; in
-start)
-        start
-        ;;
-stop)
-        stop
-        ;;
-reload)
-        reload
-        ;;
-restart)
-        stop
-        start
-        ;;
-status)
-        status $prog
-        RETVAL=$?
-        ;;
-*)
-        echo $&quot;Usage: $prog {start|stop|restart|reload|status|help}&quot;
-        exit 1
-esac
-exit $RETVAL
-
-</code></pre>
-<p>:wq  保存并退出</p>
-<h2 id="72-设置文件的访问权限">7.2 设置文件的访问权限</h2>
-<p>chmod a+x /etc/init.d/nginx   (a+x ==&gt; all user can execute  所有用户可执行)</p>
-<p>这样在控制台就很容易的操作nginx了：查看Nginx当前状态、启动Nginx、停止Nginx、重启Nginx…</p>
-<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191126212523315.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<p>如果修改了nginx的配置文件nginx.conf，也可以使用上面的命令重新加载新的配置文件并运行，可以将此命令加入到rc.local文件中，这样开机的时候nginx就默认启动了</p>
-<h2 id="73-加入到rclocal文件中">7.3 加入到rc.local文件中</h2>
-<p>vi /etc/rc.local</p>
-<p>加入一行  /etc/init.d/nginx start    保存并退出，下次重启会生效。</p>
 ]]></content>
     </entry>
     <entry>
@@ -1704,6 +1188,165 @@ class SpringbootRedisApplicationTests {
 <p>如果是修改防火墙规则，可以修改：/etc/sysconfig/iptables文件</p>
 <h1 id="8-系统添加缓存逻辑示例">8.   系统添加缓存逻辑示例</h1>
 <p>添加缓存逻辑的原则：缓存逻辑不能影响正常的业务逻辑执行。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[问题!!]]></title>
+        <id>https://yihuaikun.github.io/post/wen-ti</id>
+        <link href="https://yihuaikun.github.io/post/wen-ti">
+        </link>
+        <updated>2019-12-04T05:32:59.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="spring-cloud之eureka和ribbon使用问题">spring-cloud之eureka和ribbon使用问题</h1>
+<h2 id="提供服务层端">提供服务层端</h2>
+<pre><code class="language-java">@Service
+@Slf4j
+public class ContentServiceImpl implements ContentService {
+    @Autowired
+    private TbContentMapper tbContentMapper;
+    @Autowired
+    private CacheManagerService cacheManagerService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Override
+    public TaotaoResult getContent(Long cId) {
+        List&lt;TbContent&gt; tbContents = cacheManagerService.getTbContentFromCache(cId);
+        /**
+         * 如果缓存中没有数据就从数据库中查
+         * 查完之后将数据放入缓存,以便下次查找
+         */
+        if(tbContents == null){
+            TbContentExample tbContentExample = new TbContentExample();
+            TbContentExample.Criteria criteria = tbContentExample.createCriteria();
+            criteria.andCategoryIdEqualTo(cId);
+            tbContents = tbContentMapper.selectByExampleWithBLOBs(tbContentExample);
+            /**
+             * 将数据放入缓存
+             */
+            cacheManagerService.pushTbContent2Cache(cId,tbContents);
+        }
+        for(TbContent tbContent : tbContents){
+            System.out.println(tbContent.toString());
+        }
+        return TaotaoResult.ok(tbContents);
+    }
+}
+
+</code></pre>
+<p>上面是提供服务的服务层</p>
+<p>下面是提供服务的web控制层</p>
+<pre><code class="language-java">@RestController
+public class ContentController {
+    @Autowired
+    private ContentService  contentService;
+    @GetMapping(&quot;/content/{cId}&quot;)
+    public TaotaoResult getContent(@PathVariable Long cId){
+        TaotaoResult taotaoResult = contentService.getContent(cId);
+        return taotaoResult;
+    }
+}
+</code></pre>
+<p>我们把返回的结果封装在一个对象中,然后TaotaoResult的data字段我们在服务层用list存进去</p>
+<h2 id="消费端">消费端</h2>
+<pre><code class="language-java">@Service
+@PropertySource(&quot;classpath:resources.properties&quot;)
+public class AdServiceImpl implements AdService {
+    /**
+     * '
+     * ribbon的方式
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value(&quot;${INDEX_ADI_URL}&quot;)
+    private String INDEX_ADI_URL;
+    @Override
+    public String getAdItemList() {
+        //调用服务层的查询打广告的数据
+        //发起http的Get请求
+//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
+        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
+//        System.out.println(taotaoResult.toString());
+        String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
+        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);
+        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
+        for (TbContent tbContent : contentList) {
+            ADItem adItem = new ADItem();
+            adItem.setHeight(240);
+            adItem.setWidth(670);
+            adItem.setSrc(tbContent.getPic());
+            adItem.setHeightB(240);
+            adItem.setWidthB(550);
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setAlt(tbContent.getTitleDesc());
+            adItem.setHref(tbContent.getUrl());
+            adItemList.add(adItem);
+        }
+        return JsonUtils.objectToJson(adItemList);
+    }
+}
+</code></pre>
+<p>返回来的TaotaoResult的data字段还是ArrayList类型,但是ArrayLIst里面的每个是以LinkedhashMap存储的,就像下面这样拆分</p>
+<pre><code class="language-java">		ArrayList arrayList = new ArrayList();
+        LinkedHashMap map = new LinkedHashMap();
+        map.put(&quot;id&quot;,101);
+        map.put(&quot;name&quot;,&quot;张三&quot;);
+        map.put(&quot;age&quot;,24);
+        LinkedHashMap map1 = new LinkedHashMap();
+        map1.put(&quot;id&quot;,102);
+        map1.put(&quot;name&quot;,&quot;张三&quot;);
+        map1.put(&quot;age&quot;,2);
+        arrayList.add(map);
+        arrayList.add(map1);
+        System.out.println(arrayList);
+</code></pre>
+<p>所以直接用会报类型转换异常:LinkedHashMap  不能转换成某一个bean对象</p>
+<p>正确的写法是</p>
+<pre><code class="language-java">@Service
+@PropertySource(&quot;classpath:resources.properties&quot;)
+public class AdServiceImpl implements AdService {
+    /**
+     * '
+     * ribbon的方式
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value(&quot;${INDEX_ADI_URL}&quot;)
+    private String INDEX_ADI_URL;
+    @Override
+    public String getAdItemList() {
+        //调用服务层的查询打广告的数据
+        //发起http的Get请求
+//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
+//        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
+//        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, String.class);
+        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider&quot; + INDEX_ADI_URL, String.class);
+        System.out.println(result);
+        //        System.out.println(taotaoResult.toString());
+        TaotaoResult taotaoResult = TaotaoResult.formatToList(result, TbContent.class);
+//        System.out.println(taotaoResult.getData().getClass());
+        List&lt;TbContent&gt; contentList = (List&lt;TbContent&gt;) taotaoResult.getData();
+       /* String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
+        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);*/
+        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
+        for (TbContent tbContent : contentList) {
+            ADItem adItem = new ADItem();
+            adItem.setHeight(240);
+            adItem.setWidth(670);
+            adItem.setSrc(tbContent.getPic());
+            adItem.setHeightB(240);
+            adItem.setWidthB(550);
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setAlt(tbContent.getTitleDesc());
+            adItem.setHref(tbContent.getUrl());
+            adItemList.add(adItem);
+        }
+        return JsonUtils.objectToJson(adItemList);
+    }
+}
+
+</code></pre>
+<p><strong>直接把上面的data数据转换成json串,然后再转bean对象,还有就是服务不要写端口号,注册中心有端口号,不然没办法做客户端的负载均衡.</strong></p>
 ]]></content>
     </entry>
     <entry>
@@ -3346,6 +2989,1196 @@ public class Student {
             e.printStackTrace();
         }
     }
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Mybatis总结]]></title>
+        <id>https://yihuaikun.github.io/post/mybatis-zong-jie</id>
+        <link href="https://yihuaikun.github.io/post/mybatis-zong-jie">
+        </link>
+        <updated>2019-08-14T04:31:21.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="mybatis框架学习">Mybatis框架学习</h1>
+<h2 id="mybatis介绍">Mybatis介绍</h2>
+<p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis<br>
+避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。MyBatis<br>
+可以使用简单的 XML 或注解来配置和映射原生类型、接口和 Java 的 POJO（Plain Old<br>
+Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
+<h2 id="mybatis简单使用">Mybatis简单使用</h2>
+<h3 id="1初始化sqlsessionfactory对象">1.初始化SqlSessionFactory对象:</h3>
+<h4 id="1sqlsessionfactory对象">1.SqlSessionFactory对象:</h4>
+<p>需要从核心配置文件中获得,因此我们创建SqlSessionFactory对象时需要先配置一个Mybatis核心配置文件,过程如下:</p>
+<p>1&gt;.创建一个模板:建议最好去官网上找模板<a href="https://mybatis.org/mybatis-3/zh/getting-started.html">Mybatis配置模板</a></p>
+<p><img src="https://img-blog.csdnimg.cn/20191019172955442.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt=""><img src="https://img-blog.csdnimg.cn/20191019173125581.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="2效果试图和创建mybatis过程">2.效果试图和创建Mybatis过程:</h4>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191019173149492.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="3创建后的文件">3.创建后的文件:</h4>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/201910191732101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h3 id="2核心配置文件如下">2.核心配置文件如下:</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+    &lt;!-- 引入外部properties文件,路径从类路径的根目录开始 --&gt;
+    &lt;properties resource=&quot;jdbc.properties&quot; /&gt;
+
+    &lt;settings&gt;
+        &lt;!-- 开启将数据库中下划线连接的字段自动映射为Java的小驼峰命名 --&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+
+    &lt;!-- 定义类型别名，在xxxMapper.xml文件中就可以用别名代替很长的类名 --&gt;
+    &lt;typeAliases&gt;
+        
+            &lt;!-- 单个类配置别名 --&gt;
+&lt;!--        &lt;typeAlias type=&quot;com.lanou3g.mybatis.bean.User&quot; alias=&quot;User&quot; /&gt;--&gt;
+        
+            &lt;!-- 统一配置某个包下所有类的别名, 会使用 Bean 的首字母小写的类名来作为它的别名。 --&gt;
+        &lt;package name=&quot;com.lanou3g.mybatis.bean&quot; /&gt;
+    &lt;/typeAliases&gt;
+
+
+    &lt;!-- 配置不同环境的参数 --&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;!-- 开发环境数据库、事务配置 --&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;!-- 事务管理使用JDBC的事务 --&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;!-- 配置开发环境数据源 --&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+                &lt;!-- 将所有driver.开头的参数，附加到url属性的值后面上 --&gt;
+                &lt;property name=&quot;driver.characterEncoding&quot; value=&quot;utf8&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;!-- 将mapper SQL映射文件包含进来 --&gt;
+    &lt;mappers&gt;
+        &lt;!-- 将通过XML方式配置的mapper引入进来 --&gt;
+        &lt;mapper resource=&quot;mapper/userMapper.xml&quot;/&gt;
+        &lt;!-- 将通过注解方式配置的mapper引入进来 --&gt;
+&lt;!--        &lt;mapper class=&quot;com.lanou3g.mybatis.mapper.UserMapper&quot; /&gt;--&gt;
+
+        &lt;!-- 将com.lanou3g.mybatis.mapper包下所有通过注解方式配置的mapper引入进来 --&gt;
+&lt;!--        &lt;package name=&quot;com.lanou3g.mybatis.mapper&quot;/&gt;--&gt;
+    &lt;/mappers&gt;
+&lt;/configuration&gt;
+</code></pre>
+<h4 id="1构建对象">1.构建对象:</h4>
+<pre><code class="language-java"> @Test
+    public void testXml() throws IOException {
+        String xmlPath = &quot;mybatis_config.xml&quot;;
+        InputStream inputStream = Resources.getResourceAsStream(xmlPath);
+        SqlSessionFactory sessionFactory = new 			                      SqlSessionFactoryBuilder().build(inputStream);
+        System.out.println(sessionFactory);
+    }
+</code></pre>
+<h4 id="2创建sqlsession对象">2.创建SqlSession对象</h4>
+<p>通过上步的SqlSessionFactory对象的创建可以获取到负责执行sql的SqlSession对象</p>
+<pre><code class="language-java">// 3. 获取SqlSession对象，默认事务不自动提交
+// SqlSession sqlSession = sqlSessionFactory.openSession();
+// 获取一个自动提交事务的sqlSession
+SqlSession sqlSession = sqlSessionFactory.openSession();
+</code></pre>
+<h4 id="3用sqlsession对象从mybatis中获取mapper接口的实现类">3.用SqlSession对象从Mybatis中获取Mapper接口的实现类</h4>
+<pre><code class="language-java"> StudentMapper mapper = sqlSession.getMapper(StudentMapper.class);
+</code></pre>
+<h4 id="4编写mapper对象的xml配置文件">4.编写Mapper对象的xml配置文件</h4>
+<p>和核心配置文件的步骤一样去官网找文档配置修改之后是这样,这里可以配合Fre Mybatis plugin插件使用效率更高:</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou3g.mybatis.mapper.UserMapper&quot;&gt;
+    &lt;select id=&quot;queryAllUser&quot; resultType=&quot;user&quot;&gt;
+        select * from user
+     &lt;/select&gt;
+
+    &lt;insert id=&quot;insertUser&quot;&gt;
+      insert into user (username,nick_name,email)
+      values (#{username},#{nickName},#{email})
+    &lt;/insert&gt;
+&lt;/mapper&gt;
+</code></pre>
+<h1 id="深入了解mybatis">深入了解Mybatis</h1>
+<h2 id="主要组件">主要组件</h2>
+<h3 id="核心配置文件的处理">核心配置文件的处理:</h3>
+<p>所谓的核心配置文件,就是mybatis的入口.它里面可以配置mybatis的具体参数、数据源、类型别名、关联映射文件等。</p>
+<h4 id="加载mybatis配置文件的路径">加载Mybatis配置文件的路径:</h4>
+<pre><code class="language-java"> String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+</code></pre>
+<h4 id="resources">Resources</h4>
+<pre><code class="language-java">package org.apache.ibatis.io;
+//Resources:所在的包.
+	public static InputStream getResourceAsStream(String resource) throws IOException {
+        return getResourceAsStream((ClassLoader)null, resource);
+    }
+
+	public static InputStream getUrlAsStream(String urlString) throws IOException {
+        URL url = new URL(urlString);
+        URLConnection conn = url.openConnection();
+        return conn.getInputStream();
+    }
+
+//上面是底层常用的方法:
+//例如:加载加载Mybatis配置文件
+InputStream inputStream = Resources.getResourceAsStream(configurationXmlPath);
+</code></pre>
+<h4 id="sqlsessionfactorybuilser">SqlSessionFactoryBuilser</h4>
+<p>主要用来创建SqlSessionFactory接口类对象.</p>
+<pre><code class="language-java">//SqlSessionFactoryBuiler所在的包:
+package org.apache.ibatis.session;
+
+	public SqlSessionFactory build(Reader reader, String environment) {
+        return this.build((Reader)reader, environment, (Properties)null);
+    }
+
+	public SqlSessionFactory build(InputStream inputStream) {
+        return this.build((InputStream)inputStream, (String)null, (Properties)null);
+    }
+//上面是SqlSessionFactoryBuilser的部分底层.我们调用build方法来获得下面的SqlSessionFactory接口类对象.
+//例如下面:获得SqlSessionFactory接口类对象:development表示xml中的environment的id
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,&quot;development&quot;);
+
+</code></pre>
+<h4 id="sqlsessionfactory">SqlSessionFactory</h4>
+<p>一个SqlSessionFactory只能连接一个数据库实例，如果需要连接多个数据库，需要构建多个SqlSessionFactory对象。</p>
+<p>在构建SqlSesssionFactory时可以指定environment的id，表示使用指定的数据源来构建factory对象</p>
+<pre><code class="language-java">	//这个是是否开启自动提交事务:入过不开启自动提交的话可能出现sql语句执行了,页成功了但	
+	//是没有插入到数据库例如下面实例:一般我们把参数设置为true,让它自动提交事务,如果没有设置出现下面实例	//	中的错误,在实例1下面由解决方法.注意Query时开不开没关系,最好开启
+	SqlSession openSession((boolean autoCommit);
+    SqlSession openSession(Connection var1);                        
+    //TransactionIsolationLevel是一个枚举类,事务隔离
+	// NONE(0),
+    //READ_COMMITTED(2),
+    //READ_UNCOMMITTED(1),
+    //REPEATABLE_READ(4),
+    //SERIALIZABLE(8);
+    SqlSession openSession(TransactionIsolationLevel level);
+	// ExecutorType枚举类
+    //SIMPLE,
+    //REUSE,
+    //BATCH;   最常用的试着个,Mybatis缓冲,下面我们会总结到                
+    SqlSession openSession(ExecutorType var1);
+
+    SqlSession openSession(ExecutorType var1, boolean var2);
+
+    SqlSession openSession(ExecutorType var1, TransactionIsolationLevel var2);
+
+    SqlSession openSession(ExecutorType var1, Connection var2);
+
+    Configuration getConfiguration();
+</code></pre>
+<p>关于Mybatis的TransactionIsolationLevel枚举类的探究,事务隔离级别:</p>
+<p>​			隔离级别：一个事务必须与由其他事务进行的资源或数据更改相隔离的程度。隔离级别从允许的并发副作用（例如，脏读或虚拟读取）的角度进行描述。</p>
+<pre><code class="language-java">none:
+read uncommitted | 1 未提交读
+read committed | 2 已提交读
+repeatable read | 4 可重复读
+serializable | 8 可序列化
+</code></pre>
+<p>实例1:</p>
+<pre><code class="language-java">    @Test
+    public void testPaperGirl() {
+        String configurationXmlPath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = 					            Resources.getResourceAsStream(configurationXmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //注意这里要开启事务:坑
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+            KingMapper mapper = sqlSession.getMapper(KingMapper.class);
+            List&lt;Girl&gt; girlList = new ArrayList&lt;&gt;();
+            Collections.addAll(girlList, new Girl(&quot;木兰&quot;, 2), new Girl(&quot;伽罗&quot;, 2));
+            int count = 0;
+            List&lt;BatchResult&gt; batchResults = null;
+            for(Girl girl : girlList){
+                mapper.insertPaperGir(girl);
+                count ++ ;
+                if(count % 2 == 0){
+                    batchResults = sqlSession.flushStatements();
+                    count = 0 ;
+                }
+            }
+            for(BatchResult batchResult : batchResults){
+                int[] updateCounts = batchResult.getUpdateCounts();
+                for(int updateCount : updateCounts){
+                    System.out.println(updateCount);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果如下:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173358929.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>但是数据库中并没有插入:</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191019173413717.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>解决办法有两种</p>
+<pre><code class="language-java">//解决方法一:
+SqlSession openSession(true);
+//解决方法二
+    @Test
+    public void testPaperGirl() {
+        String configurationXmlPath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(configurationXmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //注意这里要开启事务:坑
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+            KingMapper mapper = sqlSession.getMapper(KingMapper.class);
+            List&lt;Girl&gt; girlList = new ArrayList&lt;&gt;();
+            Collections.addAll(girlList, new Girl(&quot;木兰&quot;, 2), new Girl(&quot;伽罗&quot;, 2));
+            int count = 0;
+            List&lt;BatchResult&gt; batchResults = null;
+            for(Girl girl : girlList){
+                mapper.insertPaperGir(girl);
+                count ++ ;
+                if(count % 2 == 0){
+                    batchResults = sqlSession.flushStatements();
+                    count = 0 ;
+                }
+            }
+            for(BatchResult batchResult : batchResults){
+                int[] updateCounts = batchResult.getUpdateCounts();
+                for(int updateCount : updateCounts){
+                    System.out.println(updateCount);
+                }
+            }
+            //在这里加事务提交:
+            sqlSession.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+</code></pre>
+<p>解决后结果:</p>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191019173449651.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="sqlsession">SqlSession</h4>
+<p>一个SqlSession对象代表一次到数据的会话，该对象有一下功能：</p>
+<ul>
+<li>获取Mapper实现类</li>
+<li>管理事务操作</li>
+<li>注意： SqlSession对象是非线程安全的，在多线程环境下，建议不要作为类的实例属性来用。</li>
+</ul>
+<h4 id="mapper接口类">Mapper接口类:</h4>
+<h4 id="mapper">Mapper</h4>
+<ul>
+<li>
+<p>Mapper接口类</p>
+<p>定义了增删盖查的方法。注意，必须是接口类型，而且方法只需要定义就可以了。</p>
+</li>
+<li>
+<p>Mapper配置文件</p>
+<p>Mapper配置文件中就是负责实现接口中的方法，它定义了具体要执行什么SQL语句，如何映射结果集。</p>
+<ul>
+<li>配置文件中select、delete、update、insert标签的id必须是对应接口中的方法名。</li>
+<li>mapper文件的namespace属性需要对应Mapper接口的完全类型限定名。</li>
+</ul>
+</li>
+</ul>
+<h1 id="深入mybatis核心配置文件">深入Mybatis核心配置文件</h1>
+<h2 id="深入mybatis映射配置文件">深入Mybatis映射配置文件</h2>
+<h3 id="crud语句定义">CRUD语句定义</h3>
+<p>接口中的源码</p>
+<pre><code class="language-java">public interface KingMapper {
+    List&lt;King&gt; findKingById(int id);
+    int insertGirl(List&lt;Girl&gt; girlList);
+    int insertPaperGir(Girl girl);
+}
+
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.KingMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;kingMap&quot; type=&quot;com.lanou.bean.King&quot;&gt;
+        &lt;id column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;k_name&quot; property=&quot;kName&quot;/&gt;
+        &lt;association property=&quot;queen&quot; javaType=&quot;com.lanou.bean.Queen&quot; resultMap=&quot;queenMap&quot;/&gt;
+        &lt;collection property=&quot;girls&quot; ofType=&quot;com.lanou.bean.Girl&quot; resultMap=&quot;girlMap&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;girlMap&quot; type=&quot;com.lanou.bean.Girl&quot;&gt;
+        &lt;id property=&quot;gId&quot; column=&quot;g_id&quot;/&gt;
+        &lt;result property=&quot;kId&quot; column=&quot;k_id&quot;/&gt;
+        &lt;result property=&quot;gName&quot; column=&quot;g_name&quot;/&gt;
+
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;queenMap&quot; type=&quot;com.lanou.bean.Queen&quot;&gt;
+        &lt;id column=&quot;q_id&quot; property=&quot;qId&quot;/&gt;
+        &lt;result column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;q_name&quot; property=&quot;qName&quot;/&gt;
+    &lt;/resultMap&gt;
+    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+    &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;findKingById&quot; resultMap=&quot;kingMap&quot;&gt;
+
+        select
+         king.k_id k_id,
+         k_name,
+         q_id,
+         q_name,
+         g_id,
+         g_name
+        from king
+        left join girl
+        on king.k_id = girl.k_id
+        left join queen
+        on queen.k_id = king.k_id
+        where king.k_id = #{id};
+    &lt;/select&gt;
+&lt;/mapper
+</code></pre>
+<h4 id="插入语句">插入语句</h4>
+<h5 id="普通插入语句">普通插入语句</h5>
+<p>接口</p>
+<pre><code class="language-java">int insertUser(User user);
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertUser&quot;&gt;
+    insert into user (username,nick_name,email)
+    values (#{username},#{nickName},#{email})
+&lt;/insert&gt;
+</code></pre>
+<h4 id="如何返回数据库自增的id">如何返回数据库自增的ID</h4>
+<h5 id="java源代码之接口中">java源代码之接口中</h5>
+<pre><code class="language-java">public interface GirlMapper {
+    int insertGirl(Girl girl);
+}
+</code></pre>
+<h5 id="xml中">xml中</h5>
+<pre><code class="language-xml">&lt;!-- 给insert语句添加useGeneratedKeys、keyProperty后，mybatis会将自增的id值直接赋值到传进来的user对象的id属性上
+        useGeneratedKeys: 指定需要获取数据库自增的id
+        keyProperty: 指定自增地段的名称
+ps:只对update和insert语句使用
+     --&gt;
+ &lt;insert id=&quot;insertGirl&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;gId&quot; &gt;
+        insert into girl (g_name,k_id)
+        values(#{gName},#{kId})
+    &lt;/insert&gt;
+</code></pre>
+<h5 id="测试">测试</h5>
+<pre><code class="language-java">@Test
+    public void testGirl(){
+        String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream resourceAsStream = Resources.getResourceAsStream(configMybatisXmlpath);
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+            SqlSession sqlSession = sessionFactory.openSession(true);
+            GirlMapper girlMapper = sqlSession.getMapper(GirlMapper.class);
+            Girl girl = new Girl(&quot;香蛋&quot;,1);
+            int i = girlMapper.insertGirl(girl);
+            System.out.println(girl.getGId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<h5 id="结果">结果</h5>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191019173555319.png" alt="在这里插入图片描述"></figure>
+<h5 id="ps">ps:</h5>
+<p>​	keyColumn=&quot;&quot;:（仅对 insert 和 update 有用）通过生成的键值设置表中的列名，这个设置仅在某些数据库（像 PostgreSQL）是必须的，当主键列不是表中的第一列的时候需要设置。如果希望使用多个生成的列，也可以设置为逗号分隔的属性名称列表。</p>
+<p>​	keyProperty=&quot;&quot; :给insert语句添加useGeneratedKeys、keyProperty后，mybatis会将自增的id值直接赋值到传进来的user对象的id属性上:</p>
+<p>​		useGeneratedKeys: 指定需要获取数据库自增的id<br>
+keyProperty: 指定自增地段的名称</p>
+<p>只对update和insert语句使用</p>
+<h4 id="删除语句">删除语句</h4>
+<p>接口中</p>
+<pre><code class="language-java">void deleteUserById(Integer id);
+</code></pre>
+<p>xml中的配置:</p>
+<pre><code class="language-xml">&lt;delete id=&quot;deleteUserById&quot;&gt;
+    delete from user where id = #{id}
+&lt;/delete&gt;
+</code></pre>
+<h4 id="更新语句">更新语句</h4>
+<p>接口中:</p>
+<pre><code class="language-java">void updateUser(User user);
+</code></pre>
+<p>XML配置中</p>
+<pre><code class="language-xml">&lt;update id=&quot;updateUser&quot;&gt;
+    update user set password = #{password} where id = #{id}
+&lt;/update&gt;
+</code></pre>
+<h4 id="ps-2">ps:</h4>
+<p>插入和更新删除需要:</p>
+<pre><code class="language-java">    SqlSession sqlSession = sessionFactory.openSession(true);
+</code></pre>
+<h3 id="接口中的参数如果传递到sql中">接口中的参数如果传递到SQL中</h3>
+<h4 id="简单类型参数">简单类型参数</h4>
+<p>接口中</p>
+<pre><code class="language-java">void deleteUserById(Integer id);
+</code></pre>
+<p>xml配置</p>
+<pre><code class="language-xml">&lt;delete id=&quot;deleteUserById&quot;&gt;
+    delete from user where id = #{id}
+&lt;/delete&gt;
+</code></pre>
+<h4 id="引用类型参数">引用类型参数</h4>
+<p>接口中</p>
+<pre><code class="language-java">int insertUser(User user);
+</code></pre>
+<pre><code class="language-xml">&lt;!--这里注意取参数直接#+实体类字段名--&gt;
+&lt;insert id=&quot;insertUser&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+    insert into user (username,nick_name,email)
+    values (#{username},#{nickName},#{email})
+&lt;/insert&gt;
+</code></pre>
+<h4 id="当接口中参数和xml配置取值时名称不一样时">当接口中参数和XML配置取值时名称不一样时</h4>
+<p>ps:现在Mybatis版本中的不存在这个问题</p>
+<p>在接口中的参数前加注解</p>
+<pre><code class="language-java">User queryUserById(@Param(&quot;id&quot;) Integer xxxxxxxId);
+</code></pre>
+<p>在XML中取值时用注解指定的名称</p>
+<pre><code class="language-xml">&lt;select id=&quot;queryUserById&quot; resultType=&quot;user&quot;&gt;
+    select * from user where id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p>例如:</p>
+<p>接口中的java代码:</p>
+<pre><code class="language-java">public interface GirlMapper {
+    Girl queryGirl(Integer sid);
+}
+</code></pre>
+<p>xml中的配置:</p>
+<pre><code class="language-xml">    &lt;select id=&quot;queryGirl&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl where g_id = #{gId}
+    &lt;/select&gt;
+
+</code></pre>
+<p>运行的结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173831808.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="与的区别">#{}与${}的区别</h4>
+<ul>
+<li>它俩都可以获取接口调用中传递过来的参数</li>
+<li>#{}会将参数作为占位符，使用预编译语句(PreparedStatement)执行</li>
+<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow></mrow><mi mathvariant="normal">会</mi><mi mathvariant="normal">直</mi><mi mathvariant="normal">接</mi><mi mathvariant="normal">用</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">际</mi><mi mathvariant="normal">参</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">替</mi><mi mathvariant="normal">换</mi></mrow><annotation encoding="application/x-tex">{}会直接用实际参数替换</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0em;vertical-align:0em;"></span><span class="mord"></span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">直</span><span class="mord cjk_fallback">接</span><span class="mord cjk_fallback">用</span><span class="mord cjk_fallback">实</span><span class="mord cjk_fallback">际</span><span class="mord cjk_fallback">参</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">替</span><span class="mord cjk_fallback">换</span></span></span></span>{}， 参数可以作为SQL的一部分。</li>
+</ul>
+<p>接口中的配置:</p>
+<pre><code class="language-java">public interface GirlMapper {
+    Girl queryGirl(Integer sid);
+}
+</code></pre>
+<p>xml配置:</p>
+<pre><code class="language-xml">    &lt;select id=&quot;queryGirl&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl where g_id = #{gId}
+    &lt;/select&gt;
+</code></pre>
+<p>#的运行结果:<br>
+<img src="https://img-blog.csdnimg.cn/20191019173856777.png" alt="在这里插入图片描述"><img src="https://img-blog.csdnimg.cn/20191019173909890.png" alt="在这里插入图片描述"></p>
+<h4 id="结果集如何映射">结果集如何映射</h4>
+<h5 id="resulttype方式">ResultType方式</h5>
+<p>​	ResultType方式适用于数据库结果集可以直接映射成一个Java类的情况</p>
+<h5 id="resultmap方式">ResultMap方式</h5>
+<p>​	ResultMap方式适用于复杂的结果集映射，比如数据库返回的结果集中的列名和JavaBean无法一一对应，或者对象间存在一对一、一对多关联映射时。</p>
+<h6 id="解决数据库列名与java类中属性名不一致的映射问题">解决数据库列名与Java类中属性名不一致的映射问题</h6>
+<h6 id="解决一对一映射查询问题">解决一对一映射查询问题</h6>
+<h6 id="解决一对多映射查询问题">解决一对多映射查询问题</h6>
+<p>下面是例子:</p>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter
+@Getter
+@ToString
+public class Girl {
+    private int gId;
+    private int kId;
+    private String gName;
+    public Girl(){
+
+    }
+    public Girl(String gName ,int kId) {
+        this.gName = gName;
+        this.kId = kId;
+
+    }
+}
+</code></pre>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.util.List;
+
+@Setter
+@Getter
+@ToString
+public class King {
+    private int kId;
+    private String kName;
+    private Queen queen;
+    private List&lt;Girl&gt; girls;
+}
+
+</code></pre>
+<pre><code class="language-java">package com.lanou.bean;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class Queen {
+    private int qId;
+    private int kId;
+    private String qName;
+}
+
+</code></pre>
+<p>接口中</p>
+<pre><code class="language-java">package com.lanou.mapper;
+
+import com.lanou.bean.Girl;
+import com.lanou.bean.King;
+
+import java.util.List;
+
+public interface KingMapper {
+    List&lt;King&gt; findKingById(int id);
+    int insertGirl(List&lt;Girl&gt; girlList);
+    int insertPaperGir(Girl girl);
+}
+
+</code></pre>
+<p>xml中的配置</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.KingMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;kingMap&quot; type=&quot;com.lanou.bean.King&quot;&gt;
+        &lt;id column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;k_name&quot; property=&quot;kName&quot;/&gt;
+        &lt;!--这是一对一的情况--&gt;
+        &lt;association property=&quot;queen&quot; javaType=&quot;com.lanou.bean.Queen&quot; resultMap=&quot;queenMap&quot;/&gt;
+        &lt;!--这是一对多的情况--&gt;
+        &lt;collection property=&quot;girls&quot; ofType=&quot;com.lanou.bean.Girl&quot; resultMap=&quot;girlMap&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;girlMap&quot; type=&quot;com.lanou.bean.Girl&quot;&gt;
+        &lt;id property=&quot;gId&quot; column=&quot;g_id&quot;/&gt;
+        &lt;result property=&quot;kId&quot; column=&quot;k_id&quot;/&gt;
+        &lt;result property=&quot;gName&quot; column=&quot;g_name&quot;/&gt;
+
+    &lt;/resultMap&gt;
+
+    &lt;resultMap id=&quot;queenMap&quot; type=&quot;com.lanou.bean.Queen&quot;&gt;
+        &lt;id column=&quot;q_id&quot; property=&quot;qId&quot;/&gt;
+        &lt;result column=&quot;k_id&quot; property=&quot;kId&quot;/&gt;
+        &lt;result column=&quot;q_name&quot; property=&quot;qName&quot;/&gt;
+    &lt;/resultMap&gt;
+    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+
+    &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;findKingById&quot; resultMap=&quot;kingMap&quot;&gt;
+
+        select
+         king.k_id k_id,
+         k_name,
+         q_id,
+         q_name,
+         g_id,
+         g_name
+        from king
+        left join girl
+        on king.k_id = girl.k_id
+        left join queen
+        on queen.k_id = king.k_id
+        where king.k_id = #{id};
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="动态sql">动态sql</h4>
+<h5 id="条件分支sql">条件分支SQL</h5>
+<ul>
+<li>
+<p>if</p>
+<p>mapper中:</p>
+<pre><code class="language-java">package com.lanou.mappers;
+import com.lanou.bean.Student;
+import java.util.List;
+public interface StudentMqpper {
+    List&lt;Student&gt; findStudent(Student condition);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">   &lt;select id=&quot;findStudent&quot; resultType=&quot;com.lanou.bean.Student&quot;&gt;
+        select * from `student`
+        &lt;where&gt;
+        &lt;if test=&quot;sex != null&quot; &gt;
+           sex = #{sex}
+        &lt;/if&gt;
+        &lt;if test=&quot;name != null&quot; &gt;
+            and name = #{name}
+        &lt;/if&gt;
+        &lt;/where&gt;
+    &lt;/select&gt;
+</code></pre>
+<p>测试1:</p>
+<pre><code class="language-java">    @Test
+    public void testStudentMapper(){
+        String configMybatisXmlpath = &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream resourceAsStream = Resources.getResourceAsStream(configMybatisXmlpath);
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+            SqlSession sqlSession = sessionFactory.openSession();
+            StudentMqpper mapper = sqlSession.getMapper(StudentMqpper.class);
+            Student condition = new Student();
+            condition.setName(&quot;黄忠&quot;);
+            condition.setSex(&quot;男&quot;);
+            List&lt;Student&gt; studentList = mapper.findStudent(condition);
+            for(Student student1 :studentList ){
+                System.out.println(student1.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果:</p>
+</li>
+</ul>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191019174002916.png" alt="在这里插入图片描述"></figure>
+<p>测试2:把setAge注释掉:</p>
+<p>结果为:</p>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20191019174018428.png" alt="在这里插入图片描述"></figure>
+<ul>
+<li>choose&amp;when&amp;otherwise</li>
+</ul>
+<h5 id="循环sql">循环SQL</h5>
+<ul>
+<li>forEach</li>
+</ul>
+<p>两种forEach:</p>
+<p>第一种:</p>
+<p>实例</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface KingMapper {
+    int insertGirl(List&lt;Girl&gt; girlList);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;girl&quot; separator=&quot;,&quot;&gt;
+            (#{girl.gName},#{girl.kId})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+</code></pre>
+<p>第二种:</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface KingMapper {
+    int insertPaperGir(Girl girl);
+}
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">  &lt;insert id=&quot;insertPaperGir&quot;&gt;
+      insert into girl (g_name,k_id) values(#{gName},#{kId})
+    &lt;/insert&gt;
+</code></pre>
+<h5 id="其他特殊sql">其他特殊SQL</h5>
+<ul>
+<li>where</li>
+<li>set</li>
+<li>trim</li>
+</ul>
+<h2 id="一级缓存">一级缓存:</h2>
+<p>默认情况下是一级缓存,配置方法：</p>
+<pre><code class="language-xml">&lt;setting name=&quot;localCacheScope&quot; value=&quot;SESSION&quot;/&gt;
+</code></pre>
+<p>取值有两个：SESSION和STATEMENT分别对应缓存应用session会话范围和一次statement范围</p>
+<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20191019174130687.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>验证:</p>
+<p>mapper中:</p>
+<pre><code class="language-java">public interface GirlsMapper {
+    List&lt;Girl&gt; queryGirls();
+    int insertGirl(Girl girl);
+}
+
+</code></pre>
+<p>xml中:</p>
+<pre><code class="language-xml">    &lt;insert id=&quot;insertGirl&quot;&gt;
+        insert into girl (g_name,k_id) value(#{gName},#{kId})
+    &lt;/insert&gt;
+
+    &lt;select id=&quot;queryGirls&quot; resultType=&quot;com.lanou.bean.Girl&quot;&gt;
+        select * from girl
+    &lt;/select&gt;
+</code></pre>
+<p>测试:注意先不要设置自动提交,这样就能看到增删改是先对缓存的改动.提交之后才能到数据库更新数据:</p>
+<pre><code class="language-java">    @Test
+    public void testCache(){
+        String mybatisXmlpath =&quot;mybatis-config-cache.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(mybatisXmlpath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            GirlsMapper girlsMapper = sqlSession.getMapper(GirlsMapper.class);
+            List&lt;Girl&gt; girlList = girlsMapper.queryGirls();
+            System.out.println(&quot;*************&quot; + girlList.size());
+            for(Girl girl : girlList){
+                System.out.println(girl.toString());
+            }
+
+            Girl girl = new Girl(&quot;香香&quot;,1);
+            int i = girlsMapper.insertGirl(girl);
+            System.out.println(i);
+           // sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果是:</p>
+<figure data-type="image" tabindex="9"><img src="https://img-blog.csdnimg.cn/20191019174206167.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>然而数据库中则:</p>
+<figure data-type="image" tabindex="10"><img src="https://img-blog.csdnimg.cn/2019101917423782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>放开commit:</p>
+<pre><code class="language-java">    @Test
+    public void testCache(){
+        String mybatisXmlpath =&quot;mybatis-config-cache.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(mybatisXmlpath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            GirlsMapper girlsMapper = sqlSession.getMapper(GirlsMapper.class);
+            List&lt;Girl&gt; girlList = girlsMapper.queryGirls();
+            System.out.println(&quot;*************&quot; + girlList.size());
+            for(Girl girl : girlList){
+                System.out.println(girl.toString());
+            }
+
+            Girl girl = new Girl(&quot;香香&quot;,1);
+            int i = girlsMapper.insertGirl(girl);
+            System.out.println(i);
+           // sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<p>结果:</p>
+<figure data-type="image" tabindex="11"><img src="https://img-blog.csdnimg.cn/20191019174258260.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<figure data-type="image" tabindex="12"><img src="https://img-blog.csdnimg.cn/20191019174326101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>结果很明显也很符合上面原理图</p>
+<h2 id="二级缓存">二级缓存:</h2>
+<figure data-type="image" tabindex="13"><img src="https://img-blog.csdnimg.cn/201910191743484.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>开启二级缓存的方法</p>
+<ol>
+<li>第一步，打开全局二级缓存开关</li>
+</ol>
+<pre><code class="language-xml">&lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+</code></pre>
+<ol>
+<li>在具体的Mapper中开启二级缓存</li>
+</ol>
+<pre><code class="language-xml">&lt;cache/&gt; 
+</code></pre>
+<p>可配置参数：</p>
+<ul>
+<li><code>type</code>：cache使用的类型，默认是</li>
+<li><code>PerpetualCache</code>，这在一级缓存中提到过。</li>
+<li><code>eviction</code>： 定义回收的策略，常见的有FIFO，LRU。</li>
+<li><code>flushInterval</code>： 配置一定时间自动刷新缓存，单位是毫秒。</li>
+<li><code>size</code>： 最多缓存对象的个数。</li>
+<li><code>readOnly</code>： 是否只读，若配置可读写，则需要对应的实体类能够序列化。</li>
+<li><code>blocking</code>： 若缓存中找不到对应的key，是否会一直blocking，直到有对应的数据进入缓存。</li>
+</ul>
+<blockquote>
+<p>注意 要使用二级缓存结果集对应的POJO类必须实现序列化接口</p>
+</blockquote>
+<h1 id="spring与mybatis的整合">Spring与Mybatis的整合:</h1>
+<h2 id="1需要的依赖">1.需要的依赖:</h2>
+<pre><code class="language-xml">&lt;!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+    &lt;version&gt;2.0.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h2 id="2在spring中管理sqlsessionfactory">2.在Spring中管理SqlSessionFactory</h2>
+<pre><code class="language-xml">&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;&gt;
+
+    &lt;!-- 注入数据源 --&gt;
+    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+    &lt;!-- 设置mybatis核心配置文件路径（可选） --&gt;    
+    &lt;property name=&quot;configLocation&quot; value=&quot;classpath:/mybatis-config.xml&quot; /&gt;
+     &lt;!-- 配置mybatis xml映射文件位置（如果Mapper是用注解配置的，这里就不用设置此属性了） --&gt;   
+    &lt;property name=&quot;mapperLocations&quot; value=&quot;classpath:/mappers/*&quot; /&gt;
+    &lt;/bean&gt;
+</code></pre>
+<p>如果是注解的方式配置的Mapper，我们需要在Spring配置文件中添加mybatis的schema以支持mybatis注解扫描</p>
+<pre><code class="language-xml">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+  xmlns:mybatis=&quot;http://mybatis.org/schema/mybatis-spring&quot;
+  xsi:schemaLocation=&quot;
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd&quot;&gt;
+
+&lt;!-- 配置基于注解的Mapper所在包的路径 --&gt;
+  &lt;mybatis:scan base-package=&quot;org.mybatis.spring.sample.mapper&quot; /&gt;
+
+
+&lt;/beans&gt;
+</code></pre>
+<p>或者这样配置</p>
+<pre><code class="language-java">@Configuration
+@MapperScan(&quot;org.mybatis.spring.sample.mapper&quot;)
+public class AppConfig {
+  // ...
+}
+</code></pre>
+<h2 id="3用spring管理事务">3.用Spring管理事务</h2>
+<blockquote>
+<p>和单独使用Spring时一样， 配置Spring的声明式事务就可以了，mybatis会自动参与到spring的事务中</p>
+</blockquote>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[今日打卡Jquery]]></title>
+        <id>https://yihuaikun.github.io/post/jin-ri-da-qia-jquery</id>
+        <link href="https://yihuaikun.github.io/post/jin-ri-da-qia-jquery">
+        </link>
+        <updated>2019-08-02T07:10:56.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="jquery是什么">Jquery是什么</h1>
+<p>​	 jQuery是一套跨浏览器的JavaScript库，简化HTML与JavaScript之间的操作。[1]由约翰·雷西格（John Resig）在2006年1月的BarCamp NYC上发布第一个版本。当前是由Dave Methvin领导的开发团队进行开发。全球前10,000个访问最高的网站中，有65%使用了jQuery，是当前最受欢迎的JavaScript库.</p>
+<h1 id="为什么要学习jquery">为什么要学习jquery</h1>
+<p>​	在使用javaScript开发的过程中,有许多的缺点</p>
+<pre><code>1.查找元素的方法太少,麻烦.
+2.遍历伪数组很麻烦,通常要嵌套一大推循环
+3.有兼容性问题
+4.想要实现动画效果也很麻烦
+5.代码冗余
+</code></pre>
+<p>jquery有哪些优点呢:</p>
+<pre><code>1.查找元素的方法多种多样
+2.拥有隐式迭代性,因此不再需要手写for循环了
+3.完全没有兼容性问题
+4.实现动画很简单,而且功能很强大
+5.代码简单,粗暴
+</code></pre>
+<h1 id="jquery的入口函数">jquery的入口函数</h1>
+<pre><code>1. 引入jQuery文件
+2. 入口函数
+3. 功能实现
+</code></pre>
+<p>关于jquery的入口函数</p>
+<pre><code class="language-javascript">//第一种写法
+$(document).ready(function(){
+    
+});
+//第二种写法
+$(function() {
+    
+});
+</code></pre>
+<p>jquery入口函数和js入口函数的对比</p>
+<pre><code>1.javaScript的入口函数要等页面所有资源加(包括图片,文件)加载完成菜开始执行
+2.jquery的入口函数只会等待文档树加载完成就开始执行,并不会等待图片,文件的加载
+</code></pre>
+<h1 id="jquery对象与dom对象的区别">jquery对象与DOM对象的区别</h1>
+<pre><code>1.DOM对象:使用javaScript中的方法获取页面的元素返回的就是dom对象
+2.jquery对象:jquery对象就是使用jquery的方法获取页面中的元素返回的对象就是jQuery对象
+3.jQuery对象其实就是DOM对象的包装集(包装了DOM对象的集合(伪数组)
+4.DOM对象与JQuery对象的方法不能混用
+</code></pre>
+<p>DOM对象转换成jQuery对象</p>
+<pre><code class="language-javascript">var $obj = $(domObj);
+</code></pre>
+<p>jQuery对象转换成DOM对象</p>
+<pre><code class="language-javascript">var $li = $(&quot;li&quot;);
+//第一种方法
+$li[0]
+//第二种方法
+$li.get[0]
+</code></pre>
+<h1 id="选择器">选择器</h1>
+<h2 id="什么是jquery选择器">什么是jQuery选择器</h2>
+<p>jQuery选择器是jQuery为我们提供的一组方法，让我们更加方便的获取到页面中的元素。注意：jQuery选择器返回的是jQuery对象。</p>
+<p>jQuery选择器有很多，基本兼容了CSS1到CSS3所有的选择器，并且jQuery还添加了很多更加复杂的选择器。【查看jQuery文档】</p>
+<p>jQuery选择器虽然很多，但是选择器之间可以相互替代，就是说获取一个元素，你会有很多种方法获取到。所以我们平时真正能用到的只是少数的最常用的选择器</p>
+<h2 id="基本选择器">基本选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID选择器</td>
+<td>$(&quot;#id&quot;);</td>
+<td>获取指定ID的元素</td>
+</tr>
+<tr>
+<td>类选择器</td>
+<td>$(&quot;.class'&quot;);</td>
+<td>获取同一类class的元素</td>
+</tr>
+<tr>
+<td>标签选择器</td>
+<td>$(&quot;div&quot;);</td>
+<td>获取同一类标签的所有元素</td>
+</tr>
+<tr>
+<td>并集选择器</td>
+<td>$(&quot;div,p,li&quot;);</td>
+<td>使用逗号分隔,只要符合条件之一就可</td>
+</tr>
+<tr>
+<td>交集选择器</td>
+<td>$(&quot;div.redClass&quot;);</td>
+<td>获取class为redClass的div元素</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>总结:使用跟css的选择器用法一模一样</p>
+</blockquote>
+<h2 id="层级选择器">层级选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子代选择器</td>
+<td>$(&quot;ul&gt;li&quot;);</td>
+<td>使用&gt;,获取儿子层级的元素,注意,并不会获取孙子层级的元素</td>
+</tr>
+<tr>
+<td>后代选择器</td>
+<td>$(&quot;ul li &quot;);</td>
+<td>使用空格,代表后代选择器,获取ul下的所有元素,包括孙子等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="过滤选择器">过滤选择器</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:eq(index)</td>
+<td>$(&quot;li:eq(2)&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li的元素中,选择索引号为2的元素,索引号index从0开始</td>
+</tr>
+<tr>
+<td>:odd</td>
+<td>$(&quot;li:odd&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li元素中,选择索号为奇数的元素</td>
+</tr>
+<tr>
+<td>:even</td>
+<td>$(&quot;li:even&quot;).css(&quot;color&quot;,&quot;red&quot;);</td>
+<td>获取到li元素中,选择索引为偶数的元素</td>
+</tr>
+</tbody>
+</table>
+<h2 id="筛选选择器方法">筛选选择器(方法)</h2>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>用法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>children(selector)</td>
+<td>$(“ul”).children(“li”)</td>
+<td>相当于$(“ul&gt;li”)，子类选择器</td>
+</tr>
+<tr>
+<td>find(selector)</td>
+<td>$(“ul”).find(“li”);</td>
+<td>相当于$(“ul li”),后代选择器</td>
+</tr>
+<tr>
+<td>siblings(selector)</td>
+<td>$(“#first”).siblings(“li”);</td>
+<td>查找兄弟节点，不包括自己本身。</td>
+</tr>
+<tr>
+<td>parent()</td>
+<td>$(“#first”).parent();</td>
+<td>查找父亲</td>
+</tr>
+<tr>
+<td>eq(index)</td>
+<td>$(“li”).eq(2);</td>
+<td>相当于$(“li:eq(2)”),index从0开始</td>
+</tr>
+<tr>
+<td>next()</td>
+<td>$(“li”).next()</td>
+<td>找下一个兄弟</td>
+</tr>
+<tr>
+<td>prev()</td>
+<td>$(“li”).prev()</td>
+<td>找上一次兄弟</td>
+</tr>
+</tbody>
+</table>
+<p>筛选选择器的功能与过滤选择器有点类似,但是用法不一样,</p>
+</blockquote>
+<h1 id="dom操作">DOM操作</h1>
+<pre><code> DOM操作
+	1. 内容操作
+		1. html(): 获取/设置元素的标签体内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt;  --&gt; &lt;font&gt;内容&lt;/font&gt;
+		2. text(): 获取/设置元素的标签体纯文本内容   &lt;a&gt;&lt;font&gt;内容&lt;/font&gt;&lt;/a&gt; --&gt; 内容
+		3. val()： 获取/设置元素的value属性值
+	2. 属性操作
+		1. 通用属性操作
+			1. attr(): 获取/设置元素的属性
+			2. removeAttr():删除属性
+			3. prop():获取/设置元素的属性
+			4. removeProp():删除属性
+
+			* attr和prop区别？
+				1. 如果操作的是元素的固有属性，则建议使用prop
+				2. 如果操作的是元素自定义的属性，则建议使用attr
+		2. 对class属性操作
+			1. addClass():添加class属性值
+			2. removeClass():删除class属性值
+			3. toggleClass():切换class属性
+				* toggleClass(&quot;one&quot;): 
+					* 判断如果元素对象上存在class=&quot;one&quot;，则将属性值one删除掉。  如果元素对象上不存在class=&quot;one&quot;，则添加
+			4. css():
+	3. CRUD操作:
+		1. append():父元素将子元素追加到末尾
+			* 对象1.append(对象2): 将对象2添加到对象1元素内部，并且在末尾
+		2. prepend():父元素将子元素追加到开头
+			* 对象1.prepend(对象2):将对象2添加到对象1元素内部，并且在开头
+		3. appendTo():
+			* 对象1.appendTo(对象2):将对象1添加到对象2内部，并且在末尾
+		4. prependTo()：
+			* 对象1.prependTo(对象2):将对象1添加到对象2内部，并且在开头
+</code></pre>
+<pre><code>	5. after():添加元素到元素后边
+			* 对象1.after(对象2)： 将对象2添加到对象1后边。对象1和对象2是兄弟关系
+		6. before():添加元素到元素前边
+			* 对象1.before(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
+		7. insertAfter()
+			* 对象1.insertAfter(对象2)：将对象2添加到对象1后边。对象1和对象2是兄弟关系
+		8. insertBefore()
+			* 对象1.insertBefore(对象2)： 将对象2添加到对象1前边。对象1和对象2是兄弟关系
+
+		9. remove():移除元素
+			* 对象.remove():将对象删除掉
+		10. empty():清空元素的所有后代元素。
+			* 对象.empty():将对象的后代元素全部清空，但是保留当前对象以及其属性节点
+</code></pre>
+<h1 id="动画">动画</h1>
+<pre><code>1. 动画
+	1. 三种方式显示和隐藏元素
+		1. 默认显示和隐藏方式
+			1. show([speed,[easing],[fn]])
+				1. 参数：
+					1. speed：动画的速度。三个预定义的值(&quot;slow&quot;,&quot;normal&quot;, &quot;fast&quot;)或表示动画时长的毫秒数值(如：1000)
+					2. easing：用来指定切换效果，默认是&quot;swing&quot;，可用参数&quot;linear&quot;
+						* swing：动画执行时效果是 先慢，中间快，最后又慢
+						* linear：动画执行时速度是匀速的
+					3. fn：在动画完成时执行的函数，每个元素执行一次。
+
+			2. hide([speed,[easing],[fn]])
+			3. toggle([speed],[easing],[fn])
+		
+		2. 滑动显示和隐藏方式
+			1. slideDown([speed],[easing],[fn])
+			2. slideUp([speed,[easing],[fn]])
+			3. slideToggle([speed],[easing],[fn])
+
+		3. 淡入淡出显示和隐藏方式
+			1. fadeIn([speed],[easing],[fn])
+			2. fadeOut([speed],[easing],[fn])
+			3. fadeToggle([speed,[easing],[fn]])
+</code></pre>
+<pre><code>2. 遍历
+	1. js的遍历方式
+		* for(初始化值;循环结束条件;步长)
+	2. jq的遍历方式
+		1. jq对象.each(callback)
+			1. 语法：
+				jquery对象.each(function(index,element){});
+					* index:就是元素在集合中的索引
+					* element：就是集合中的每一个元素对象
+
+					* this：集合中的每一个元素对象
+			2. 回调函数返回值：
+				* true:如果当前function返回为false，则结束循环(break)。
+				* false:如果当前function返回为true，则结束本次循环，继续下次循环(continue)
+		2. $.each(object, [callback])
+		3. for..of: jquery 3.0 版本之后提供的方式
+			for(元素对象 of 容器对象)
+	
+3. 事件绑定
+	1. jquery标准的绑定方式
+		* jq对象.事件方法(回调函数)；
+		* 注：如果调用事件方法，不传递回调函数，则会触发浏览器默认行为。
+			* 表单对象.submit();//让表单提交
+	2. on绑定事件/off解除绑定
+		* jq对象.on(&quot;事件名称&quot;,回调函数)
+		* jq对象.off(&quot;事件名称&quot;)
+			* 如果off方法不传递任何参数，则将组件上的所有事件全部解绑
+	3. 事件切换：toggle
+		* jq对象.toggle(fn1,fn2...)
+			* 当单击jq对象对应的组件后，会执行fn1.第二次点击会执行fn2.....
+			
+		* 注意：1.9版本 .toggle() 方法删除,jQuery Migrate（迁移）插件可以恢复此功能。
+			 &lt;script src=&quot;../js/jquery-migrate-1.0.0.js&quot; type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
 </code></pre>
 ]]></content>
     </entry>
