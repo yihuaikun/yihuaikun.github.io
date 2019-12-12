@@ -1,0 +1,320 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>问题!! | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576154153063">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576154153063" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              问题!!
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="spring-cloud之eureka和ribbon使用问题">spring-cloud之eureka和ribbon使用问题</h1>
+<h2 id="提供服务层端">提供服务层端</h2>
+<pre><code class="language-java">@Service
+@Slf4j
+public class ContentServiceImpl implements ContentService {
+    @Autowired
+    private TbContentMapper tbContentMapper;
+    @Autowired
+    private CacheManagerService cacheManagerService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Override
+    public TaotaoResult getContent(Long cId) {
+        List&lt;TbContent&gt; tbContents = cacheManagerService.getTbContentFromCache(cId);
+        /**
+         * 如果缓存中没有数据就从数据库中查
+         * 查完之后将数据放入缓存,以便下次查找
+         */
+        if(tbContents == null){
+            TbContentExample tbContentExample = new TbContentExample();
+            TbContentExample.Criteria criteria = tbContentExample.createCriteria();
+            criteria.andCategoryIdEqualTo(cId);
+            tbContents = tbContentMapper.selectByExampleWithBLOBs(tbContentExample);
+            /**
+             * 将数据放入缓存
+             */
+            cacheManagerService.pushTbContent2Cache(cId,tbContents);
+        }
+        for(TbContent tbContent : tbContents){
+            System.out.println(tbContent.toString());
+        }
+        return TaotaoResult.ok(tbContents);
+    }
+}
+
+</code></pre>
+<p>上面是提供服务的服务层</p>
+<p>下面是提供服务的web控制层</p>
+<pre><code class="language-java">@RestController
+public class ContentController {
+    @Autowired
+    private ContentService  contentService;
+    @GetMapping(&quot;/content/{cId}&quot;)
+    public TaotaoResult getContent(@PathVariable Long cId){
+        TaotaoResult taotaoResult = contentService.getContent(cId);
+        return taotaoResult;
+    }
+}
+</code></pre>
+<p>我们把返回的结果封装在一个对象中,然后TaotaoResult的data字段我们在服务层用list存进去</p>
+<h2 id="消费端">消费端</h2>
+<pre><code class="language-java">@Service
+@PropertySource(&quot;classpath:resources.properties&quot;)
+public class AdServiceImpl implements AdService {
+    /**
+     * '
+     * ribbon的方式
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value(&quot;${INDEX_ADI_URL}&quot;)
+    private String INDEX_ADI_URL;
+    @Override
+    public String getAdItemList() {
+        //调用服务层的查询打广告的数据
+        //发起http的Get请求
+//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
+        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
+//        System.out.println(taotaoResult.toString());
+        String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
+        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);
+        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
+        for (TbContent tbContent : contentList) {
+            ADItem adItem = new ADItem();
+            adItem.setHeight(240);
+            adItem.setWidth(670);
+            adItem.setSrc(tbContent.getPic());
+            adItem.setHeightB(240);
+            adItem.setWidthB(550);
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setAlt(tbContent.getTitleDesc());
+            adItem.setHref(tbContent.getUrl());
+            adItemList.add(adItem);
+        }
+        return JsonUtils.objectToJson(adItemList);
+    }
+}
+</code></pre>
+<p>返回来的TaotaoResult的data字段还是ArrayList类型,但是ArrayLIst里面的每个是以LinkedhashMap存储的,就像下面这样拆分</p>
+<pre><code class="language-java">		ArrayList arrayList = new ArrayList();
+        LinkedHashMap map = new LinkedHashMap();
+        map.put(&quot;id&quot;,101);
+        map.put(&quot;name&quot;,&quot;张三&quot;);
+        map.put(&quot;age&quot;,24);
+        LinkedHashMap map1 = new LinkedHashMap();
+        map1.put(&quot;id&quot;,102);
+        map1.put(&quot;name&quot;,&quot;张三&quot;);
+        map1.put(&quot;age&quot;,2);
+        arrayList.add(map);
+        arrayList.add(map1);
+        System.out.println(arrayList);
+</code></pre>
+<p>所以直接用会报类型转换异常:LinkedHashMap  不能转换成某一个bean对象</p>
+<p>正确的写法是</p>
+<pre><code class="language-java">@Service
+@PropertySource(&quot;classpath:resources.properties&quot;)
+public class AdServiceImpl implements AdService {
+    /**
+     * '
+     * ribbon的方式
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+    @Value(&quot;${INDEX_ADI_URL}&quot;)
+    private String INDEX_ADI_URL;
+    @Override
+    public String getAdItemList() {
+        //调用服务层的查询打广告的数据
+        //发起http的Get请求
+//        String result = HttpUtil.doGet(REST_BASE_URL+INDEX_ADI_URL);
+//        TaotaoResult taotaoResult = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, TaotaoResult.class);
+//        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider:8081&quot; + INDEX_ADI_URL, String.class);
+        String result = restTemplate.getForObject(&quot;http://taotao-rest-provider&quot; + INDEX_ADI_URL, String.class);
+        System.out.println(result);
+        //        System.out.println(taotaoResult.toString());
+        TaotaoResult taotaoResult = TaotaoResult.formatToList(result, TbContent.class);
+//        System.out.println(taotaoResult.getData().getClass());
+        List&lt;TbContent&gt; contentList = (List&lt;TbContent&gt;) taotaoResult.getData();
+       /* String dataJson = JsonUtils.objectToJson(taotaoResult.getData());
+        List&lt;TbContent&gt; contentList = JsonUtils.jsonToList(dataJson, TbContent.class);*/
+        List&lt;ADItem&gt; adItemList = new ArrayList&lt;&gt;();
+        for (TbContent tbContent : contentList) {
+            ADItem adItem = new ADItem();
+            adItem.setHeight(240);
+            adItem.setWidth(670);
+            adItem.setSrc(tbContent.getPic());
+            adItem.setHeightB(240);
+            adItem.setWidthB(550);
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setSrcB(tbContent.getPic2());
+            adItem.setAlt(tbContent.getTitleDesc());
+            adItem.setHref(tbContent.getUrl());
+            adItemList.add(adItem);
+        }
+        return JsonUtils.objectToJson(adItemList);
+    }
+}
+
+</code></pre>
+<p><strong>直接把上面的data数据转换成json串,然后再转bean对象,还有就是服务不要写端口号,注册中心有端口号,不然没办法做客户端的负载均衡.</strong></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#spring-cloud%E4%B9%8Beureka%E5%92%8Cribbon%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98">spring-cloud之eureka和ribbon使用问题</a>
+<ul>
+<li><a href="#%E6%8F%90%E4%BE%9B%E6%9C%8D%E5%8A%A1%E5%B1%82%E7%AB%AF">提供服务层端</a></li>
+<li><a href="#%E6%B6%88%E8%B4%B9%E7%AB%AF">消费端</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/mybatis-ni-xiang-gong-cheng">
+              <h3 class="post-title">
+                Mybatis逆向工程
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

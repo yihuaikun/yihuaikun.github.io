@@ -1,0 +1,311 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Docker基础 | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576154153063">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576154153063" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Docker基础
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="docker基础1">Docker基础1</h1>
+<p>​		Docker 是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口</p>
+<h2 id="一个完整的docker有以下几个部分组成">一个完整的Docker有以下几个部分组成：</h2>
+<ol>
+<li>DockerClient客户端</li>
+<li>Docker Daemon守护进程</li>
+<li>Docker Image镜像</li>
+<li>DockerContainer容器</li>
+</ol>
+<h2 id="让我来介绍下-docker-解决了哪些痛点">让我来介绍下 docker 解决了哪些痛点：</h2>
+<ol>
+<li>
+<p>简化环境管理</p>
+<p>传统的软件开发与发布环境复杂，配置繁琐，经常有读者在微信上问：我的代码开发环境可以运行，一旦部署到服务器上就运行不了了。这个问题很常见，也确实很烦人，但是问题总要解决，开发环境、测试环境、生产环境，每个环节都有可能出现这样那样的问题，如果能够在各个环境中实现一键部署，就会方便很多，例如一键安装  linux 、一键安装 mysql、一键安装 nginx 等，docker 彻底解决了这个问题。</p>
+</li>
+<li>
+<p>虚拟化更加轻量级</p>
+<p>说到容器，说到虚拟化，很多人总会想到虚拟机，想到 VMware、VirtualBox 等工具，不同于这些虚拟技术，docker  虚拟化更加轻量级，传统的虚拟机都是先虚拟出一个操作系统，然后在操作系统上完成各种各样的配置，这样并不能充分的利用物理机的性能，docker  则是一种操作系统级别的虚拟技术，它运行在操作系统之上的用户空间，所有的容器都共用一个系统内核甚至公共库，容器引擎提供了进程级别的隔离，让每个容器都像运行在单独的系统之上，但是又能够共享很多底层资源。因此  docker 更为轻量、快速和易于管理。</p>
+</li>
+<li>
+<p>程序可移植</p>
+<p>有了前面介绍的两个特点，程序可移植就是顺理成章的事情了。</p>
+</li>
+</ol>
+<h2 id="docker-与传统容器">docker 与传统容器</h2>
+<p>不同与传统容器，docker 早起基于 LXC，后来基于自研的 libContainer，docker 对于传统容器做了许多优化，如下：</p>
+<ol>
+<li>跨平台的可移植性</li>
+<li>面向应用</li>
+<li>版本控制</li>
+<li>组件复用</li>
+<li>共享性</li>
+<li>工具生态系统</li>
+</ol>
+<p>docker 应用场景</p>
+<ol>
+<li>加速本地开发<br>
+自动打包和部署应用<br>
+3. 创建轻量、私有的PaaS环境<br>
+自动化测试和持续集成/部署<br>
+5. 部署并扩展Web应用、数据库和后端服务器<br>
+创建安全沙盒<br>
+7. 轻量级的桌面虚拟化</li>
+</ol>
+<h2 id="1docker的安装">1.Docker的安装</h2>
+<pre><code class="language-linux">#安装
+yum -y install docker
+#启动服务
+systemctl start docker
+#查看版本
+docker -v
+</code></pre>
+<h2 id="2查看容器">2.查看容器</h2>
+<pre><code class="language-linux">查看正在运行的docker容器
+docker ps
+查看所有容器
+docker ps -a
+//查看最新创建的docker
+docker ps -l
+//查看最新创建的几个容器
+docker ps -x=xxx
+</code></pre>
+<h2 id="3容器的创建">3.容器的创建</h2>
+<pre><code class="language-linux">//创建容器,创建出来之后容器处于停止状态,名字是随机的
+docker create nginx
+//指定名字
+docker create --name=nginx nginx
+//创建容器加启动
+docker run --name nginx1 -d -p 8080:80 nginx
+//用create创建的容器的启动
+docker start
+</code></pre>
+<h2 id="4容器的停止">4.容器的停止</h2>
+<pre><code class="language-linux">docker stop
+</code></pre>
+<h2 id="5容器删除">5.容器删除</h2>
+<pre><code class="language-linux">docker rm xx
+</code></pre>
+<h1 id="镜像">镜像</h1>
+<p>​	总体来说，镜像是一个包含程序运行必要以来环境和代码的只读文件，它采用分层的文件系统，将每一层的改变以读写层的形式增加到原来的只读文件上。这有点像洋葱，一层一层的，当我们后面学习了 Dockerfile ，相信大家对于这样的架构理解将更为准确。</p>
+<h1 id="镜像与容器的关系">镜像与容器的关系</h1>
+<h2 id="相关理解">相关理解</h2>
+<p>​		前文已经向读者介绍过容器的使用了，细心的读者可能已经发现，容器在启动或者创建时，必须指定一个镜像的名称或者  id  ，其实，这时镜像所扮演的角色就是容器的模版，不同的镜像可以构造出不同的容器，同一个镜像，我们也可以通过配置不同参数来构造出不通的容器。如下命令：</p>
+<pre><code class="language-linux">docker run -itd --name nginx nginx
+</code></pre>
+<p>​		令中的最后一个 nginx 即表示创建该容器所需要的镜像（模版），当然这里还省略了一些信息，例如版本号等，这些我们后文会详细介绍。</p>
+<h2 id="镜像的体系结构">镜像的体系结构</h2>
+<p>镜像的最底层是一个启动文件系统（bootfs）镜像，bootfs 的上层镜像叫做根镜像，一般来说，根镜像是一个操作系统，例如 Ubuntu、CentOS 等，用户的镜像必须构建于根镜像之上，在根镜像之上，用户可以构建出各种各样的其他镜像。<br>
+从上面的介绍读者可以看出，镜像的本质其实就是一系列文件的集合，一层套一层的结构有点类似于 Git ，也有点类似于生活中的洋葱。</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191211192533714.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h2 id="镜像的写时复制机制">镜像的写时复制机制</h2>
+<p>​		通过 <code>docker run</code>  命令指定一个容器创建镜像时，实际上是在该镜像之上创建一个空的可读写的文件系统层级，可以将这个文件系统层级当成一个临时的镜像来对待，而命令中所指的模版镜像则可以称之为父镜像。父镜像的内容都是以只读的方式挂载进来的，容器会读取共享父镜像的内容，用户所做的所有修改都是在文件系统中，不会对父镜像造成任何影响。当然用户可以通过其他一些手段使修改持久化到父镜像中，这个我们后面会详细介绍到。</p>
+<p>简而言之，镜像就是一个固定的不会变化的模版文件，容器是根据这个模版创建出来的，容器会在模版的基础上做一些修改，这些修改本身并不会影响到模版，我们还可以根据模版（镜像）创建出来更多的容器。</p>
+<p>如果有必要，我们是可以修改模版（镜像）的。</p>
+<p>查看镜像;</p>
+<pre><code class="language-linux">docker images
+</code></pre>
+<p>这里一共有五个参数，含义分别如下：</p>
+<ul>
+<li>TAG: TAG用于区分同一仓库中的不同镜像，默认为latest。</li>
+<li>IMAGE ID: IMAGE ID是镜像的一个唯一标识符。</li>
+<li>CREATED: CREATED表示镜像的创建时间。</li>
+<li>SIZE: SIZE表示镜像的大小。</li>
+<li>REPOSITORY:仓库名称，仓库一般用来存放同一类型的镜像。仓库的名称由其创建者指定。如果没有指定则为 <code>&lt;none&gt;</code> 。一般来说，仓库名称有如下几种不同的形式:</li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191211192555394.png" alt="在这里插入图片描述"></figure>
+<p>镜像的删除</p>
+<pre><code class="language-linux">docker rmi xxx
+</code></pre>
+<p>用nginx在linux上启动一个项目</p>
+<pre><code class="language-linux">docker run --name containerName -d -p 8081:81 nginx
+java -jar xxx.xxx.jar
+</code></pre>
+<p>访问端口ip:81出现结果为</p>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191211192603296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h2 id="commint-创建本地镜像">commint 创建本地镜像</h2>
+<p>命令解释：</p>
+<ol>
+<li>参数 -m 是对创建的该镜像的一个简单描述。</li>
+<li>–author 表示该镜像的作者。</li>
+<li>ce1fe32739402 表示创建镜像所依据的容器的 id。</li>
+<li>sang/nginx 则表示仓库名，sang 是名称空间，nginx 是镜像名。</li>
+<li>v1 表示仓库的 tag。</li>
+<li>创建完成后，通过 docker images 命令就可以查看到刚刚创建的镜像。</li>
+<li>通过刚刚创建的镜像运行一个容器，访问该容器，发现 nginx 默认的首页已经发生改变。</li>
+</ol>
+<p>这是我们通过 commint 方式创建本地镜像的方式，但是 commit 方式存在一些问题，比如不够透明化，无法重复，体积较大，为了解决这些问题，可以考虑使用 Dockerfile ，实际上，主流方案也是 Dockerfile。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#docker%E5%9F%BA%E7%A1%801">Docker基础1</a>
+<ul>
+<li><a href="#%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84docker%E6%9C%89%E4%BB%A5%E4%B8%8B%E5%87%A0%E4%B8%AA%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90">一个完整的Docker有以下几个部分组成：</a></li>
+<li><a href="#%E8%AE%A9%E6%88%91%E6%9D%A5%E4%BB%8B%E7%BB%8D%E4%B8%8B-docker-%E8%A7%A3%E5%86%B3%E4%BA%86%E5%93%AA%E4%BA%9B%E7%97%9B%E7%82%B9">让我来介绍下 docker 解决了哪些痛点：</a></li>
+<li><a href="#docker-%E4%B8%8E%E4%BC%A0%E7%BB%9F%E5%AE%B9%E5%99%A8">docker 与传统容器</a></li>
+<li><a href="#1docker%E7%9A%84%E5%AE%89%E8%A3%85">1.Docker的安装</a></li>
+<li><a href="#2%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8">2.查看容器</a></li>
+<li><a href="#3%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9B%E5%BB%BA">3.容器的创建</a></li>
+<li><a href="#4%E5%AE%B9%E5%99%A8%E7%9A%84%E5%81%9C%E6%AD%A2">4.容器的停止</a></li>
+<li><a href="#5%E5%AE%B9%E5%99%A8%E5%88%A0%E9%99%A4">5.容器删除</a></li>
+</ul>
+</li>
+<li><a href="#%E9%95%9C%E5%83%8F">镜像</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E4%B8%8E%E5%AE%B9%E5%99%A8%E7%9A%84%E5%85%B3%E7%B3%BB">镜像与容器的关系</a>
+<ul>
+<li><a href="#%E7%9B%B8%E5%85%B3%E7%90%86%E8%A7%A3">相关理解</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84">镜像的体系结构</a></li>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%9A%84%E5%86%99%E6%97%B6%E5%A4%8D%E5%88%B6%E6%9C%BA%E5%88%B6">镜像的写时复制机制</a></li>
+<li><a href="#commint-%E5%88%9B%E5%BB%BA%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F">commint 创建本地镜像</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/solr">
+              <h3 class="post-title">
+                Solr
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

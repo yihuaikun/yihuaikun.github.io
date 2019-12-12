@@ -1,0 +1,407 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux下安装tomcat | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576154153063">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576154153063" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux下安装tomcat
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="linux下安装tomcat">Linux下安装tomcat</h1>
+<h2 id="jdk的安装">jdk的安装</h2>
+<p>1.下载JDK与Tomcat.<br>
+<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html">jdk下载地址</a><br>
+<a href="http://tomcat.apache.org/download-70.cgi">tomcat下载地址</a></p>
+<pre><code class="language-linux">tar.gz包:解压缩
+# mkdir /usr/java
+# cd /usr/java
+# tar -zxvf /software/jdk-7u55-linux-x64.tar.gz
+生成链接以便版本升级
+# ln -s jdk1.7.0_55 latest
+# ln -s latest default
+</code></pre>
+<p>(2)配置环境变量</p>
+<pre><code class="language-linux">    export JAVA_HOME=/usr/java/default
+    export JAVA_BIN=$JAVA_HOME/bin
+    export PATH=$PATH:$JAVA_HOME/bin
+    export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+    export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+</code></pre>
+<p>使配置生效</p>
+<pre><code class="language-linux">  source /etc/profile
+</code></pre>
+<p>测试jdk安装成功否</p>
+<pre><code class="language-linux">java -version
+javac -version
+</code></pre>
+<h2 id="安装tomcat">安装tomcat</h2>
+<p>1.下载tomcat在上面的网站上可以下载</p>
+<p>2.在/usr/local/下创建tomcat目录</p>
+<pre><code class="language-linux">  # mkdir /usr/local/tomcat
+  #  cd /usr/local/tomcat
+  #  tar -zxvf /software/apache-tomcat-7.0.54.tar.gz
+  加上软链接,方便进入并且版 
+  # ln -s apache-tomcat-7.0.54 server
+</code></pre>
+<p>3.启动tomcat</p>
+<pre><code class="language-linux">   # cd /usr/local/tomcat/server/bin
+    # ./startup.sh
+    Using CATALINA_BASE: /usr/local/tomcat/server
+    Using CATALINA_HOME: /usr/local/tomcat/server
+    Using CATALINA_TEMDIR: /usr/local/tomcat/server/temp
+    Using JRE_HOME: /usr/java/default
+    Using CLASS_PATH: /usr/local/tomcat/server/bin/bootstrap.jar:/usr/local/tomcat/server/bin/tomcat-juli.jar
+    Tomcat started.
+</code></pre>
+<p>测试tomcat</p>
+<pre><code class="language-linux"> 打开防火墙,使外部能访问
+    # /sbin/iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
+    # service iptables save
+    # service iptables restart
+    #systemctl restart iptables.service
+    或直接修改文件/etc/sysconfig/iptables.
+    # vi /etc/sysconfig/iptables
+    -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+    # service iptables restart
+    在浏览器输入: http://192.168.16.133:8080
+    如在本机可以输入: http://localhost:8080
+    出现tomcat的页面表示安装成功.
+</code></pre>
+<p>4.停止tomcat</p>
+<pre><code class="language-linux"> # ./shutdown.sh
+</code></pre>
+<h1 id="问题">问题</h1>
+<h2 id="1重启systemctl-restart-iptablesservice时的错误">1.重启systemctl restart iptables.service时的错误</h2>
+<p>如果不能#service restart iptables.service有可能就是linux版本命令改变成systemctl restart iptables.service</p>
+<h2 id="2在linux环境能访问在浏览器不能访问">2.在linux环境能访问在浏览器不能访问</h2>
+<p>#curl http://39.97.252.228:8080能访问但是在浏览器上不能访问的问题:</p>
+<p>在本地应该访问你的远程服务器加端口</p>
+<h2 id="3关于shudownsh报cataline错误">3.关于./shudown.sh报cataline错误</h2>
+<h3 id="解决方法">解决方法</h3>
+<p>正常启动<br>
+<img src="https://img-blog.csdnimg.cn/20191211193430275.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>#.shutdown.sh出现下面这种错误</p>
+<p>图示信息:</p>
+<pre><code class="language-java">SEVERE: Could not contact localhost:8005. Tomcat may not be running.
+Jul 20, 2018 3:17:45 PM org.apache.catalina.startup.Catalina stopServer
+SEVERE: Catalina.stop: 
+java.net.ConnectException: Connection refused (Connection refused)
+    at java.net.PlainSocketImpl.socketConnect(Native Method)
+    at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl
+    at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSoc
+    at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.j
+    at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+    at java.net.Socket.connect(Socket.java:589)
+    at java.net.Socket.connect(Socket.java:538)
+    at java.net.Socket.&lt;init&gt;(Socket.java:434)
+    at java.net.Socket.&lt;init&gt;(Socket.java:211)
+    at org.apache.catalina.startup.Catalina.stopServer(Catalina.java:498)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorIm
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAc
+    at java.lang.reflect.Method.invoke(Method.java:498)
+    at org.apache.catalina.startup.Bootstrap.stopServer(Bootstrap.java:34
+    at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:430)
+</code></pre>
+<p>上面显示的时8005端口没有起来</p>
+<p>先说问题解决方法:</p>
+<p>先查看8080端口和8005端口的使用情况:</p>
+<p>#netstat -tunlp | grep 8080</p>
+<p>#netstat -tunlp | grep 8005</p>
+<p>这里如果出现上面错五可能会有异常.</p>
+<p>具体的解决方法:</p>
+<p>1.进入jdk文件</p>
+<p>cd /usr/java/jdk1.8.0_51/jre/lib</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191211193342581.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2MjI4MA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<p>进入security文件修改Java.security文件</p>
+<p>#vim java.security</p>
+<pre><code class="language-xml">securerandom.source=file:/dev/random
+改为：
+securerandom.source=file:/dev/urandom
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191211193505844.png" alt="在这里插入图片描述"></figure>
+<p>查找快捷键</p>
+<p>a 后Esc然后/securerandom.source=file:/dev/random</p>
+<p>然后干掉8080端口进程和8005端口进程</p>
+<p>重新启动tomcat然后检查8005端口和端口8080启动正常</p>
+<p>回复正常.</p>
+<h3 id="原因">原因</h3>
+<p>上面设计到两方面的知识</p>
+<h4 id="8005端口和8080端口还有8009端口的作用">8005端口和8080端口还有8009端口的作用:</h4>
+<pre><code class="language-xml">&lt;Server port=&quot;8005&quot; shutdown=&quot;SHUTDOWN&quot;&gt;
+</code></pre>
+<p><strong>1.8005端口是用来关闭TOMCAT服务的端口。</strong></p>
+<pre><code class="language-xml">&lt;Connector port=&quot;8009&quot; protocol=&quot;AJP/1.3&quot; redirectPort=&quot;8443&quot; /&gt;
+</code></pre>
+<p><strong>2.连接器监听8009端口，负责和其他的HTTP服务器建立连接。在把Tomcat与其他HTTP服务器集成时，就需要用到这个连接器</strong></p>
+<pre><code class="language-xml">&lt;Connector port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot;
+               connectionTimeout=&quot;20000&quot;
+               redirectPort=&quot;8443&quot; /&gt;
+</code></pre>
+<p><strong>3.连接器监听8080端口，负责建立HTTP连接。在通过浏览器访问Tomcat服务器的Web应用时，使用的就是这个连接器</strong></p>
+<p><strong>Tomcat1端口分配表(tomcat全部采用默认配置)</strong></p>
+<p><strong>端口号</strong></p>
+<p><strong>关闭指令端口</strong></p>
+<p><strong>8005</strong></p>
+<p><strong>http端口</strong></p>
+<p><strong>8080</strong></p>
+<p><strong>https端口</strong></p>
+<p><strong>8443</strong></p>
+<p><strong>Ajp端口</strong></p>
+<p><strong>8009</strong></p>
+<h4 id="jdk和jre基本概念">jdk和jre基本概念</h4>
+<p><strong>JRE： Java Runtime Environment<br>
+JDK：Java Development Kit</strong><br>
+JRE顾名思义是java运行时环境，包含了java虚拟机，java基础类库。是使用java语言编写的程序运行所需要的软件环境，是提供给想运行java程序的用户使用的。<br>
+JDK顾名思义是java开发工具包，是程序员使用java语言编写java程序所需的开发工具包，是提供给程序员使用的。JDK包含了JRE，同时还包含了编译java源码的编译器javac，还包含了很多java程序调试和分析的工具：jconsole，jvisualvm等工具软件，还包含了java程序编写所需的文档和demo例子程序。</p>
+<h4 id="securerandomsourcefiledevrandom相关">/securerandom.source=file:/dev/random相关</h4>
+<h5 id="securerandom的正确使用">SecureRandom的正确使用</h5>
+<h6 id="安全随机数">安全随机数</h6>
+<p>在安全应用场景，随机数应该使用安全的随机数。密码学意义上的安全随机数，要求必须保证其<strong>不可预测性</strong>。</p>
+<h6 id="怎么获得安全的随机数">怎么获得安全的随机数</h6>
+<p>​		可以直接使用真随机数产生器产生的随机数。或者使用真随机数产生器产生的随机数做种子，输入密码学安全的伪随机数产生器产生密码学安全随机数。</p>
+<blockquote>
+<p>非物理真随机数产生器有：</p>
+<ol>
+<li>Linux操作系统的**/dev/random**设备接口</li>
+<li>Windows操作系统的CryptGenRandom接口</li>
+</ol>
+<p>密码学安全的伪随机数产生器,包括JDK的java.security.SecureRandom等。</p>
+</blockquote>
+<h5 id="securerandom最佳实践">SecureRandom最佳实践</h5>
+<h6 id="基本用法">基本用法</h6>
+<p>java.security.SecureRandom基本用法：</p>
+<pre><code class="language-java">byte[] values = new byte[128];
+SecureRandom random = new SecureRandom();
+random.nextBytes(values);
+</code></pre>
+<h6 id="关于种子的设置">关于种子的设置</h6>
+<p>要保证得到安全的随机数，需要使用真随机数产生器产生的随机数做种子。</p>
+<p>可能的<strong>不当用法</strong>：</p>
+<pre><code class="language-java"> byte[] salt = new byte[128];
+ SecureRandom secureRandom = new SecureRandom();
+ secureRandom.setSeed(System.currentTimeMillis());  
+//使用系统时间作为种子
+ secureRandom.nextBytes(salt);
+</code></pre>
+<p>此处指定了当前系统时间作为种子，替代系统默认随机源。如果同一毫秒连续调用，则得到的随机数则是相同的。</p>
+<blockquote>
+<p>小结：不要自己指定种子。应当使用系统随机源。</p>
+</blockquote>
+<p>系统默认的随机源是什么？</p>
+<p>这取决于$JAVA_HOME/jre/lib/security/java.security配置中的securerandom.source属性。例如jdk1.8中该配置为：</p>
+<pre><code class="language-xml">securerandom.source=file:/dev/random
+</code></pre>
+<p>使用无参构造函数实例化SecureRandom，在大多数系统中，默认的算法是“nativePRNG”，从/dev/random获取随机数。</p>
+<h6 id="熵源不足时阻塞问题">熵源不足时阻塞问题</h6>
+<p><strong>概念回顾</strong>：</p>
+<ul>
+<li>&quot;熵值&quot;：即是随机值的不确定性度量值。<br>
+&quot;熵源&quot;：即是随机数的来源。<br>
+&quot;熵输入&quot;：是伪随机数产生器描述从熵源获取的bit串，用来产生种子。<br>
+&quot;种子&quot;：即是输入到伪随机数产生器用于初始化的bit串。</li>
+</ul>
+<p><strong>问题描述</strong><br>
+在Linux系统中，/dev/random是系统提供的安全随机数接口。当通过/dev/random读取随机数的速度可以为产品所接受时，可以直接使用/dev/random读取的随机数。<br>
+有时无法满足产品对随机数的使用要求，熵源不足时存在阻塞，会导致得到随机数的速度太慢。</p>
+<pre><code>在读取时，/dev/random设备会返回小于熵池噪声总数的随机字节。/dev/random可生成高随机性的公钥或一次性密码本。若熵池空了，对/dev/random的读操作将会被阻塞，直到收集到了足够的环境噪声为止。
+</code></pre>
+<p><strong>解决方法</strong><br>
+提高系统随机数产生器产生随机数速度的一种方法：</p>
+<ul>
+<li>采用haveged守护进程增加系统熵池熵值以提高/dev/random读取随机数的速度。</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#linux%E4%B8%8B%E5%AE%89%E8%A3%85tomcat">Linux下安装tomcat</a>
+<ul>
+<li><a href="#jdk%E7%9A%84%E5%AE%89%E8%A3%85">jdk的安装</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85tomcat">安装tomcat</a></li>
+</ul>
+</li>
+<li><a href="#%E9%97%AE%E9%A2%98">问题</a>
+<ul>
+<li><a href="#1%E9%87%8D%E5%90%AFsystemctl-restart-iptablesservice%E6%97%B6%E7%9A%84%E9%94%99%E8%AF%AF">1.重启systemctl restart iptables.service时的错误</a></li>
+<li><a href="#2%E5%9C%A8linux%E7%8E%AF%E5%A2%83%E8%83%BD%E8%AE%BF%E9%97%AE%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8D%E8%83%BD%E8%AE%BF%E9%97%AE">2.在linux环境能访问在浏览器不能访问</a></li>
+<li><a href="#3%E5%85%B3%E4%BA%8Eshudownsh%E6%8A%A5cataline%E9%94%99%E8%AF%AF">3.关于./shudown.sh报cataline错误</a>
+<ul>
+<li><a href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95">解决方法</a></li>
+<li><a href="#%E5%8E%9F%E5%9B%A0">原因</a>
+<ul>
+<li><a href="#8005%E7%AB%AF%E5%8F%A3%E5%92%8C8080%E7%AB%AF%E5%8F%A3%E8%BF%98%E6%9C%898009%E7%AB%AF%E5%8F%A3%E7%9A%84%E4%BD%9C%E7%94%A8">8005端口和8080端口还有8009端口的作用:</a></li>
+<li><a href="#jdk%E5%92%8Cjre%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">jdk和jre基本概念</a></li>
+<li><a href="#securerandomsourcefiledevrandom%E7%9B%B8%E5%85%B3">/securerandom.source=file:/dev/random相关</a>
+<ul>
+<li><a href="#securerandom%E7%9A%84%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8">SecureRandom的正确使用</a>
+<ul>
+<li><a href="#%E5%AE%89%E5%85%A8%E9%9A%8F%E6%9C%BA%E6%95%B0">安全随机数</a></li>
+<li><a href="#%E6%80%8E%E4%B9%88%E8%8E%B7%E5%BE%97%E5%AE%89%E5%85%A8%E7%9A%84%E9%9A%8F%E6%9C%BA%E6%95%B0">怎么获得安全的随机数</a></li>
+</ul>
+</li>
+<li><a href="#securerandom%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5">SecureRandom最佳实践</a>
+<ul>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95">基本用法</a></li>
+<li><a href="#%E5%85%B3%E4%BA%8E%E7%A7%8D%E5%AD%90%E7%9A%84%E8%AE%BE%E7%BD%AE">关于种子的设置</a></li>
+<li><a href="#%E7%86%B5%E6%BA%90%E4%B8%8D%E8%B6%B3%E6%97%B6%E9%98%BB%E5%A1%9E%E9%97%AE%E9%A2%98">熵源不足时阻塞问题</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/docker-ji-chu">
+              <h3 class="post-title">
+                Docker基础
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

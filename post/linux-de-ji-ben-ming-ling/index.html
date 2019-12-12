@@ -1,0 +1,375 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux的基本命令 | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576154153063">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576154153063" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux的基本命令
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="linux学习">Linux学习</h1>
+<h2 id="介绍">介绍:</h2>
+<p>​		Linux是一套免费使用和自由传播的<a href="https://baike.baidu.com/item/%E7%B1%BBUnix">类Unix</a><a href="https://baike.baidu.com/item/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/192">操作系统</a>，是一个基于<a href="https://baike.baidu.com/item/POSIX">POSIX</a>和Unix的多用户、<a href="https://baike.baidu.com/item/%E5%A4%9A%E4%BB%BB%E5%8A%A1/1011764">多任务</a>、支持<a href="https://baike.baidu.com/item/%E5%A4%9A%E7%BA%BF%E7%A8%8B/1190404">多线程</a>和多<a href="https://baike.baidu.com/item/CPU">CPU</a>的操作系统。它能运行主要的Unix工具软件、应用程序和网络协议。它支持<a href="https://baike.baidu.com/item/32%E4%BD%8D/5812218">32位</a>和<a href="https://baike.baidu.com/item/64%E4%BD%8D">64位</a>硬件。Linux继承了Unix以网络为核心的设计思想，是一个性能稳定的多用户网络操作系统。</p>
+<h2 id="发行版本">发行版本</h2>
+<p>RedHat(红帽)</p>
+<p>CentOS</p>
+<p>ubuntu</p>
+<p>Debian</p>
+<p>Open SuSE(变色龙)</p>
+<h2 id="指令相关">指令相关</h2>
+<h3 id="常用指令及其了解">常用指令及其了解:</h3>
+<h4 id="插件的安装及其查看">插件的安装及其查看</h4>
+<p>yum和rpm</p>
+<p><a href="http://www.yanghengfei.com/tag/yum/">		yum</a>（全称为 Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。基於RPM包(RPM 是 Red Hat Package Manager 的缩写，本意是Red Hat 软件包管理，顾名思义是Red Hat 贡献出来的软件包管理)管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。yum提供了查找、安装、删除某一个、一组甚至全部软件包的命令，而且命令简洁而又好记。</p>
+<p>​		yum的命令形式一般是如下：yum [options] [command] [package ...]<br>
+其中的[options]是可选的，选项包括-h（帮助），-y（当安装过程提示选择全部为&quot;yes&quot;），-q（不显示安装的过程）等等。[command]为所要进行的操作，[package ...]是操作的对象。</p>
+<p>1 安装<br>
+yum install 全部安装<br>
+yum install package1 安装指定的安装包package1<br>
+yum groupinsall group1 安装程序组group1</p>
+<p>2 更新和升级<br>
+yum update 全部更新<br>
+yum update package1 更新指定程序包package1<br>
+yum check-update 检查可更新的程序<br>
+yum upgrade package1 升级指定程序包package1<br>
+yum groupupdate group1 升级程序组group1</p>
+<p>3 查找和显示<br>
+yum info package1 显示安装包信息package1<br>
+yum list 显示所有已经安装和可以安装的程序包<br>
+yum list package1 显示指定程序包安装情况package1<br>
+yum groupinfo group1 显示程序组group1信息yum search string 根据关键字string查找安装包</p>
+<p>4 删除程序<br>
+yum remove | erase package1 删除程序包package1<br>
+yum groupremove group1 删除程序组group1<br>
+yum deplist package1 查看程序package1依赖情况</p>
+<p>5 清除缓存<br>
+yum clean packages 清除缓存目录下的软件包<br>
+yum clean headers 清除缓存目录下的 headers<br>
+yum clean oldheaders 清除缓存目录下旧的 headers<br>
+yum clean, yum clean</p>
+<h4 id="cd命令">cd命令</h4>
+<p>用来切换目录的:</p>
+<p><strong>cd  ..</strong> :切换到父级目录</p>
+<p><strong>cd ../目录</strong>:进入当前目录的父级目录下的目录</p>
+<p><strong>cd /目录/目录/</strong>:进入指定的目录</p>
+<p><strong>cd ~</strong>:用户的家目录</p>
+<p><strong>cd</strong>:切换到用户登陆时的工作目录</p>
+<h4 id="pwd">pwd</h4>
+<p>查看所在的当前目录</p>
+<h4 id="ls和ll命令">ls和ll命令:</h4>
+<p>用来列出文件或文件的相关信息</p>
+<p>ll的效果和ls -l是一样的</p>
+<p>ls:</p>
+<p>-a:显示所有的文件,包括隐藏的文件</p>
+<p>-A:显示指定目录下的所有的子目录下的所有文件,包括隐藏的文件</p>
+<p>-l</p>
+<h4 id="cat命令显示文件和合并文件">cat命令:显示文件和合并文件</h4>
+<p>cat [参数]  文件名</p>
+<pre><code class="language-linux">1 cat 文件1 文件2 &gt; 文件3  这时文件3虽然把文件1和文件2中的都合并了但是文件3中原来的内容被覆盖了如图1
+2.cat 文件1 文件2 &gt;&gt; 文件3 把文件1和文件2中的内容追加到文件3 如图2
+</code></pre>
+<p>图一</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-TiPY6wRz-1576064731384)(D:\总结\Linux\cat文件合并.png)]</p>
+<p>图二</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-qfv9vWPU-1576064731386)(D:\总结\Linux\cat文件合并1.png)]</p>
+<p>cat 文件名来浏览比较小的文件,因为较大的文件,cat只能看到后面的一部分,这时你需要用到less,more,tail命令</p>
+<h4 id="cp命令拷贝文件">cp:命令拷贝文件</h4>
+<p>cp source_file target_file : cp 要拷贝的文件  拷贝到什么地方</p>
+<h4 id="mv移动文件到指定地方">mv:移动文件到指定地方</h4>
+<p>mv 文件名  目标全限定地址</p>
+<h3 id="文件相关">文件相关:</h3>
+<h4 id="rm删除文件">rm:删除文件</h4>
+<p>-i:删除文件时提示用户</p>
+<h4 id="touch创建文件或修改文件的日期">touch:创建文件或修改文件的日期</h4>
+<p>1.touch:创建一个空的文件</p>
+<p>touch [参数] 文件名或目录名</p>
+<p>​	-d  yyyymmmdd:修改文件修改或存取的日期,</p>
+<p>例如 touch -d 2003.03.03 文件名</p>
+<p>[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-88iQnfVw-1576064731387)(D:\总结\Linux\touch修改文件日期.png)]</p>
+<p>​	-a:只修改存取时间</p>
+<p>​	-m:把文件的修改时间改成当前时间</p>
+<h4 id="mkdir创建目录">mkdir:创建目录</h4>
+<p>mkdir [参数] 文件名</p>
+<p>-p:例如mkdir -p 目录1/目录2/目录3/文件名,如果父级目录不存在会自动创建.</p>
+<h4 id="rmdir删除目录">rmdir:删除目录</h4>
+<p>-p:同上,连同父级目录一并删除.</p>
+<h4 id="cp拷贝文件">cp:拷贝文件</h4>
+<p>cp [参数] 文件名  目标地址全限定名</p>
+<p>-a:尽量全得取拷贝,包括权限等.</p>
+<p>-f:如果目标地址中存在则删除在覆盖</p>
+<p>-i:如果目标地址存在同名文件,提示在覆盖</p>
+<p>-R:递归赋值</p>
+<h4 id="mv移动文件">mv:移动文件</h4>
+<p>软连接   得到目标文件下取执行:ln -s 源文件  到目标目录的目标文件</p>
+<p>硬链接  得到目标文件下取执行:ln 源文件   到目标目录的目标文件</p>
+<h4 id="文件的解压与压缩">文件的解压与压缩</h4>
+<p>gzip与gunzip:文件的压缩与解压,解压和压缩的文件都是以.gz为后缀的</p>
+<p>tar:文件的打包与解包,最常用的时解压包</p>
+<h4 id="软链接">软链接</h4>
+<pre><code class="language-linux">ln -s src dst
+</code></pre>
+<h4 id="硬链接">硬链接</h4>
+<pre><code class="language-linux">ln src dst
+</code></pre>
+<h4 id="home">/home</h4>
+<p>其他用户共用的一个家目录。 比如下面可以有： /home/user1、/home/user2。分别代表user1、user2的家目录</p>
+<h4 id="root">/root</h4>
+<p>root用户得家目录</p>
+<h4 id="usr-usrlocal-usrbin">/usr     /usr/local     /usr/bin</h4>
+<p>软件安装目录，类似于windows下的program files目录</p>
+<h4 id="opt">/opt</h4>
+<p>软件安装目录，类似于windows下的program files目录</p>
+<h4 id="bin">/bin</h4>
+<p>可执行文件， 系统及应用运行命令存储目录</p>
+<h4 id="etc">/etc</h4>
+<p>配置目录，存放系统、应用程序全局的配置信息</p>
+<h4 id="var">/var</h4>
+<p>存储经常变动的数据， 比如日志、邮件</p>
+<h4 id="系统默认会查找命令得目录">系统默认会查找命令得目录</h4>
+<p>/bin</p>
+<p>/sbin</p>
+<p>/usr/bin</p>
+<p>/usr/sbin</p>
+<h1 id="系统配置与管理">系统配置与管理</h1>
+<h2 id="linux服务器的用户和组">linux服务器的用户和组</h2>
+<h3 id="1添加用户组">1.添加用户组</h3>
+<p>语法：</p>
+<pre><code>groupadd 选项 组名
+</code></pre>
+<p>选项：</p>
+<ul>
+<li>-g GID 指定新用户组的组标识号（GID）。</li>
+<li>-o 一般与-g选项同时使用，表示新用户组的GID可以与系统已有用户组的GID相同</li>
+</ul>
+<h3 id="2删除用户组">2.删除用户组</h3>
+<p>语法:</p>
+<pre><code class="language-linux">groupadd 选项 组名
+</code></pre>
+<p>选项：</p>
+<ul>
+<li>-g GID 指定新用户组的组标识号（GID）。</li>
+<li>-o 一般与-g选项同时使用，表示新用户组的GID可以与系统已有用户组的GID相同</li>
+</ul>
+<h3 id="3修改用户组">3.修改用户组</h3>
+<p>语法:</p>
+<pre><code>groupmod 选项 组名
+</code></pre>
+<p>选项：</p>
+<ul>
+<li>-g GID 为用户组指定新的组标识号。</li>
+<li>-o 与-g选项同时使用，用户组的新GID可以与系统已有用户组的GID相同。</li>
+<li>-n新用户组 将用户组的名字改为新名字</li>
+</ul>
+<h3 id="4切换用户组">4.切换用户组</h3>
+<p>语法</p>
+<pre><code>newgrp 组名
+</code></pre>
+<p>如果一个用户同属于多个用户组时使用</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#linux%E5%AD%A6%E4%B9%A0">Linux学习</a>
+<ul>
+<li><a href="#%E4%BB%8B%E7%BB%8D">介绍:</a></li>
+<li><a href="#%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC">发行版本</a></li>
+<li><a href="#%E6%8C%87%E4%BB%A4%E7%9B%B8%E5%85%B3">指令相关</a>
+<ul>
+<li><a href="#%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4%E5%8F%8A%E5%85%B6%E4%BA%86%E8%A7%A3">常用指令及其了解:</a>
+<ul>
+<li><a href="#%E6%8F%92%E4%BB%B6%E7%9A%84%E5%AE%89%E8%A3%85%E5%8F%8A%E5%85%B6%E6%9F%A5%E7%9C%8B">插件的安装及其查看</a></li>
+<li><a href="#cd%E5%91%BD%E4%BB%A4">cd命令</a></li>
+<li><a href="#pwd">pwd</a></li>
+<li><a href="#ls%E5%92%8Cll%E5%91%BD%E4%BB%A4">ls和ll命令:</a></li>
+<li><a href="#cat%E5%91%BD%E4%BB%A4%E6%98%BE%E7%A4%BA%E6%96%87%E4%BB%B6%E5%92%8C%E5%90%88%E5%B9%B6%E6%96%87%E4%BB%B6">cat命令:显示文件和合并文件</a></li>
+<li><a href="#cp%E5%91%BD%E4%BB%A4%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6">cp:命令拷贝文件</a></li>
+<li><a href="#mv%E7%A7%BB%E5%8A%A8%E6%96%87%E4%BB%B6%E5%88%B0%E6%8C%87%E5%AE%9A%E5%9C%B0%E6%96%B9">mv:移动文件到指定地方</a></li>
+</ul>
+</li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%9B%B8%E5%85%B3">文件相关:</a>
+<ul>
+<li><a href="#rm%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6">rm:删除文件</a></li>
+<li><a href="#touch%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E6%88%96%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E7%9A%84%E6%97%A5%E6%9C%9F">touch:创建文件或修改文件的日期</a></li>
+<li><a href="#mkdir%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95">mkdir:创建目录</a></li>
+<li><a href="#rmdir%E5%88%A0%E9%99%A4%E7%9B%AE%E5%BD%95">rmdir:删除目录</a></li>
+<li><a href="#cp%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6">cp:拷贝文件</a></li>
+<li><a href="#mv%E7%A7%BB%E5%8A%A8%E6%96%87%E4%BB%B6">mv:移动文件</a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%9A%84%E8%A7%A3%E5%8E%8B%E4%B8%8E%E5%8E%8B%E7%BC%A9">文件的解压与压缩</a></li>
+<li><a href="#%E8%BD%AF%E9%93%BE%E6%8E%A5">软链接</a></li>
+<li><a href="#%E7%A1%AC%E9%93%BE%E6%8E%A5">硬链接</a></li>
+<li><a href="#home">/home</a></li>
+<li><a href="#root">/root</a></li>
+<li><a href="#usr-usrlocal-usrbin">/usr     /usr/local     /usr/bin</a></li>
+<li><a href="#opt">/opt</a></li>
+<li><a href="#bin">/bin</a></li>
+<li><a href="#etc">/etc</a></li>
+<li><a href="#var">/var</a></li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4%E4%BC%9A%E6%9F%A5%E6%89%BE%E5%91%BD%E4%BB%A4%E5%BE%97%E7%9B%AE%E5%BD%95">系统默认会查找命令得目录</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E4%B8%8E%E7%AE%A1%E7%90%86">系统配置与管理</a>
+<ul>
+<li><a href="#linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%94%A8%E6%88%B7%E5%92%8C%E7%BB%84">linux服务器的用户和组</a>
+<ul>
+<li><a href="#1%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7%E7%BB%84">1.添加用户组</a></li>
+<li><a href="#2%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7%E7%BB%84">2.删除用户组</a></li>
+<li><a href="#3%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E7%BB%84">3.修改用户组</a></li>
+<li><a href="#4%E5%88%87%E6%8D%A2%E7%94%A8%E6%88%B7%E7%BB%84">4.切换用户组</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/linux">
+              <h3 class="post-title">
+                Linux下安装tomcat
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

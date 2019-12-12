@@ -1,0 +1,404 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title> Mybatis实现批量插入 | 向java工程师迈进</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://yihuaikun.github.io/favicon.ico?v=1576154153063">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://yihuaikun.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yihuaikun.github.io">
+  <img class="avatar" src="https://yihuaikun.github.io/images/avatar.png?v=1576154153063" alt="">
+  </a>
+  <h1 class="site-title">
+    向java工程师迈进
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+               Mybatis实现批量插入
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-12
+              </span>
+              <span>
+                8 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="mybatis实现批量插入">Mybatis实现批量插入</h1>
+<p>环境配置</p>
+<p>1.依赖</p>
+<pre><code class="language-xml"> &lt;!-- https://mvnrepository.com/artifact/org.mybatis/mybatis --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+            &lt;version&gt;3.5.2&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;5.1.47&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;5.1.47&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- https://mvnrepository.com/artifact/com.alibaba/druid --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;druid&lt;/artifactId&gt;
+            &lt;version&gt;1.1.20&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+            &lt;version&gt;1.18.10&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>2.application.xml中的配置</p>
+<pre><code class="language-yml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+        PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+&lt;configuration&gt;
+    &lt;properties resource=&quot;jdbc.properties&quot; /&gt;
+    &lt;settings&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+&lt;!--        &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;--&gt;
+&lt;!--        &lt;setting name=&quot;localCacheScope&quot; value=&quot;SESSION&quot;/&gt;--&gt;
+    &lt;/settings&gt;
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;${jdbc.user}&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+    &lt;mappers&gt;
+        &lt;mapper resource=&quot;mappers/studentMapper.xml&quot;/&gt;
+        &lt;mapper resource=&quot;mappers/userMapper.xml&quot;/&gt;
+    &lt;/mappers&gt;
+&lt;/configuration&gt;
+</code></pre>
+<p>2.jdbc.properties</p>
+<pre><code class="language-properties">jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost/day03?characterEncoding=utf-8
+jdbc.user=root
+jdbc.password=123456
+</code></pre>
+<p>6.创建数据库student</p>
+<h2 id="实现技术mybatis的动态sql">实现技术:Mybatis的动态sql</h2>
+<h3 id="第一种是mapperxml中的foreach动态sql语句">第一种是mapper.xml中的foreach动态sql语句</h3>
+<p>1.首先创建测试类:Student</p>
+<pre><code class="language-java">@Setter
+@Getter
+@ToString
+public class Student {
+    private int sId;
+    private String sName;
+    private String sex;
+    private int age;
+    private String subject;
+    private String phone;
+
+    public Student() {
+    }
+
+    public Student(int sId, String sName, String sex, int age, String subject, String phone) {
+        this.sId = sId;
+        this.sName = sName;
+        this.sex = sex;
+        this.age = age;
+        this.subject = subject;
+        this.phone = phone;
+    }
+
+    public Student(String sName, String sex, int age, String subject, String phone) {
+        this.sName = sName;
+        this.sex = sex;
+        this.age = age;
+        this.subject = subject;
+        this.phone = phone;
+    }
+    public Student(int sId, String sName) {
+        this.sId = sId;
+        this.sName = sName;
+    }
+}
+</code></pre>
+<p>2.然后创建mapper接口</p>
+<pre><code class="language-java">public interface StudentMapper {
+    int insert(List&lt;Student&gt; studentList);
+}
+</code></pre>
+<p>3.然后配置mapper.xml</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.StudentMapper&quot;&gt;
+
+&lt;!--    &lt;cache/&gt;--&gt;
+&lt;!--  这是测试forEach的第一种  --&gt;
+    &lt;insert id=&quot;insert&quot; &gt;
+        insert into student(s_name,sex,age,subject,phone) values
+        &lt;foreach collection=&quot;list&quot; item=&quot;stu&quot; separator=&quot;,&quot; &gt;
+           ( #{stu.sName},
+            #{stu.sex},
+            #{stu.age},
+            #{stu.subject},
+            #{stu.phone})
+        &lt;/foreach&gt;
+    &lt;/insert&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p>3.然后测试一下</p>
+<pre><code class="language-java">    /**
+     *这是测试forEach的第一种方法:
+     */
+    @Test
+    public void testForEacher(){
+        String xmlPath= &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(xmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //开启自动提交:如果不开启则会看到一级缓存的作用true
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
+            //String sName, String sex, int age, String subject, String phone
+            List&lt;Student&gt; studentList = new ArrayList&lt;&gt;();
+            Collections.addAll(studentList,
+                    new Student(&quot;黄三&quot;,&quot;女&quot;,23,&quot;蓝翔挖掘机&quot;,&quot;11111111111&quot;),
+                    new Student(&quot;黄四&quot;,&quot;男&quot;,20,&quot;蓝翔厨师&quot;,&quot;22222222222&quot;),
+                    new Student(&quot;黄五&quot;,&quot;女&quot;,25,&quot;电大&quot;,&quot;33333333333&quot;)
+                    );
+            studentMapper.insert(studentList);
+            //没有开启自动提交,就会对缓存进行操作,只有这样才能会提交缓存中的数据到数据库,更新数据.
+            sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<h3 id="第二种是简单的sql语句逻辑实现foreach">第二种是简单的sql语句,逻辑实现foreach</h3>
+<p>1.mapper.xml中</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+        PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.lanou.mapper.StudentMapper&quot;&gt;
+    &lt;!--  这是forEacher的第二种  --&gt;
+    &lt;insert id=&quot;insert2&quot; &gt;
+        insert into student(s_name,sex,age,subject,phone) values
+             (#{sName},
+            #{sex},
+            #{age},
+            #{subject},
+            #{phone})
+    &lt;/insert&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p>2.然后定义mapper接口</p>
+<pre><code class="language-java">public interface StudentMapper {
+    int insert2(Student student);
+}
+</code></pre>
+<p>3.然后测试</p>
+<pre><code class="language-java">    /**
+     * 这是forEach的第二种方法,和批处理
+     */
+    @Test
+    public void testForEach2(){
+        String xmlPath= &quot;mybatis-config.xml&quot;;
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(xmlPath);
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            //开启自动提交:如果不开启则会看到一级缓存的作用true
+            //ExecutorType默认是simple一条一执行,还有就是batch使用这个得  sqlSession.flushStatements()才会提交数据
+
+            SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH,true);
+            StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
+            //String sName, String sex, int age, String subject, String phone
+            List&lt;Student&gt; studentList = new ArrayList&lt;&gt;();
+            Collections.addAll(studentList,
+                    new Student(&quot;黄三&quot;,&quot;女&quot;,23,&quot;蓝翔挖掘机&quot;,&quot;11111111111&quot;),
+                    new Student(&quot;黄四&quot;,&quot;男&quot;,20,&quot;蓝翔厨师&quot;,&quot;22222222222&quot;),
+                    new Student(&quot;黄五&quot;,&quot;女&quot;,25,&quot;电大&quot;,&quot;33333333333&quot;)
+            );
+
+//            对缓存的操作之批量插入:
+            int count = 0;
+            for(Student student : studentList ){
+                studentMapper.insert2(student);
+                count++;
+                if(count % 2 == 0){
+                    sqlSession.flushStatements();
+                }
+            }
+//          对剩余得处理:
+            if(count % 2 != 0){
+               sqlSession.flushStatements();
+            }
+            //没有开启自动提交,就会对缓存进行操作,只有这样才能会提交缓存中的数据到数据库,更新数据.
+            sqlSession.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#mybatis%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5">Mybatis实现批量插入</a>
+<ul>
+<li><a href="#%E5%AE%9E%E7%8E%B0%E6%8A%80%E6%9C%AFmybatis%E7%9A%84%E5%8A%A8%E6%80%81sql">实现技术:Mybatis的动态sql</a>
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E6%98%AFmapperxml%E4%B8%AD%E7%9A%84foreach%E5%8A%A8%E6%80%81sql%E8%AF%AD%E5%8F%A5">第一种是mapper.xml中的foreach动态sql语句</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%98%AF%E7%AE%80%E5%8D%95%E7%9A%84sql%E8%AF%AD%E5%8F%A5%E9%80%BB%E8%BE%91%E5%AE%9E%E7%8E%B0foreach">第二种是简单的sql语句,逻辑实现foreach</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yihuaikun.github.io/post/jie-ru-a-li-da-yu-duan-xin-fu-wu">
+              <h3 class="post-title">
+                接入阿里大于短信服务
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://yihuaikun.github.io" target="_blank">YHK</a> | 
+  <a class="rss" href="https://yihuaikun.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
